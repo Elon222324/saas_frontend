@@ -1,0 +1,25 @@
+git clone https://github.com/Elon222324/saas_frontend.git
+cd saas_frontend
+npm create vite@latest . -- --template react
+
+npm install
+npm run dev
+
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+
+sudo npm install -g tailwindcss
+npm install -D @tailwindcss/postcss
+
+npm run dev
+
+npm install lucide-react
+
+
+npm install -D tailwindcss-animate
+npm install @radix-ui/react-slot class-variance-authority clsx tailwind-variants
+
+npm uninstall tailwindcss
+npm install -D tailwindcss@3.4.1 postcss autoprefixer
+
+npm install axios
