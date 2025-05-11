@@ -8,6 +8,8 @@ import {
   Trash2,
   ExternalLink,
   Plus,
+  Copy,
+  Settings,
 } from 'lucide-react'
 
 export default function Sites() {
@@ -15,8 +17,15 @@ export default function Sites() {
   const [loading, setLoading] = useState(true)
   const [newDomain, setNewDomain] = useState('')
   const [adding, setAdding] = useState(false)
+  const [loadingSites, setLoadingSites] = useState({})
 
   const baseDomain = import.meta.env.VITE_BASE_DOMAIN
+
+  const setSiteLoading = (domain, value) => {
+    setLoadingSites((prev) => ({ ...prev, [domain]: value }))
+  }
+
+  const isSiteLoading = (domain) => !!loadingSites[domain]
 
   const fetchSites = async () => {
     try {
@@ -57,59 +66,78 @@ export default function Sites() {
   }
 
   const handleStopSite = async (domain) => {
+    if (isSiteLoading(domain)) return
+    setSiteLoading(domain, true)
     try {
-      await api.post(
-        '/api/sites/stop-site',
-        { domain },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-          },
-        }
-      )
+      await api.post('/api/sites/stop-site', { domain }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      })
       await fetchSites()
     } catch (err) {
       console.error('Ошибка при остановке сайта:', err)
+    } finally {
+      setSiteLoading(domain, false)
     }
   }
 
   const handleStartSite = async (domain) => {
+    if (isSiteLoading(domain)) return
+    setSiteLoading(domain, true)
     try {
-        await api.post(
-          'api/sites/start-site',
-          { domain },
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-            },
-          }
-        )
-        await fetchSites()
-      } catch (err) {
-        console.error('Ошибка при запуске сайта:', err)
-      }
+      await api.post('/api/sites/start-site', { domain }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      })
+      await fetchSites()
+    } catch (err) {
+      console.error('Ошибка при запуске сайта:', err)
+    } finally {
+      setSiteLoading(domain, false)
     }
+  }
 
   const handleRestartSite = async (domain) => {
-    console.log('TODO: перезапуск', domain)
+    if (isSiteLoading(domain)) return
+    setSiteLoading(domain, true)
+    try {
+      await api.post('/api/sites/restart-site', { domain }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      })
+      await fetchSites()
+    } catch (err) {
+      console.error('Ошибка при перезапуске сайта:', err)
+    } finally {
+      setSiteLoading(domain, false)
+    }
   }
 
   const handleDeleteSite = async (domain) => {
+    if (isSiteLoading(domain)) return
+    setSiteLoading(domain, true)
     try {
-        await api.post(
-          '/api/sites/delete-site',
-          { domain },
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-            },
-          }
-        )
-        await fetchSites()
-      } catch (err) {
-        console.error('Ошибка при удаление сайта:', err)
-      }
+      await api.post('/api/sites/delete-site', { domain }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      })
+      await fetchSites()
+    } catch (err) {
+      console.error('Ошибка при удалении сайта:', err)
+    } finally {
+      setSiteLoading(domain, false)
     }
+  }
+
+  const handleCopyLink = (domain) => {
+    const fullLink = `https://${domain}.${baseDomain}`
+    navigator.clipboard.writeText(fullLink)
+    alert(`Скопировано: ${fullLink}`)
+  }
 
   useEffect(() => {
     fetchSites()
@@ -119,7 +147,7 @@ export default function Sites() {
 
   return (
     <div className="p-6 space-y-4">
-      <h1 className="text-2xl font-bold"> Сайты</h1>
+      <h1 className="text-2xl font-bold">Сайты</h1>
 
       {/* Добавление сайта */}
       <div className="flex gap-2 items-center">
@@ -136,7 +164,7 @@ export default function Sites() {
           className="flex gap-2 items-center"
         >
           <Plus size={18} />
-          Добавить
+          {adding ? 'Добавление...' : 'Добавить'}
         </Button>
       </div>
 
@@ -148,7 +176,35 @@ export default function Sites() {
             className="bg-white p-4 rounded shadow border border-gray-200 flex flex-col justify-between"
           >
             <div>
-              <h2 className="text-lg font-semibold">{site.name}</h2>
+              <div className="flex justify-between items-start mb-2">
+                <h2 className="text-lg font-semibold">{site.name}</h2>
+                <div className="flex gap-1">
+                  <a
+                    href={`https://${site.domain}.${baseDomain}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Открыть сайт"
+                  >
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="bg-gray-100 hover:bg-gray-200 text-gray-600"
+                    >
+                      <ExternalLink size={18} />
+                    </Button>
+                  </a>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleCopyLink(site.domain)}
+                    title="Скопировать ссылку"
+                    className="bg-gray-100 hover:bg-gray-200 text-gray-600"
+                  >
+                    <Copy size={18} />
+                  </Button>
+                </div>
+              </div>
+
               <p className="text-sm text-gray-600">Домен: {site.domain}</p>
               <p className="text-sm text-gray-600">Порт: {site.port}</p>
               <p className="text-sm text-gray-600">Путь: {site.path}</p>
@@ -162,28 +218,18 @@ export default function Sites() {
             </div>
 
             <div className="flex justify-start gap-2 mt-4 flex-wrap">
-              <a
-                href={`https://${site.domain}.${baseDomain}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Открыть сайт"
-              >
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-600"
-                >
-                  <ExternalLink size={18} />
-                </Button>
-              </a>
-
               {site.status === 'running' ? (
                 <Button
                   variant="ghost"
                   size="icon"
                   title="Остановить"
                   onClick={() => handleStopSite(site.domain)}
-                  className="bg-orange-100 hover:bg-orange-200 text-orange-600"
+                  disabled={isSiteLoading(site.domain)}
+                  className={`${
+                    isSiteLoading(site.domain)
+                      ? 'bg-orange-200 text-orange-300 cursor-not-allowed'
+                      : 'bg-orange-100 hover:bg-orange-200 text-orange-600'
+                  }`}
                 >
                   <Pause size={18} />
                 </Button>
@@ -193,7 +239,12 @@ export default function Sites() {
                   size="icon"
                   title="Запустить"
                   onClick={() => handleStartSite(site.domain)}
-                  className="bg-green-100 hover:bg-green-200 text-green-600"
+                  disabled={isSiteLoading(site.domain)}
+                  className={`${
+                    isSiteLoading(site.domain)
+                      ? 'bg-green-200 text-green-300 cursor-not-allowed'
+                      : 'bg-green-100 hover:bg-green-200 text-green-600'
+                  }`}
                 >
                   <Play size={18} />
                 </Button>
@@ -204,7 +255,12 @@ export default function Sites() {
                 size="icon"
                 title="Перезапустить"
                 onClick={() => handleRestartSite(site.domain)}
-                className="bg-blue-100 hover:bg-blue-200 text-blue-600"
+                disabled={isSiteLoading(site.domain)}
+                className={`${
+                  isSiteLoading(site.domain)
+                    ? 'bg-blue-200 text-blue-300 cursor-not-allowed'
+                    : 'bg-blue-100 hover:bg-blue-200 text-blue-600'
+                }`}
               >
                 <RefreshCcw size={18} />
               </Button>
@@ -214,10 +270,26 @@ export default function Sites() {
                 size="icon"
                 title="Удалить"
                 onClick={() => handleDeleteSite(site.domain)}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-600"
+                disabled={isSiteLoading(site.domain)}
+                className={`${
+                  isSiteLoading(site.domain)
+                    ? 'bg-gray-200 text-gray-300 cursor-not-allowed'
+                    : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
+                }`}
               >
                 <Trash2 size={18} />
               </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                title="Настройки"
+                onClick={() =>
+                    window.location.href = `/settings/${site.domain}/pages`
+                  }
+                className="bg-gray-100 hover:bg-gray-200 text-gray-600"
+              >
+                <Settings size={18} />
+              </Button>                
             </div>
           </div>
         ))}

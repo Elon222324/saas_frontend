@@ -11,6 +11,7 @@ npx tailwindcss init -p
 sudo npm install -g tailwindcss
 npm install -D @tailwindcss/postcss
 
+# Запуск сайта локально
 npm run dev
 
 npm install lucide-react
@@ -23,3 +24,10 @@ npm uninstall tailwindcss
 npm install -D tailwindcss@3.4.1 postcss autoprefixer
 
 npm install axios
+
+
+СБОРКА ФРОНТА, ПЕРЕД ЗАЛИВКОЙ НА СЕРВЕР
+npm run build
+
+ЗАЛИВКА НА СЕРВЕР (ПАПКА С ФРОНТОМ ДЛЯ СЕРВИСА)
+scp -r ./dist/* root@217.107.219.130:/frontend/saas_front/

@@ -4,6 +4,13 @@ import Dashboard from './pages/Dashboard'
 import Sites from './pages/Sites'
 import Users from './pages/Users'
 import MainLayout from './layouts/MainLayout'
+import SiteSettings from '@/pages/SiteSettings'
+import Pages from '@/pages/settings/Pages'
+import Products from '@/pages/settings/Products'
+import Integrations from '@/pages/settings/Integrations'
+import GeneralSettings from '@/pages/settings/GeneralSettings'
+import PageEditor from './pages/settings/PageEditor'
+import { SiteSettingsProvider } from '@/context/SiteSettingsContext'
 
 export default function App() {
   return (
@@ -14,8 +21,22 @@ export default function App() {
           <Route index element={<Dashboard />} />
           <Route path="sites" element={<Sites />} />
           <Route path="users" element={<Users />} />
+          
+          <Route path="/settings/:domain" element={
+            <SiteSettingsProvider>
+              <SiteSettings />
+            </SiteSettingsProvider>
+          }>
+            <Route path="pages" element={<Pages />} />
+            <Route path="products" element={<Products />} />
+            <Route path="integrations" element={<Integrations />} />
+            <Route path="general" element={<GeneralSettings />} />
+          </Route>
+
+          <Route path="/settings/:domain/pages/:slug" element={<PageEditor />} />
         </Route>
       </Routes>
     </BrowserRouter>
   )
 }
+
