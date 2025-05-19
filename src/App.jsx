@@ -23,26 +23,15 @@ export default function App() {
           <Route path="users" element={<Users />} />
 
           {/* Все настройки сайта обёрнуты в провайдер */}
-          <Route path="/settings/:domain" element={
-            <SiteSettingsProvider>
-              <SiteSettings />
-            </SiteSettingsProvider>
-          }>
+          <Route path="settings/:domain" element={<SiteSettingsProvider><SiteSettings /></SiteSettingsProvider>}>
             <Route path="pages" element={<Pages />} />
             <Route path="products" element={<Products />} />
             <Route path="integrations" element={<Integrations />} />
             <Route path="general" element={<GeneralSettings />} />
+            <Route path="pages/:slug" element={<PageEditor />} />
           </Route>
-
-          {/* Страница редактирования страницы — тоже в провайдере */}
-          <Route path="/settings/:domain/pages/:slug" element={
-            <SiteSettingsProvider>
-              <PageEditor />
-            </SiteSettingsProvider>
-          } />
         </Route>
       </Routes>
     </BrowserRouter>
   )
 }
-

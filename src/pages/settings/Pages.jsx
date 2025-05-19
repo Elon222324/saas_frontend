@@ -85,6 +85,28 @@ export default function Pages() {
     }
   }
 
+  const handleDeletePage = async (slug) => {
+    const confirmed = window.confirm('Удалить эту страницу? Это действие необратимо.')
+    if (!confirmed) return
+
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/pages/${slug}?site_name=${site_name}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+        credentials: 'include',
+      })
+      if (!res.ok) throw new Error('Ошибка удаления')
+
+      setPages(prev => prev.filter(p => p.slug !== slug))
+      alert('Страница удалена')
+    } catch (err) {
+      console.error(err)
+      alert('Не удалось удалить страницу')
+    }
+  }
+
   if (loading) return <div className="p-6">Загрузка...</div>
 
   return (
@@ -135,6 +157,12 @@ export default function Pages() {
                 onClick={() => navigate(`/settings/${domain}/pages/${page.slug}`)}
               >
                 Настроить
+              </Button>
+              <Button
+                className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm"
+                onClick={() => handleDeletePage(page.slug)}
+              >
+                Удалить
               </Button>
             </div>
           </div>
