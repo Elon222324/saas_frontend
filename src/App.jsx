@@ -21,7 +21,8 @@ export default function App() {
           <Route index element={<Dashboard />} />
           <Route path="sites" element={<Sites />} />
           <Route path="users" element={<Users />} />
-          
+
+          {/* Все настройки сайта обёрнуты в провайдер */}
           <Route path="/settings/:domain" element={
             <SiteSettingsProvider>
               <SiteSettings />
@@ -33,7 +34,12 @@ export default function App() {
             <Route path="general" element={<GeneralSettings />} />
           </Route>
 
-          <Route path="/settings/:domain/pages/:slug" element={<PageEditor />} />
+          {/* Страница редактирования страницы — тоже в провайдере */}
+          <Route path="/settings/:domain/pages/:slug" element={
+            <SiteSettingsProvider>
+              <PageEditor />
+            </SiteSettingsProvider>
+          } />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,43 +1,35 @@
-// src/pages/settings/PageEditor.jsx
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Switch } from '@/components/ui/switch'
 import { Trash2, ChevronsUpDown, Pin, Info } from 'lucide-react'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import BlockDetails from '@/components/BlockDetails'
+import { useSiteSettings } from '@/context/SiteSettingsContext'
 
 export default function PageEditor() {
   const { domain, slug } = useParams()
+  const { data, loading: loadingContext } = useSiteSettings()
   const [blocks, setBlocks] = useState([])
   const [blockDataMap, setBlockDataMap] = useState({})
   const [selectedId, setSelectedId] = useState(null)
-  const [loading, setLoading] = useState(true)
+
   const API_URL = import.meta.env.VITE_API_URL
 
   useEffect(() => {
-    fetch(`${API_URL}/schema/site-settings`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-        Accept: 'application/json',
-      },
-      credentials: 'include',
-    })
-      .then(res => res.json())
-      .then(data => {
-        // 1. Метаданные блоков для текущей страницы
-        const pageBlocks = data.blocks?.[slug] || []
-        const sorted = [...pageBlocks].sort((a, b) => a.order - b.order)
-        setBlocks(sorted)
-        setSelectedId(sorted[0]?.id || null)
+    if (!data?.blocks?.[slug]) return
 
-        // 2. Данные всех блоков
-        setBlockDataMap(data.block_data || {})
-      })
-      .catch(err => console.error('Ошибка загрузки блоков:', err))
-      .finally(() => setLoading(false))
-  }, [slug])
+    const pageBlocks = data.blocks[slug]
+    const sorted = [...pageBlocks].sort((a, b) => a.order - b.order)
+    setBlocks(sorted)
+    setSelectedId(sorted[0]?.id || null)
 
-  // Сохранение конкретного блока
+    const blockData = {}
+    for (const blk of sorted) {
+      blockData[blk.id] = blk.settings || {}
+    }
+    setBlockDataMap(blockData)
+  }, [data, slug])
+
   const handleSave = async (blockId, newData) => {
     try {
       const res = await fetch(
@@ -53,7 +45,6 @@ export default function PageEditor() {
         }
       )
       if (!res.ok) throw new Error('Ошибка сохранения')
-      // Обновляем локально
       setBlockDataMap(prev => ({ ...prev, [blockId]: newData }))
       alert('Сохранено!')
     } catch (err) {
@@ -81,14 +72,13 @@ export default function PageEditor() {
     alert('Добавление нового блока')
   }
 
-  if (loading) return <div className="p-6">Загрузка...</div>
+  if (loadingContext || !blocks.length) return <div className="p-6">Загрузка...</div>
 
   const selectedMeta = blocks.find(b => b.id === selectedId)
   const selectedData = selectedMeta ? blockDataMap[selectedMeta.id] : null
 
   return (
     <div className="p-6 space-y-4">
-      {/* Заголовок и назад */}
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Редактирование: {slug}</h1>
         <Link to={`/settings/${domain}/pages`} className="text-blue-600 hover:underline text-sm">
@@ -97,14 +87,10 @@ export default function PageEditor() {
       </div>
 
       <div className="flex gap-6">
-        {/* Левая: драг-н-дроп */}
+        {/* Левая часть: список блоков */}
         <div className="w-1/3">
           <div className="mb-2 flex items-center text-sm text-gray-500">
-            <Info
-              size={16}
-              className="mr-1 cursor-pointer"
-              title="Перетащите блоки, чтобы изменить порядок. Шапка и подвал закреплены."
-            />
+            <Info size={16} className="mr-1" title="Перетащите блоки..." />
             Перетащите блоки, чтобы изменить порядок. Шапка и подвал закреплены.
           </div>
 
@@ -163,15 +149,9 @@ export default function PageEditor() {
                               </div>
                             </div>
 
-                            <div
-                              className="flex items-center gap-2"
-                              onClick={e => e.stopPropagation()}
-                            >
+                            <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
                               {!isFixed && (
-                                <ChevronsUpDown
-                                  size={16}
-                                  className="text-gray-400 transition-transform duration-150 hover:scale-110"
-                                />
+                                <ChevronsUpDown size={16} className="text-gray-400 hover:scale-110" />
                               )}
                               <Switch
                                 checked={block.active}
@@ -197,7 +177,6 @@ export default function PageEditor() {
                     )
                   })}
 
-                  {/* Добавить новый блок */}
                   <div
                     onClick={handleAddBlock}
                     className="flex justify-center items-center px-3 py-2 rounded-md border border-blue-300 bg-blue-100/50 text-blue-700 hover:bg-blue-100 cursor-pointer"
@@ -212,7 +191,7 @@ export default function PageEditor() {
           </DragDropContext>
         </div>
 
-        {/* Правая: блок деталей */}
+        {/* Правая часть: детали блока */}
         <div className="flex-1 border rounded p-4 bg-white shadow-sm min-h-[200px]">
           <BlockDetails block={selectedMeta} data={selectedData} onSave={handleSave} />
         </div>
