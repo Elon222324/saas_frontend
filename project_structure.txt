@@ -1,0 +1,60 @@
+.
+├── README.md
+├── components.json
+├── docs
+│   ├── histiry
+│   └── отображение.md
+├── eslint.config.js
+├── index.html
+├── jsconfig.json
+├── package-lock.json
+├── package.json
+├── postcss.config.cjs
+├── project_structure.txt
+├── src
+│   ├── App.jsx
+│   ├── components
+│   │   ├── BlockDetails.jsx
+│   │   ├── fields
+│   │   │   ├── ColorInput.jsx
+│   │   │   ├── DurationInput.jsx
+│   │   │   ├── FontSizeInput.jsx
+│   │   │   ├── ImageInput.jsx
+│   │   │   ├── NumberInput.jsx
+│   │   │   ├── SelectInput.jsx
+│   │   │   ├── TextAreaInput.jsx
+│   │   │   ├── TextInput.jsx
+│   │   │   └── ToggleInput.jsx
+│   │   └── ui
+│   │       ├── button.jsx
+│   │       ├── input.jsx
+│   │       ├── label.jsx
+│   │       └── switch.jsx
+│   ├── config
+│   │   └── fieldTypes.js
+│   ├── context
+│   │   └── SiteSettingsContext.jsx
+│   ├── index.css
+│   ├── layouts
+│   │   └── MainLayout.jsx
+│   ├── lib
+│   │   ├── authFetch.js
+│   │   ├── axios.js
+│   │   └── utils.js
+│   ├── main.jsx
+│   └── pages
+│       ├── Dashboard.jsx
+│       ├── Login.jsx
+│       ├── SiteSettings.jsx
+│       ├── Sites.jsx
+│       ├── Users.jsx
+│       └── settings
+│           ├── GeneralSettings.jsx
+│           ├── Integrations.jsx
+│           ├── PageEditor.jsx
+│           ├── Pages.jsx
+│           └── Products.jsx
+├── tailwind.config.js
+└── vite.config.js
+
+12 directories, 46 files
