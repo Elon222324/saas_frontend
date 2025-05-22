@@ -14,7 +14,6 @@ export const useSiteSettings = () => {
       document.documentElement.style.setProperty(cssKey, cssValue)
     }
 
-    // custom_css
     const oldStyle = document.querySelector('style[data-from="custom_css"]')
     if (oldStyle) oldStyle.remove()
 
@@ -30,9 +29,13 @@ export const useSiteSettings = () => {
     setLoading(true)
     try {
       const raw = await getSiteInfo()
-      const unpacked = raw.common ? { ...raw.common } : raw
-      setSettings(unpacked)
-      applyCssVariables(unpacked)
+
+      // применяем стили, если есть common
+      if (raw.common) applyCssVariables(raw.common)
+
+      // сохраняем ВСЁ, включая navigation / pages / blocks
+      setSettings(raw)
+
     } catch (err) {
       console.error('Ошибка загрузки настроек сайта:', err)
     } finally {

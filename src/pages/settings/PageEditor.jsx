@@ -239,7 +239,12 @@ export default function PageEditor() {
         </div>
 
         <div className="flex-1 border rounded p-4 bg-white shadow-sm min-h-[200px]">
-          <BlockDetails block={selectedMeta} data={selectedData} onSave={handleSave} />
+          <BlockDetails
+            block={selectedMeta}
+            data={{ ...selectedData, block_id: selectedMeta?.real_id }}
+            onSave={handleSave}
+          />
+
         </div>
       </div>
     </div>

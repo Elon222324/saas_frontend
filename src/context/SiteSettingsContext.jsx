@@ -23,10 +23,13 @@ export const SiteSettingsProvider = ({ children }) => {
       credentials: 'include',
     })
       .then(res => res.json())
-      .then(setData)
+      .then((result) => {
+        console.log('[API result]:', result)  // 👈 вот сюда
+        setData(result)
+      })
       .catch(console.error)
       .finally(() => setLoading(false))
-  }, [API_URL, site_name])
+        }, [API_URL, site_name])
 
   // Первый запрос
   useEffect(() => {
