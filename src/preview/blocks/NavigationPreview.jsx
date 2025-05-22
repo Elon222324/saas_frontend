@@ -18,9 +18,7 @@ export default function NavigationPreview({ settings }) {
     }
   }, [data?.ui_schema])
 
-  const nav = data?.navigation?.filter(
-    item => item.block_id === settings.block_id && item.visible
-  )
+  const nav = settings.items?.filter(item => item.visible)
 
   if (!nav?.length) {
     return (

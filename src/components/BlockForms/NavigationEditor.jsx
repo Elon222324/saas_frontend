@@ -64,10 +64,11 @@ export default function NavigationEditor({ block, data, onChange }) {
         credentials: 'include',
         body: JSON.stringify(payload),
       })
+
       console.log('[📦 PATCH payload]', JSON.stringify(payload, null, 2))
 
-
       if (!res.ok) throw new Error('Ошибка обновления порядка')
+
       setItems(newItems)
       onChange(prev => ({ ...prev, items: newItems }))
     } catch (err) {
