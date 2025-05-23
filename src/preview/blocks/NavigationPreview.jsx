@@ -18,7 +18,14 @@ export default function NavigationPreview({ settings }) {
     }
   }, [data?.ui_schema])
 
-  const nav = settings.items?.filter(item => item.visible)
+  const nav =
+    settings.items?.length > 0
+      ? [...settings.items]
+          .filter(item => item.visible)
+          .sort((a, b) => a.order - b.order)
+      : data?.navigation
+          ?.filter(item => item.block_id === settings.block_id && item.visible)
+          ?.sort((a, b) => a.order - b.order)
 
   if (!nav?.length) {
     return (

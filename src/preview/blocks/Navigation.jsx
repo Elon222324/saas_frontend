@@ -14,10 +14,11 @@ export const Navigation = ({ navigation }) => {
         font-sans
       "
     >
-      {navigation.map((item) => (
+      {navigation.map((item, index) => (
         <a
-          key={item.link}
-          href={item.link}
+          key={item.link || index}
+          href="#"
+          onClick={(e) => e.preventDefault()}
           className="
             no-underline 
             hover:underline 
@@ -25,6 +26,7 @@ export const Navigation = ({ navigation }) => {
             transition-all 
             duration-[var(--transition-duration)]
             text-base
+            cursor-default
           "
         >
           {item.label}

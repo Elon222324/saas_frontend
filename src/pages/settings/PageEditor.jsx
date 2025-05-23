@@ -21,19 +21,21 @@ export default function PageEditor() {
 
   useEffect(() => {
     if (!data?.blocks?.[slug]) return
-  
-    const pageBlocks = data.blocks[slug]
-    const sorted = [...pageBlocks].sort((a, b) => a.order - b.order)
-    setBlocks(sorted)
-    setSelectedId(sorted[0]?.real_id || null)
-  
+
+    const pageBlocks = [...data.blocks[slug]].sort((a, b) => a.order - b.order)
+    setBlocks(pageBlocks)
+
+    // 🧠 Сохраняем выбор, если он уже был
+    if (!selectedId || !pageBlocks.find(b => b.id === selectedId)) {
+      setSelectedId(pageBlocks[0]?.id || null)
+    }
+
     const blockData = {}
-    for (const blk of sorted) {
+    for (const blk of pageBlocks) {
       blockData[blk.real_id] = blk.settings || {}
     }
     setBlockDataMap(blockData)
   }, [data, slug])
-  
 
   const handleSave = async (blockId, newData) => {
     try {
@@ -61,11 +63,11 @@ export default function PageEditor() {
   const handleReorder = async (newBlocks) => {
     const payload = newBlocks.map(({ real_id, order }) => ({
       id: real_id,
-      order
+      order,
     }))
-  
+
     console.log("[DEBUG] Отправка блока:", payload)
-  
+
     try {
       const res = await fetch(
         `${API_URL}/blocks/reorder/${site_name}/${slug}`,
@@ -244,7 +246,6 @@ export default function PageEditor() {
             data={{ ...selectedData, block_id: selectedMeta?.real_id }}
             onSave={handleSave}
           />
-
         </div>
       </div>
     </div>

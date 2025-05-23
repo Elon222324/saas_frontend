@@ -37,7 +37,7 @@ export const SiteSettingsProvider = ({ children }) => {
   }, [fetchData])
 
   return (
-    <SiteSettingsContext.Provider value={{ data, loading, site_name, refetch: fetchData }}>
+    <SiteSettingsContext.Provider value={{ data, setData, loading, site_name, refetch: fetchData }}>
       {children}
     </SiteSettingsContext.Provider>
   )

@@ -9,7 +9,7 @@ import { useSiteSettings } from '@/context/SiteSettingsContext'
 export default function Pages() {
   const { domain } = useParams()
   const navigate = useNavigate()
-  const { data, loading, site_name } = useSiteSettings()
+  const { data, loading, site_name, refetch } = useSiteSettings()
 
   const [pages, setPages] = useState([])
   const [isOpen, setIsOpen] = useState(false)
@@ -79,6 +79,12 @@ export default function Pages() {
         body: JSON.stringify({ slug, value })
       })
       if (!res.ok) throw new Error('Ошибка смены статуса')
+
+      // Локальное обновление
+      setPages(prev => prev.map(p => p.slug === slug ? { ...p, is_active: value } : p))
+
+      // Перезапросим SiteSettings (navigation + pages)
+      await refetch()
     } catch (err) {
       console.error(err)
       alert('Не удалось обновить статус активности страницы')
@@ -100,6 +106,7 @@ export default function Pages() {
       if (!res.ok) throw new Error('Ошибка удаления')
 
       setPages(prev => prev.filter(p => p.slug !== slug))
+      await refetch()
       alert('Страница удалена')
     } catch (err) {
       console.error(err)
