@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { previewBlocks } from '@/preview/blockMap'
-import NavigationEditor from '@/components/BlockForms/NavigationEditor'
+import NavigationEditor from '@/components/BlockForms/Navigation'
+
 
 export default function BlockDetails({ block, data, onSave }) {
   const [form, setForm] = useState({})

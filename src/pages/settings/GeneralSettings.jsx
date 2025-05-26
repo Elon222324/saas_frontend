@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button'
 import { Info } from 'lucide-react'
 import { fieldTypes } from '@/config/fieldTypes'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
+import { lightTheme } from '@/site_themes/light'
+import { darkTheme } from '@/site_themes/dark'
 
 export default function GeneralSettings() {
   const { domain } = useParams()
@@ -21,7 +23,7 @@ export default function GeneralSettings() {
 
   useEffect(() => {
     if (!data?.ui_schema?.length || hasInitialized) return
-  
+
     const initialCommon = {}
     for (const field of data.ui_schema) {
       if (field.key) {
@@ -29,48 +31,14 @@ export default function GeneralSettings() {
           field.hasOwnProperty('value') ? field.value : (field.default ?? '')
       }
     }
-  
+
     setCommon(initialCommon)
     setInitial(initialCommon)
     setHasInitialized(true)
   }, [data, hasInitialized])
 
   const getThemeDefaults = (theme) => {
-    const light = {
-      font_family: "'Roboto', sans-serif",
-      font_size_base: 16,
-      line_height: 1.6,
-      primary_color: "#1976D2",
-      secondary_color: "#90CAF9",
-      background_color: "#FFFFFF",
-      text_color: "#212121",
-      max_width: 1200,
-      container_padding: 24,
-      border_radius: 8,
-      shadow_level: "medium",
-      button_style: "filled",
-      transition_duration: "0.3s",
-      custom_css: "",
-    }
-
-    const dark = {
-      font_family: "'Roboto', sans-serif",
-      font_size_base: 16,
-      line_height: 1.6,
-      primary_color: "#90CAF9",
-      secondary_color: "#1976D2",
-      background_color: "#121212",
-      text_color: "#FFFFFF",
-      max_width: 1200,
-      container_padding: 24,
-      border_radius: 8,
-      shadow_level: "medium",
-      button_style: "filled",
-      transition_duration: "0.3s",
-      custom_css: "",
-    }
-
-    return theme === 'dark' ? dark : light
+    return theme === 'dark' ? darkTheme : lightTheme
   }
 
   const handleChange = (key, value) => {

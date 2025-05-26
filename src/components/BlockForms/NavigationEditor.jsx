@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import { GripVertical, Check, X, Pencil } from 'lucide-react'
+import { navigationSchema } from '@/config/blockSchemas/navigationSchema'
+import { fieldTypes } from '@/config/fieldTypes'
 
 export default function NavigationEditor({ block, data, onChange }) {
   const { data: siteData, setData, site_name } = useSiteSettings()
@@ -126,8 +128,28 @@ export default function NavigationEditor({ block, data, onChange }) {
     handleReorder(newItems)
   }
 
+  const renderField = (field) => {
+    if (field.visible_if) {
+      const [[depKey, depVal]] = Object.entries(field.visible_if)
+      if (data?.[depKey] !== depVal) return null
+    }
+
+    const FieldComponent = fieldTypes[field.type] || fieldTypes.text
+    const value = data?.[field.key]
+
+    return (
+      <FieldComponent
+        {...field}
+        key={field.key}
+        value={value}
+        onChange={(val) => onChange(prev => ({ ...prev, [field.key]: val }))}
+        label={field.label}
+      />
+    )
+  }
+
   return (
-    <div className="space-y-3 relative">
+    <div className="space-y-6 relative">
       {showToast && (
         <div className="absolute top-0 right-0 bg-green-100 text-green-800 px-3 py-1 rounded shadow text-sm transition-opacity duration-300">
           ✅ Порядок сохранён
@@ -216,6 +238,12 @@ export default function NavigationEditor({ block, data, onChange }) {
           )}
         </Droppable>
       </DragDropContext>
+
+      {/* 👇 Авто-рендер настроек внешнего вида */}
+      <div className="pt-4 border-t mt-6 space-y-4">
+        {navigationSchema.map(field => field.editable && renderField(field))}
+      </div>
     </div>
   )
 }
+
