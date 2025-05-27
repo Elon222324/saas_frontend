@@ -1,4 +1,4 @@
-export default function NavigationAppearance({
+export default function FooterAppearance({
   schema,
   settings,
   onChange,
@@ -7,7 +7,7 @@ export default function NavigationAppearance({
   showButton,
 }) {
   const renderField = (field) => {
-    if (field.visible_if) {
+    if (field.key !== 'custom_appearance' && field.visible_if) {
       const [[depKey, depVal]] = Object.entries(field.visible_if)
       if (settings?.[depKey] !== depVal) return null
     }
@@ -30,7 +30,15 @@ export default function NavigationAppearance({
 
   return (
     <div className="pt-4 border-t mt-6 space-y-4">
-      {schema.map(field => field.editable && renderField(field))}
+      {/* Сначала рендерим custom_appearance */}
+      {schema
+        .filter(field => field.key === 'custom_appearance')
+        .map(renderField)}
+
+      {/* Потом все остальные */}
+      {schema
+        .filter(field => field.editable && field.key !== 'custom_appearance')
+        .map(renderField)}
 
       {isCustom && showButton && (
         <div>

@@ -1,14 +1,31 @@
+// src/components/BlockDetails.jsx
 import { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
+import { useSiteSettings } from '@/context/SiteSettingsContext'
 import { previewBlocks } from '@/preview/blockMap'
-import NavigationEditor from '@/components/BlockForms/Navigation'
 
+import NavigationEditor from '@/components/BlockForms/Navigation'
+import HeaderEditor from '@/components/BlockForms/Header'
+import BannerEditor from '@/components/BlockForms/Banner'
+import QuickInfoEditor from '@/components/BlockForms/QuickInfo'
+import PromoEditor from '@/components/BlockForms/PromoCards'
+import ProductsEditor from '@/components/BlockForms/PopularItems'
+import TabsEditor from '@/components/BlockForms/MenuTabs'
+import ProductGridEditor from '@/components/BlockForms/ProductGrid'
+import ReviewsEditor from '@/components/BlockForms/Reviews'
+import DeliveryEditor from '@/components/BlockForms/Delivery'
+import TextEditor from '@/components/BlockForms/Text'
+import FooterEditor from '@/components/BlockForms/Footer'
 
 export default function BlockDetails({ block, data, onSave }) {
   const [form, setForm] = useState({})
+  const { slug } = useParams()
+  const { site_name } = useSiteSettings()
 
   useEffect(() => {
     if (!block?.real_id || !data) return
-    setForm({ ...data, block_id: block.real_id }) // минимальный старт
+    console.log('📦 BlockDetails получил данные:', data)
+    setForm({ ...data, block_id: block.real_id })
   }, [data, block?.real_id])
 
   if (!block || !block.real_id) {
@@ -35,25 +52,59 @@ export default function BlockDetails({ block, data, onSave }) {
     )
   }
 
+  const sharedProps = {
+    block,
+    data: form,
+    onChange: setForm,
+    slug,
+    site_name,
+  }
+
   const renderEditor = () => {
     switch (block.type) {
       case 'navigation':
-        return <NavigationEditor block={block} data={form} onChange={setForm} />
+        return <NavigationEditor {...sharedProps} />
+      case 'header':
+        return <HeaderEditor {...sharedProps} />
+      case 'banner':
+        return <BannerEditor {...sharedProps} />
+      case 'info':
+        return <QuickInfoEditor {...sharedProps} />
+      case 'promo':
+        return <PromoEditor {...sharedProps} />
+      case 'products':
+        return <ProductsEditor {...sharedProps} />
+      case 'tabs':
+        return <TabsEditor {...sharedProps} />
+      case 'product_grid':
+        return <ProductGridEditor {...sharedProps} />
+      case 'reviews':
+        return <ReviewsEditor {...sharedProps} />
+      case 'delivery':
+        return <DeliveryEditor {...sharedProps} />
+      case 'text':
+        return <TextEditor {...sharedProps} />
+      case 'footer':
+        return <FooterEditor {...sharedProps} />
       default:
-        return <p className="text-sm text-gray-500">Редактор блока "{block.type}" пока не реализован</p>
+        return (
+          <p className="text-sm text-gray-500">
+            Редактор блока "{block.type}" пока не реализован
+          </p>
+        )
     }
   }
 
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <h2 className="text-lg font-semibold">Редактирование "{block.label || block.type}"</h2>
+        <h2 className="text-lg font-semibold">
+          Редактирование "{block.label || block.type}"
+        </h2>
         {renderPreview()}
       </div>
 
-      <div className="space-y-4">
-        {renderEditor()}
-      </div>
+      <div className="space-y-4">{renderEditor()}</div>
     </div>
   )
 }

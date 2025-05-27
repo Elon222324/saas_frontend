@@ -1,4 +1,4 @@
-export default function NavigationAppearance({
+export default function ProductsAppearance({
   schema,
   settings,
   onChange,

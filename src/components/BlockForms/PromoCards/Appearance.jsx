@@ -1,4 +1,4 @@
-export default function NavigationAppearance({
+export default function PromoAppearance({
   schema,
   settings,
   onChange,

@@ -1,4 +1,4 @@
-export default function NavigationAppearance({
+export default function BannerAppearance({
   schema,
   settings,
   onChange,

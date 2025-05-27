@@ -6,20 +6,43 @@ import NavigationItemsEditor from './ItemsEditor'
 import NavigationAppearance from './Appearance'
 import { initBlockAppearanceFromCommon } from '@/components/BlockForms/utils/initBlockAppearanceFromCommon'
 
-export default function NavigationEditor({ block, data, onChange }) {
-  const { data: siteData, setData, site_name } = useSiteSettings()
+export default function NavigationEditor({ block, data, onChange, slug }) {
+  const { data: siteData, site_name, setData } = useSiteSettings()
+  const block_id = block?.real_id
   const [items, setItems] = useState([])
-  const [showToast, setShowToast] = useState(false)
   const [initialAppearance, setInitialAppearance] = useState({})
+  const [showToast, setShowToast] = useState(false)
   const [showSavedToast, setShowSavedToast] = useState(false)
 
   useEffect(() => {
     if (!block?.real_id) return
+
     const navItems = siteData?.navigation?.filter(item => item.block_id === block.real_id) || []
     const sorted = [...navItems].sort((a, b) => a.order - b.order)
     setItems(sorted)
-    onChange({ ...data, block_id: block.real_id, items: sorted })
+
+    const hasItems = Array.isArray(data.items)
+    const isDifferent = JSON.stringify(data.items || []) !== JSON.stringify(sorted)
+
+    if ((!hasItems || isDifferent) && sorted.length > 0) {
+      onChange(prev => ({
+        ...prev,
+        items: sorted,
+      }))
+    }
   }, [block?.real_id, siteData?.navigation])
+
+  useEffect(() => {
+    if (data?.custom_appearance && Object.keys(initialAppearance).length === 0) {
+      const values = {}
+      for (const field of navigationSchema) {
+        if (field.visible_if?.custom_appearance === true && data[field.key] !== undefined) {
+          values[field.key] = data[field.key]
+        }
+      }
+      setInitialAppearance(values)
+    }
+  }, [data])
 
   const handleFieldChange = (key, value) => {
     if (key === 'custom_appearance' && value === true) {
@@ -45,25 +68,54 @@ export default function NavigationEditor({ block, data, onChange }) {
 
   const handleSaveAppearance = async (settings) => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/blocks/save-settings/${block.real_id}`, {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-        },
-        body: JSON.stringify({ settings }),
-      })
-      if (!res.ok) throw new Error()
-      const newState = {}
+      const filteredSettings = {}
       for (const field of navigationSchema) {
-        if (field.visible_if?.custom_appearance === true) {
-          newState[field.key] = settings[field.key]
+        if (field.visible_if?.custom_appearance === true && settings[field.key] !== undefined) {
+          filteredSettings[field.key] = settings[field.key]
         }
       }
-      setInitialAppearance(newState)
+
+      filteredSettings.custom_appearance = settings.custom_appearance
+
+      console.log('📦 settings перед отправкой:', settings)
+      console.log('📦 filteredSettings:', filteredSettings)
+
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/blocks/update-settings/${site_name}/${slug}/${block_id}`,
+        {
+          method: 'PATCH',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          },
+          body: JSON.stringify({ settings: filteredSettings }),
+        }
+      )
+      if (!res.ok) {
+        const errText = await res.text()
+        throw new Error(errText)
+      }
+
+      setInitialAppearance(filteredSettings)
       setShowSavedToast(true)
       setTimeout(() => setShowSavedToast(false), 2000)
+
+      if (setData) {
+        setData(prev => {
+          const updatedBlocks = { ...prev.blocks }
+          const pageBlocks = updatedBlocks[slug]?.map(b =>
+            b.real_id === block_id ? { ...b, settings: { ...filteredSettings } } : b
+          )
+          return {
+            ...prev,
+            blocks: {
+              ...updatedBlocks,
+              [slug]: pageBlocks,
+            },
+          }
+        })
+      }
     } catch (err) {
       console.error('❌ Ошибка сохранения внешнего вида:', err)
       alert('Не удалось сохранить внешний вид блока')
@@ -81,8 +133,8 @@ export default function NavigationEditor({ block, data, onChange }) {
         <div className="text-green-600 text-sm font-medium">✅ Внешний вид сохранён</div>
       )}
 
-      <div className="text-sm text-gray-500 pl-1 italic">
-        Перетаскивайте для сортировки, используйте чекбоксы и ✏️ для редактирования.
+      <div className="text-sm text-gray-500 italic pl-1">
+        📁 Навигация: редактирование пунктов и внешнего вида блока
       </div>
 
       <NavigationItemsEditor
@@ -101,7 +153,7 @@ export default function NavigationEditor({ block, data, onChange }) {
         onChange={handleFieldChange}
         fieldTypes={fieldTypes}
         onSaveAppearance={handleSaveAppearance}
-        showButton={hasAppearanceChanged()}
+        showButton={hasAppearanceChanged() || data?.custom_appearance === false}
       />
     </div>
   )

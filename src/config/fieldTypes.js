@@ -7,6 +7,7 @@ import FontSizeInput from '@/components/fields/FontSizeInput'
 import ImageInput from '@/components/fields/ImageInput'
 import NumberInput from '@/components/fields/NumberInput'
 import DurationInput from '@/components/fields/DurationInput'
+import CheckboxField from '@/components/fields/CheckboxField'
 
 export const fieldTypes = {
   text: TextInput,
@@ -18,4 +19,5 @@ export const fieldTypes = {
   image: ImageInput,
   number: NumberInput,
   duration: DurationInput,
+  checkbox: CheckboxField,
 }

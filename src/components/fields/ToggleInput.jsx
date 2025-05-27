@@ -5,7 +5,7 @@ export default function ToggleInput({ label, value, onChange }) {
     <label className="flex items-center gap-2 cursor-pointer">
       <input
         type="checkbox"
-        checked={value}
+        checked={value ?? false}
         onChange={(e) => onChange(e.target.checked)}
         className="w-4 h-4"
       />

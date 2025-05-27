@@ -1,4 +1,4 @@
-export default function NavigationAppearance({
+export default function ReviewsAppearance({
   schema,
   settings,
   onChange,

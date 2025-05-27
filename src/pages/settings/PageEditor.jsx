@@ -32,8 +32,11 @@ export default function PageEditor() {
 
     const blockData = {}
     for (const blk of pageBlocks) {
-      blockData[blk.real_id] = blk.settings || {}
+      const parsed = typeof blk.settings === 'string' ? JSON.parse(blk.settings) : blk.settings || {}
+      console.log(`[DEBUG] settings для блока ${blk.type} (${blk.real_id}):`, parsed)
+      blockData[blk.real_id] = parsed
     }
+    
     setBlockDataMap(blockData)
   }, [data, slug])
 
@@ -53,6 +56,19 @@ export default function PageEditor() {
       )
       if (!res.ok) throw new Error('Ошибка сохранения')
       setBlockDataMap(prev => ({ ...prev, [blockId]: newData }))
+      setData(prev => {
+      const updatedBlocks = prev.blocks?.[slug]?.map(b =>
+        b.real_id === blockId ? { ...b, settings: newData } : b
+      )
+
+  return {
+    ...prev,
+    blocks: {
+      ...prev.blocks,
+      [slug]: updatedBlocks,
+    },
+  }
+})
       alert('Сохранено!')
     } catch (err) {
       console.error(err)
@@ -111,7 +127,7 @@ export default function PageEditor() {
   if (loadingContext || !blocks.length || !data?.pages) return <div className="p-6">Загрузка...</div>
 
   const selectedMeta = blocks.find(b => b.id === selectedId)
-  const selectedData = selectedMeta ? blockDataMap[selectedMeta.id] : null
+  const selectedData = selectedMeta ? blockDataMap[selectedMeta.real_id] || {} : {}
 
   return (
     <div className="p-6 space-y-4">
