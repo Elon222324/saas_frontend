@@ -11,38 +11,45 @@ export default function NavigationEditor({ block, data, onChange, slug }) {
   const block_id = block?.real_id
   const [items, setItems] = useState([])
   const [initialAppearance, setInitialAppearance] = useState({})
+  const [readyToCheck, setReadyToCheck] = useState(false)
   const [showToast, setShowToast] = useState(false)
   const [showSavedToast, setShowSavedToast] = useState(false)
+  const [resetButton, setResetButton] = useState(false)
 
   useEffect(() => {
     if (!block?.real_id) return
-
     const navItems = siteData?.navigation?.filter(item => item.block_id === block.real_id) || []
     const sorted = [...navItems].sort((a, b) => a.order - b.order)
     setItems(sorted)
-
-    const hasItems = Array.isArray(data.items)
     const isDifferent = JSON.stringify(data.items || []) !== JSON.stringify(sorted)
-
-    if ((!hasItems || isDifferent) && sorted.length > 0) {
-      onChange(prev => ({
-        ...prev,
-        items: sorted,
-      }))
+    if (isDifferent && sorted.length > 0) {
+      onChange(prev => ({ ...prev, items: sorted }))
     }
   }, [block?.real_id, siteData?.navigation])
 
   useEffect(() => {
-    if (data?.custom_appearance && Object.keys(initialAppearance).length === 0) {
-      const values = {}
-      for (const field of navigationSchema) {
-        if (field.visible_if?.custom_appearance === true && data[field.key] !== undefined) {
-          values[field.key] = data[field.key]
-        }
-      }
-      setInitialAppearance(values)
+    if (!data?.custom_appearance) {
+      setInitialAppearance({})
+      setReadyToCheck(false)
+      return
     }
-  }, [data])
+
+    const values = {}
+    for (const field of navigationSchema) {
+      if (field.visible_if?.custom_appearance && data[field.key] !== undefined) {
+        values[field.key] = data[field.key]
+      }
+    }
+
+    setInitialAppearance(values)
+
+    const isChanged = navigationSchema.some(field => {
+      if (!field.visible_if?.custom_appearance) return false
+      return data[field.key] !== values[field.key]
+    })
+
+    setReadyToCheck(isChanged)
+  }, [block?.real_id, data])
 
   const handleFieldChange = (key, value) => {
     if (key === 'custom_appearance' && value === true) {
@@ -50,19 +57,32 @@ export default function NavigationEditor({ block, data, onChange, slug }) {
       onChange(prev => {
         const next = { ...prev, custom_appearance: true, ...initialValues }
         setInitialAppearance(initialValues)
+        setReadyToCheck(false)
         return next
       })
     } else {
-      onChange(prev => ({ ...prev, [key]: value }))
+      onChange(prev => {
+        const updated = { ...prev, [key]: value }
+        if (prev.custom_appearance) {
+          const changed = navigationSchema.some(field => {
+            if (!field.visible_if?.custom_appearance) return false
+            return updated[field.key] !== initialAppearance[field.key]
+          })
+          if (changed) {
+            requestAnimationFrame(() => setReadyToCheck(true))
+          }
+        }
+        return updated
+      })
     }
   }
 
   const hasAppearanceChanged = () => {
-    if (!data?.custom_appearance) return false
+    if (!readyToCheck || !data?.custom_appearance) return false
+
     return navigationSchema.some(field => {
-      if (field.visible_if?.custom_appearance !== true) return false
-      const key = field.key
-      return data[key] !== initialAppearance[key]
+      if (!field.visible_if?.custom_appearance) return false
+      return data[field.key] !== initialAppearance[field.key]
     })
   }
 
@@ -70,15 +90,12 @@ export default function NavigationEditor({ block, data, onChange, slug }) {
     try {
       const filteredSettings = {}
       for (const field of navigationSchema) {
-        if (field.visible_if?.custom_appearance === true && settings[field.key] !== undefined) {
+        if (field.visible_if?.custom_appearance && settings[field.key] !== undefined) {
           filteredSettings[field.key] = settings[field.key]
         }
       }
 
       filteredSettings.custom_appearance = settings.custom_appearance
-
-      console.log('📦 settings перед отправкой:', settings)
-      console.log('📦 filteredSettings:', filteredSettings)
 
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/blocks/update-settings/${site_name}/${slug}/${block_id}`,
@@ -92,14 +109,16 @@ export default function NavigationEditor({ block, data, onChange, slug }) {
           body: JSON.stringify({ settings: filteredSettings }),
         }
       )
-      if (!res.ok) {
-        const errText = await res.text()
-        throw new Error(errText)
-      }
+      if (!res.ok) throw new Error(await res.text())
 
       setInitialAppearance(filteredSettings)
+      setReadyToCheck(false)
       setShowSavedToast(true)
-      setTimeout(() => setShowSavedToast(false), 2000)
+      setResetButton(true)
+      setTimeout(() => {
+        setShowSavedToast(false)
+        setResetButton(false)
+      }, 2000)
 
       if (setData) {
         setData(prev => {
@@ -121,6 +140,8 @@ export default function NavigationEditor({ block, data, onChange, slug }) {
       alert('Не удалось сохранить внешний вид блока')
     }
   }
+
+  const showSaveButton = readyToCheck && data?.custom_appearance && hasAppearanceChanged()
 
   return (
     <div className="space-y-6 relative">
@@ -153,7 +174,8 @@ export default function NavigationEditor({ block, data, onChange, slug }) {
         onChange={handleFieldChange}
         fieldTypes={fieldTypes}
         onSaveAppearance={handleSaveAppearance}
-        showButton={hasAppearanceChanged() || data?.custom_appearance === false}
+        showButton={showSaveButton || data?.custom_appearance === false}
+        resetButton={resetButton}
       />
     </div>
   )

@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from 'react'
+
 export default function NavigationAppearance({
   schema,
   settings,
@@ -5,7 +7,20 @@ export default function NavigationAppearance({
   fieldTypes,
   onSaveAppearance,
   showButton,
+  resetButton,
 }) {
+  const [internalVisible, setInternalVisible] = useState(false)
+
+  useEffect(() => {
+    if (resetButton) {
+      setInternalVisible(false)
+      return
+    }
+
+    if (showButton) setInternalVisible(true)
+    if (!settings?.custom_appearance) setInternalVisible(false)
+  }, [showButton, settings?.custom_appearance, resetButton])
+
   const renderField = (field) => {
     if (field.visible_if) {
       const [[depKey, depVal]] = Object.entries(field.visible_if)
@@ -26,13 +41,11 @@ export default function NavigationAppearance({
     )
   }
 
-  const isCustom = settings?.custom_appearance === true
-
   return (
     <div className="pt-4 border-t mt-6 space-y-4">
       {schema.map(field => field.editable && renderField(field))}
 
-      {isCustom && showButton && (
+      {internalVisible && (
         <div>
           <button
             onClick={() => onSaveAppearance?.(settings)}
