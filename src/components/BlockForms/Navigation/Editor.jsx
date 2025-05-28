@@ -35,51 +35,59 @@ export default function NavigationEditor({ block, data, onChange, slug }) {
     }
 
     const values = {}
+    const uiDefaults = {}
+    for (const field of siteData?.ui_schema || []) {
+      if (field.key) {
+        uiDefaults[field.key] = field.hasOwnProperty('value') ? field.value : (field.default ?? '')
+      }
+    }
+
     for (const field of navigationSchema) {
-      if (field.visible_if?.custom_appearance && data[field.key] !== undefined) {
-        values[field.key] = data[field.key]
+      if (field.visible_if?.custom_appearance) {
+        values[field.key] = data[field.key] !== undefined ? data[field.key] : uiDefaults[field.key]
       }
     }
 
     setInitialAppearance(values)
 
-    const isChanged = navigationSchema.some(field => {
-      if (!field.visible_if?.custom_appearance) return false
-      return data[field.key] !== values[field.key]
+    requestAnimationFrame(() => {
+      const isChanged = navigationSchema.some(field => {
+        if (!field.visible_if?.custom_appearance) return false
+        return data[field.key] !== values[field.key]
+      })
+      setReadyToCheck(isChanged)
     })
-
-    setReadyToCheck(isChanged)
-  }, [block?.real_id, data])
+  }, [block?.real_id])
 
   const handleFieldChange = (key, value) => {
-    if (key === 'custom_appearance' && value === true) {
-      const initialValues = initBlockAppearanceFromCommon(navigationSchema, siteData?.common)
-      onChange(prev => {
-        const next = { ...prev, custom_appearance: true, ...initialValues }
-        setInitialAppearance(initialValues)
-        setReadyToCheck(false)
-        return next
-      })
-    } else {
-      onChange(prev => {
-        const updated = { ...prev, [key]: value }
-        if (prev.custom_appearance) {
-          const changed = navigationSchema.some(field => {
-            if (!field.visible_if?.custom_appearance) return false
-            return updated[field.key] !== initialAppearance[field.key]
-          })
-          if (changed) {
-            requestAnimationFrame(() => setReadyToCheck(true))
-          }
-        }
-        return updated
-      })
+    if (key === 'custom_appearance' && value === false) {
+      const defaults = initBlockAppearanceFromCommon(siteData?.ui_schema || [], navigationSchema)
+      const updated = {
+        ...defaults,
+        custom_appearance: false,
+      }
+      handleSaveAppearance(updated)
+      onChange(prev => ({ ...prev, ...updated }))
+      return
     }
+
+    onChange(prev => {
+      const updated = { ...prev, [key]: value }
+
+      if (prev.custom_appearance) {
+        const changed = navigationSchema.some(field => {
+          if (!field.visible_if?.custom_appearance) return false
+          return updated[field.key] !== initialAppearance[field.key]
+        })
+        requestAnimationFrame(() => setReadyToCheck(changed))
+      }
+
+      return updated
+    })
   }
 
   const hasAppearanceChanged = () => {
     if (!readyToCheck || !data?.custom_appearance) return false
-
     return navigationSchema.some(field => {
       if (!field.visible_if?.custom_appearance) return false
       return data[field.key] !== initialAppearance[field.key]
@@ -90,7 +98,7 @@ export default function NavigationEditor({ block, data, onChange, slug }) {
     try {
       const filteredSettings = {}
       for (const field of navigationSchema) {
-        if (field.visible_if?.custom_appearance && settings[field.key] !== undefined) {
+        if (field.visible_if?.custom_appearance) {
           filteredSettings[field.key] = settings[field.key]
         }
       }

@@ -8,6 +8,7 @@ export default function NavigationAppearance({
   onSaveAppearance,
   showButton,
   resetButton,
+  uiDefaults = {},
 }) {
   const [internalVisible, setInternalVisible] = useState(false)
 
@@ -28,7 +29,10 @@ export default function NavigationAppearance({
     }
 
     const FieldComponent = fieldTypes[field.type] || fieldTypes.text
-    const value = settings?.[field.key]
+    const value =
+      settings?.[field.key] !== undefined
+        ? settings[field.key]
+        : uiDefaults?.[field.key] ?? field.default ?? ''
 
     return (
       <FieldComponent
