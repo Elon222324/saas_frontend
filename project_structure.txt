@@ -20,8 +20,73 @@
 │   ├── components
 │   │   ├── BlockDetails.jsx
 │   │   ├── BlockForms
-│   │   │   └── NavigationEditor.jsx
+│   │   │   ├── Banner
+│   │   │   │   ├── Appearance.jsx
+│   │   │   │   ├── Editor.jsx
+│   │   │   │   ├── index.js
+│   │   │   │   └── ItemsEditor.jsx
+│   │   │   ├── BlockAppearance.jsx
+│   │   │   ├── Delivery
+│   │   │   │   ├── Appearance.jsx
+│   │   │   │   ├── Editor.jsx
+│   │   │   │   ├── index.js
+│   │   │   │   └── ItemsEditor.jsx
+│   │   │   ├── Footer
+│   │   │   │   ├── Appearance.jsx
+│   │   │   │   ├── Editor.jsx
+│   │   │   │   ├── index.js
+│   │   │   │   └── ItemsEditor.jsx
+│   │   │   ├── Header
+│   │   │   │   ├── Appearance.jsx
+│   │   │   │   ├── Editor.jsx
+│   │   │   │   ├── index.js
+│   │   │   │   └── ItemsEditor.jsx
+│   │   │   ├── hooks
+│   │   │   │   └── useBlockAppearance.js
+│   │   │   ├── MenuTabs
+│   │   │   │   ├── Appearance.jsx
+│   │   │   │   ├── Editor.jsx
+│   │   │   │   ├── index.js
+│   │   │   │   └── ItemsEditor.jsx
+│   │   │   ├── Navigation
+│   │   │   │   ├── Appearance.jsx
+│   │   │   │   ├── Editor.jsx
+│   │   │   │   ├── index.js
+│   │   │   │   └── ItemsEditor.jsx
+│   │   │   ├── PopularItems
+│   │   │   │   ├── Appearance.jsx
+│   │   │   │   ├── Editor.jsx
+│   │   │   │   ├── index.js
+│   │   │   │   └── ItemsEditor.jsx
+│   │   │   ├── ProductGrid
+│   │   │   │   ├── Appearance.jsx
+│   │   │   │   ├── Editor.jsx
+│   │   │   │   ├── index.js
+│   │   │   │   └── ItemsEditor.jsx
+│   │   │   ├── PromoCards
+│   │   │   │   ├── Appearance.jsx
+│   │   │   │   ├── Editor.jsx
+│   │   │   │   ├── index.js
+│   │   │   │   └── ItemsEditor.jsx
+│   │   │   ├── QuickInfo
+│   │   │   │   ├── Appearance.jsx
+│   │   │   │   ├── Editor.jsx
+│   │   │   │   ├── index.js
+│   │   │   │   └── ItemsEditor.jsx
+│   │   │   ├── Reviews
+│   │   │   │   ├── Appearance.jsx
+│   │   │   │   ├── Editor.jsx
+│   │   │   │   ├── index.js
+│   │   │   │   └── ItemsEditor.jsx
+│   │   │   ├── Text
+│   │   │   │   ├── Appearance.jsx
+│   │   │   │   ├── Editor.jsx
+│   │   │   │   ├── index.js
+│   │   │   │   └── ItemsEditor.jsx
+│   │   │   └── utils
+│   │   │       └── initBlockAppearanceFromCommon.js
 │   │   ├── fields
+│   │   │   ├── CheckboxField.jsx
 │   │   │   ├── ColorInput.jsx
 │   │   │   ├── DurationInput.jsx
 │   │   │   ├── FontSizeInput.jsx
@@ -37,6 +102,19 @@
 │   │       ├── label.jsx
 │   │       └── switch.jsx
 │   ├── config
+│   │   ├── blockSchemas
+│   │   │   ├── bannerSchema.js
+│   │   │   ├── deliverySchema.js
+│   │   │   ├── footerSchema.js
+│   │   │   ├── headerSchema.js
+│   │   │   ├── navigationSchema.js
+│   │   │   ├── productGridSchema.js
+│   │   │   ├── productsSchema.js
+│   │   │   ├── promoSchema.js
+│   │   │   ├── quickInfoSchema.js
+│   │   │   ├── reviewsSchema.js
+│   │   │   ├── tabsSchema.js
+│   │   │   └── textSchema.js
 │   │   └── fieldTypes.js
 │   ├── context
 │   │   └── SiteSettingsContext.jsx
@@ -81,4 +159,4 @@
 ├── tailwind.config.js
 └── vite.config.js
 
-18 directories, 64 files
+33 directories, 127 files

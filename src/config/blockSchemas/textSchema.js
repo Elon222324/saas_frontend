@@ -29,5 +29,54 @@ export const textSchema = [
     default: '#6B7280',
     editable: true,
     visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'padding_top',
+    label: 'Отступ сверху (px)',
+    type: 'number',
+    default: 48,
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'padding_bottom',
+    label: 'Отступ снизу (px)',
+    type: 'number',
+    default: 48,
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'title_font_size',
+    label: 'Размер заголовка (px)',
+    type: 'fontsize',
+    default: 24,
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'desc_font_size',
+    label: 'Размер описания (px)',
+    type: 'fontsize',
+    default: 16,
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'max_width',
+    label: 'Максимальная ширина контейнера (px)',
+    type: 'number',
+    default: 768,
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'text_align',
+    label: 'Выравнивание текста',
+    type: 'select',
+    options: ['left', 'center', 'right'],
+    default: 'center',
+    editable: true,
+    visible_if: { custom_appearance: true }
   }
 ]

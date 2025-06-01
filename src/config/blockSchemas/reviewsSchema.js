@@ -53,5 +53,56 @@ export const reviewsSchema = [
     default: '#FACC15',
     editable: true,
     visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'primary_color',
+    label: 'Цвет кнопки "Оставить отзыв"',
+    type: 'color',
+    default: '#1976D2',
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'show_modal_button',
+    label: 'Показывать кнопку "Оставить отзыв"',
+    type: 'boolean',
+    default: true,
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'slider_enabled',
+    label: 'Включить горизонтальный скролл',
+    type: 'boolean',
+    default: true,
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'avatar_size',
+    label: 'Размер аватарок',
+    type: 'select',
+    options: ['small', 'medium', 'large'],
+    default: 'medium',
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'card_shadow',
+    label: 'Тень карточки',
+    type: 'select',
+    options: ['none', 'low', 'medium', 'high'],
+    default: 'low',
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'transition_effect',
+    label: 'Эффект прокрутки',
+    type: 'select',
+    options: ['fade', 'slide', 'scale'],
+    default: 'slide',
+    editable: true,
+    visible_if: { custom_appearance: true }
   }
 ]

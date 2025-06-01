@@ -6,8 +6,10 @@ export const headerSchema = [
     default: false,
     editable: true
   },
+
+  // 🎨 Цвета
   {
-    key: "bg_color",
+    key: "background_color",
     label: "Фон шапки",
     type: "color",
     default: "#FFFFFF",
@@ -67,6 +69,61 @@ export const headerSchema = [
     label: "Цвет звезды рейтинга",
     type: "color",
     default: "#FACC15",
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+
+  // 👁️ Видимость блоков
+  {
+    key: "show_login_button",
+    label: "Показывать кнопку 'Войти'",
+    type: "boolean",
+    default: true,
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: "show_bonus_button",
+    label: "Показывать кнопку 'Бонусы'",
+    type: "boolean",
+    default: true,
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: "show_rating",
+    label: "Показывать рейтинг",
+    type: "boolean",
+    default: true,
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+
+  // 🎯 Выравнивание
+  {
+    key: "alignment",
+    label: "Выравнивание содержимого (логотип + текст)",
+    type: "select",
+    options: ["left", "center"],
+    default: "left",
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+
+  // 📐 Отступы
+  {
+    key: "padding_x",
+    label: "Горизонтальный отступ (px)",
+    type: "number",
+    default: 16,
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: "padding_y",
+    label: "Вертикальный отступ (px)",
+    type: "number",
+    default: 12,
     editable: true,
     visible_if: { custom_appearance: true }
   }

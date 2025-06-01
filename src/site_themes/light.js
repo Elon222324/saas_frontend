@@ -1,32 +1,57 @@
 export const lightTheme = {
-  font_family: "'Roboto', sans-serif",
-  font_size_base: 16,
-  line_height: 1.6,
-  primary_color: "#1976D2",
-  secondary_color: "#90CAF9",
-  background_color: "#FFFFFF",
-  text_color: "#212121",
-  max_width: 1200,
-  container_padding: 24,
-  border_radius: 8,
-  shadow_level: "medium",
-  button_style: "filled",
-  transition_duration: "0.3s",
-  custom_css: "",
+  "style": "light",
 
-  // Дополнительно:
-  button_text_color: "#FFFFFF",           // Белый текст на синей кнопке
-  button_bg_color: "#1976D2",             // Та же, что и primary
-  button_border_color: "#1976D2",         // Та же, что и primary
-  button_hover_color: "#1259A8",          // Потемневший вариант primary
+  "typography.font_family": "'Roboto', sans-serif",
+  "typography.font_size_base": 16,
+  "typography.line_height": 1.6,
+  "typography.font_weight_body": 400,
+  "typography.font_weight_heading": 700,
 
-  card_bg_color: "#FFFFFF",               // Белый фон карточек
-  card_border_color: "#E5E7EB",           // Светлая серая рамка
-  card_shadow: "medium",                  // Средняя тень
+  "text.primary": "#0F172A",
+  "text.secondary": "#6B7280",
+  "text.accent": "#1976D2",
 
-  section_bg_color: "#F9FAFB",            // Едва заметный серый
-  subtle_text_color: "#6B7280",           // Tailwind gray-500
-  rating_color: "#FACC15",                // Жёлтый (звёзды)
-  heading_color: "#111827",               // Почти чёрный (gray-900)
-  icon_color: "#6B7280",                  // Серая иконка (gray-500)
+  "background.base": "#FFFFFF",
+  "background.card": "#FFFFFF",
+  "background.muted": "#F9FAFB",
+  "background.surface": "#F3F4F6",
+  "background.gradient_from": "#FFFFFF",
+  "background.gradient_to": "#F3F4F6",
+
+  "button.bg": "#1976D2",
+  "button.text": "#FFFFFF",
+  "button.hover_bg": "#1259A8",
+  "button.hover_text": "#FFFFFF",
+  "button.border": "#1976D2",
+  "button.radius": 8,
+  "button.style": "filled",
+
+  "button_secondary.bg": "#E5E7EB",
+  "button_secondary.text": "#374151",
+  "button_secondary.hover_bg": "#D1D5DB",
+  "button_secondary.border": "#E5E7EB",
+  "button_secondary.radius": 8,
+  "button_secondary.style": "filled",
+
+  "layout.max_width": 1200,
+  "layout.padding": 24,
+  "layout.border_radius": 8,
+  "layout.shadow": "medium",
+
+  "transition.duration": 0.3,
+
+  "icon.default": "#6B7280",
+  "icon.accent": "#1976D2",
+  "icon.rating": "#FACC15",
+
+  "price.bg": "#EFF6FF",
+  "price.color": "#1976D2",
+
+  "active.bg": "#E3F2FD",
+  "active.text": "#0D47A1",
+
+  "border.color": "#E5E7EB",
+  "border.show": "#E5E7EB",
+
+  "custom_css": ""
 }

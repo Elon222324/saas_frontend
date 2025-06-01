@@ -29,5 +29,79 @@ export const footerSchema = [
     default: '#E5E7EB',
     editable: true,
     visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'font_size_base',
+    label: 'Размер шрифта',
+    type: 'fontsize',
+    default: 14,
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'icon_color',
+    label: 'Цвет иконок',
+    type: 'color',
+    default: '#6B7280',
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'icon_color_hover',
+    label: 'Цвет иконок при наведении',
+    type: 'color',
+    default: '#212121',
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'section_spacing_top',
+    label: 'Отступ сверху',
+    type: 'number',
+    default: 48,
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'section_spacing_bottom',
+    label: 'Отступ снизу',
+    type: 'number',
+    default: 48,
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'alignment',
+    label: 'Выравнивание секций',
+    type: 'select',
+    options: ['left', 'center', 'spread'],
+    default: 'spread',
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'show_sections',
+    label: 'Показывать секции',
+    type: 'multicheckbox',
+    options: [
+      { key: 'about', label: 'О компании' },
+      { key: 'contacts', label: 'Контакты' },
+      { key: 'socials', label: 'Соцсети' }
+    ],
+    default: {
+      about: true,
+      contacts: true,
+      socials: true
+    },
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'show_payment_icons',
+    label: 'Показывать иконки оплат',
+    type: 'boolean',
+    default: true,
+    editable: true,
+    visible_if: { custom_appearance: true }
   }
 ]

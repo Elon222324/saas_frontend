@@ -6,6 +6,10 @@ import { fieldTypes } from '@/config/fieldTypes'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
 import { lightTheme } from '@/site_themes/light'
 import { darkTheme } from '@/site_themes/dark'
+import { juicyTheme } from '@/site_themes/juicy'
+import { candyTheme } from '@/site_themes/candy'
+import { aquaTheme } from '@/site_themes/aqua'
+import { sunsetTheme } from '@/site_themes/sunset'
 
 export default function GeneralSettings() {
   const { domain } = useParams()
@@ -38,17 +42,32 @@ export default function GeneralSettings() {
   }, [data, hasInitialized])
 
   const getThemeDefaults = (theme) => {
-    return theme === 'dark' ? darkTheme : lightTheme
+    if (theme === 'dark') return darkTheme
+    if (theme === 'juicy') return juicyTheme
+    if (theme === 'candy') return candyTheme
+    if (theme === 'aqua') return aquaTheme
+    if (theme === 'sunset') return sunsetTheme
+    return lightTheme
   }
 
   const handleChange = (key, value) => {
-    if (key === 'style' && (value === 'light' || value === 'dark')) {
-      const themeDefaults = getThemeDefaults(value)
-      setCommon((prev) => ({
-        ...prev,
-        style: value,
-        ...themeDefaults,
-      }))
+    if (key === 'style') {
+      // Только если тема известна, применим её значения
+      const knownThemes = ['light', 'dark', 'juicy', 'candy', 'aqua', 'sunset']
+      if (knownThemes.includes(value)) {
+        const themeDefaults = getThemeDefaults(value)
+        setCommon((prev) => ({
+          ...prev,
+          style: value,
+          ...themeDefaults,
+        }))
+      } else {
+        // Пользователь выбрал кастомную тему (custom) — не трогаем остальные поля
+        setCommon((prev) => ({
+          ...prev,
+          style: value
+        }))
+      }
     } else {
       setCommon(prev => ({ ...prev, [key]: value }))
     }

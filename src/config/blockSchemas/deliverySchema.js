@@ -46,5 +46,62 @@ export const deliverySchema = [
     default: '#6B7280',
     editable: true,
     visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'icon_color',
+    label: 'Цвет акцентов (числа, выделения)',
+    type: 'color',
+    default: '#F97316',
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'map_border_radius',
+    label: 'Скругление карты (px)',
+    type: 'number',
+    default: 16,
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'map_shadow',
+    label: 'Тень карты',
+    type: 'select',
+    options: ['none', 'low', 'medium', 'high'],
+    default: 'medium',
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'section_spacing_top',
+    label: 'Отступ сверху секции (px)',
+    type: 'number',
+    default: 48,
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'section_spacing_bottom',
+    label: 'Отступ снизу секции (px)',
+    type: 'number',
+    default: 48,
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'font_size_title',
+    label: 'Размер заголовков (px)',
+    type: 'fontsize',
+    default: 24,
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'font_size_desc',
+    label: 'Размер описания (px)',
+    type: 'fontsize',
+    default: 14,
+    editable: true,
+    visible_if: { custom_appearance: true }
   }
 ]

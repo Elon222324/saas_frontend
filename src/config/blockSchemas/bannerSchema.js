@@ -53,5 +53,50 @@ export const bannerSchema = [
     default: '#F3F4F6',
     editable: true,
     visible_if: { custom_appearance: true }
+  },
+
+  // 🔽 Новые переменные
+  {
+    key: 'alignment',
+    label: 'Выравнивание содержимого',
+    type: 'select',
+    options: ['left', 'center', 'right'],
+    default: 'left',
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'img_style',
+    label: 'Стиль изображения',
+    type: 'select',
+    options: ['default', 'float', 'glow'],
+    default: 'default',
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'hover_effect',
+    label: 'Анимация при наведении',
+    type: 'boolean',
+    default: true,
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'layout_variant',
+    label: 'Вариант расположения блока',
+    type: 'select',
+    options: ['wide', 'narrow'],
+    default: 'wide',
+    editable: true,
+    visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'reverse_layout',
+    label: 'Развернуть расположение (картинка слева)',
+    type: 'boolean',
+    default: false,
+    editable: true,
+    visible_if: { custom_appearance: true }
   }
 ]

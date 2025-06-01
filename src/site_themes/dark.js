@@ -1,32 +1,57 @@
 export const darkTheme = {
-  font_family: "'Roboto', sans-serif",
-  font_size_base: 16,
-  line_height: 1.6,
-  primary_color: "#90CAF9",
-  secondary_color: "#1976D2",
-  background_color: "#121212",
-  text_color: "#FFFFFF",
-  max_width: 1200,
-  container_padding: 24,
-  border_radius: 8,
-  shadow_level: "medium",
-  button_style: "filled",
-  transition_duration: "0.3s",
-  custom_css: "",
+  "style": "dark",
 
-  // Дополнительно:
-  button_text_color: "#FFFFFF",            // Белый текст
-  button_bg_color: "#90CAF9",              // Светло-синий (primary)
-  button_border_color: "#90CAF9",          // Та же
-  button_hover_color: "#64B5F6",           // Ярче на hover
+  "typography.font_family": "'Roboto', sans-serif",
+  "typography.font_size_base": 16,
+  "typography.line_height": 1.6,
+  "typography.font_weight_body": 400,
+  "typography.font_weight_heading": 700,
 
-  card_bg_color: "#1E1E1E",                // Тёмно-серый (для контраста с фоном)
-  card_border_color: "#2A2A2A",            // Едва заметная рамка
-  card_shadow: "medium",
+  "text.primary": "#F9FAFB",       // Основной текст — почти белый
+  "text.secondary": "#9CA3AF",     // Вторичный текст — серый
+  "text.accent": "#90CAF9",        // Акцент — светло-синий
 
-  section_bg_color: "#1A1A1A",             // Фон секций — чуть темнее карточек
-  subtle_text_color: "#9CA3AF",            // Светло-серый (gray-400)
-  rating_color: "#FACC15",                 // Тот же жёлтый
-  heading_color: "#FFFFFF",                // Белый для заголовков
-  icon_color: "#9CA3AF",                   // Светло-серый для иконок
+  "background.base": "#111827",            // Фон всего сайта — тёмно-синий/чёрный
+  "background.card": "#1F2937",            // Карточки — тёмно-серый
+  "background.muted": "#1E293B",           // Секции: футер, отзывы
+  "background.surface": "#334155",         // Поверхности: плашки, быстрая инфа
+  "background.gradient_from": "#1E3A8A",   // Градиент (от)
+  "background.gradient_to": "#3B82F6",     // Градиент (до)
+
+  "button.bg": "#1976D2",
+  "button.text": "#FFFFFF",
+  "button.hover_bg": "#1565C0",
+  "button.hover_text": "#FFFFFF",
+  "button.border": "#1976D2",
+  "button.radius": 8,
+  "button.style": "filled",
+
+  "button_secondary.bg": "#374151",
+  "button_secondary.text": "#E5E7EB",
+  "button_secondary.hover_bg": "#4B5563",
+  "button_secondary.border": "#4B5563",
+  "button_secondary.radius": 8,
+  "button_secondary.style": "filled",
+
+  "layout.max_width": 1200,
+  "layout.padding": 24,
+  "layout.border_radius": 8,
+  "layout.shadow": "medium",
+
+  "transition.duration": 0.3,
+
+  "icon.default": "#9CA3AF",
+  "icon.accent": "#90CAF9",
+  "icon.rating": "#FACC15",
+
+  "price.bg": "#1E40AF",
+  "price.color": "#90CAF9",
+
+  "active.bg": "#172554",
+  "active.text": "#FFFFFF",
+
+  "border.color": "#374151",
+  "border.show": "#4B5563",
+
+  "custom_css": ""
 }

@@ -8,6 +8,7 @@ import ImageInput from '@/components/fields/ImageInput'
 import NumberInput from '@/components/fields/NumberInput'
 import DurationInput from '@/components/fields/DurationInput'
 import CheckboxField from '@/components/fields/CheckboxField'
+import MultiCheckboxField from '@/components/fields/MultiCheckboxField'
 
 export const fieldTypes = {
   text: TextInput,
@@ -20,4 +21,5 @@ export const fieldTypes = {
   number: NumberInput,
   duration: DurationInput,
   checkbox: CheckboxField,
+  multicheckbox: MultiCheckboxField,
 }

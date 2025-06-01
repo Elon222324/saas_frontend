@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-export default function NavigationAppearance({
+export default function BlockAppearance({
   schema,
   settings,
   onChange,
@@ -11,6 +11,7 @@ export default function NavigationAppearance({
   uiDefaults = {},
 }) {
   const [internalVisible, setInternalVisible] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
     if (resetButton) {
@@ -45,6 +46,12 @@ export default function NavigationAppearance({
     )
   }
 
+  const handleClick = async () => {
+    setIsSaving(true)
+    await onSaveAppearance?.(settings)
+    setIsSaving(false)
+  }
+
   return (
     <div className="pt-4 border-t mt-6 space-y-4">
       {schema.map(field => field.editable && renderField(field))}
@@ -52,10 +59,13 @@ export default function NavigationAppearance({
       {internalVisible && (
         <div>
           <button
-            onClick={() => onSaveAppearance?.(settings)}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition text-sm"
+            onClick={handleClick}
+            disabled={isSaving}
+            className={`bg-blue-600 text-white px-4 py-2 rounded transition text-sm ${
+              isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
+            }`}
           >
-            📂 Сохранить внешний вид блока
+            💾 Сохранить внешний вид блока
           </button>
         </div>
       )}
