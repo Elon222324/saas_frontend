@@ -6,7 +6,7 @@ export default function TextInput({ label, value, onChange }) {
       <span className="font-medium">{label}</span>
       <input
         type="text"
-        value={value}
+        value={value ?? ''}
         onChange={(e) => onChange(e.target.value)}
         className="w-full border rounded px-3 py-2"
       />
