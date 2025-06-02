@@ -4,12 +4,6 @@ import { Button } from '@/components/ui/button'
 import { Info } from 'lucide-react'
 import { fieldTypes } from '@/config/fieldTypes'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
-import { lightTheme } from '@/site_themes/light'
-import { darkTheme } from '@/site_themes/dark'
-import { juicyTheme } from '@/site_themes/juicy'
-import { candyTheme } from '@/site_themes/candy'
-import { aquaTheme } from '@/site_themes/aqua'
-import { sunsetTheme } from '@/site_themes/sunset'
 
 export default function GeneralSettings() {
   const { domain } = useParams()
@@ -41,31 +35,33 @@ export default function GeneralSettings() {
     setHasInitialized(true)
   }, [data, hasInitialized])
 
-  const getThemeDefaults = (theme) => {
-    if (theme === 'dark') return darkTheme
-    if (theme === 'juicy') return juicyTheme
-    if (theme === 'candy') return candyTheme
-    if (theme === 'aqua') return aquaTheme
-    if (theme === 'sunset') return sunsetTheme
-    return lightTheme
+  const getThemeDefaults = async (theme) => {
+    try {
+      const res = await fetch(`/themes/${theme}.json`)
+      if (!res.ok) throw new Error('Не удалось загрузить тему')
+      const json = await res.json()
+      return json
+    } catch (err) {
+      console.error(`Ошибка загрузки темы ${theme}:`, err)
+      return {}
+    }
   }
 
-  const handleChange = (key, value) => {
+  const handleChange = async (key, value) => {
     if (key === 'style') {
-      // Только если тема известна, применим её значения
       const knownThemes = ['light', 'dark', 'juicy', 'candy', 'aqua', 'sunset']
       if (knownThemes.includes(value)) {
-        const themeDefaults = getThemeDefaults(value)
+        const theme = await getThemeDefaults(value)
+        if (theme?.common && theme?.blocks) {
+          setCommon({
+            ...theme.common,
+            style: value,
+          })
+        }
+      } else {
         setCommon((prev) => ({
           ...prev,
           style: value,
-          ...themeDefaults,
-        }))
-      } else {
-        // Пользователь выбрал кастомную тему (custom) — не трогаем остальные поля
-        setCommon((prev) => ({
-          ...prev,
-          style: value
         }))
       }
     } else {
@@ -75,8 +71,14 @@ export default function GeneralSettings() {
 
   const handleSave = async () => {
     try {
+      const theme = await getThemeDefaults(common.style || 'light')
+      const payload = {
+        common: common,
+        blocks: theme?.blocks || {}
+      }
+
       const res = await fetch(
-        `${API_URL}/schema/site-settings/${site_name}`,
+        `${API_URL}/schema/apply-theme/${site_name}`,
         {
           method: 'PATCH',
           credentials: 'include',
@@ -84,7 +86,7 @@ export default function GeneralSettings() {
             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(common),
+          body: JSON.stringify(payload),
         }
       )
       if (!res.ok) throw new Error('Ошибка сохранения')
