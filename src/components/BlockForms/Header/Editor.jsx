@@ -65,9 +65,7 @@ export default function HeaderEditor({ block, slug, onChange }) {
         </div>
       )}
 
-      <div className="text-sm text-gray-500 italic pl-1">
-        🧩 Шапка: редактирование содержимого блока
-      </div>
+
 
       <HeaderItemsEditor
         schema={headerDataSchema}

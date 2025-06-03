@@ -43,11 +43,10 @@ export default function BlockDetails({ block, data, onSave }) {
     }
 
     return (
-      <div className="border rounded shadow-sm p-4 bg-white space-y-2">
-        <p className="text-sm text-gray-500">Предпросмотр блока:</p>
-        <div className="border border-gray-200 rounded p-2 bg-gray-50">
-          <PreviewComponent settings={form} />
-        </div>
+      // 1. УБРАН ТЕКСТ "Предпросмотр блока:" (<p>...</p>).
+      // 2. Убран также класс space-y-2, так как он был для отступа от этого текста.
+      <div>
+        <PreviewComponent settings={form} />
       </div>
     )
   }
@@ -97,12 +96,14 @@ export default function BlockDetails({ block, data, onSave }) {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <h2 className="text-lg font-semibold">
-          Редактирование "{block.label || block.type}"
-        </h2>
-        {renderPreview()}
-      </div>
+      {/* 1. Вызываем renderPreview() ПЕРВЫМ */}
+      {renderPreview()}
+      {/* 2. Затем идет заголовок. Добавлен mt-4 для небольшого отступа сверху от предпросмотра. */}
+      <h2 className="text-lg font-semibold mt-4">
+        Редактирование "{block.label || block.type}"
+      </h2>
+
+      {/* Удален старый div className="space-y-2", который раньше оборачивал h2 и renderPreview(). */}
 
       <div className="space-y-4">{renderEditor()}</div>
     </div>
