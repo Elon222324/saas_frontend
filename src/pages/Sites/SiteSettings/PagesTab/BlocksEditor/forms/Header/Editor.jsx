@@ -33,12 +33,19 @@ export default function HeaderEditor({ block, slug, onChange }) {
     siteData,
     site_name,
     setData,
-    onChange: (newSettings) => {
-      setSettingsState(newSettings)
-      onChange((prevBlockState) => ({
-        ...prevBlockState,
-        settings: newSettings,
-      }))
+    onChange: (update) => {
+      setSettingsState(update)
+      onChange(prevBlockState => {
+        const resolved =
+          typeof update === 'function'
+            ? update(prevBlockState.settings || {})
+            : update
+        return {
+          ...prevBlockState,
+          ...resolved,
+          settings: resolved,
+        }
+      })
     },
   })
 
@@ -55,13 +62,19 @@ export default function HeaderEditor({ block, slug, onChange }) {
     slug,
     site_name,
     setData,
-    onChange: (newData) => {
-      console.log('HeaderEditor: onChange вызван с newData:', newData)
-      setDataState(newData)
-      onChange((prevBlockState) => ({
-        ...prevBlockState,
-        data: newData,
-      }))
+    onChange: (update) => {
+      setDataState(update)
+      onChange(prevBlockState => {
+        const resolved =
+          typeof update === 'function'
+            ? update(prevBlockState.data || {})
+            : update
+        return {
+          ...prevBlockState,
+          ...resolved,
+          data: resolved,
+        }
+      })
     },
   })
 

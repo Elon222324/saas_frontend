@@ -30,6 +30,8 @@ export default function BlockDetails({ block, data, onSave }) {
     setForm({
       ...block.settings,
       ...block.data,
+      data: { ...block.data },
+      settings: { ...block.settings },
       block_id: block.real_id,
       slug: block.slug,
       id: block.id,
@@ -55,10 +57,10 @@ export default function BlockDetails({ block, data, onSave }) {
       )
     }
 
-    const previewProps = { settings: form }
+    const previewProps = { settings: form.settings || form }
 
     if (block.type === 'header') {
-      previewProps.data = form
+      previewProps.data = form.data || form
       previewProps.commonSettings = siteData?.common || {}
       previewProps.navigation =
         siteData?.navigation?.filter(n => n.block_id === block.real_id && n.visible) || []
