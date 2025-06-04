@@ -60,6 +60,10 @@ export default function BlockDetails({ block, data, onSave }) {
 
     const previewProps = { settings: form.settings || form }
 
+    if (block.type === 'navigation') {
+      previewProps.settings = { ...(form.settings || {}) }
+    }
+
     if (block.type === 'header') {
       previewProps.data = form.data || form
       previewProps.commonSettings = siteData?.common || {}
