@@ -1,0 +1,238 @@
+{
+  "common": {
+    "typography": {
+      "font_family": "'Montserrat', sans-serif",
+      "font_size_base": 16,
+      "line_height": 1.6
+    },
+    "background": {
+      "base": "#FFF5F5"
+    },
+    "text": {
+      "primary": "#4A2C12"
+    }
+  },
+  "blocks": {
+    "navigation": {
+      "block_id": 1,
+      "settings": {
+        "custom_appearance": true,
+        "bg_color": "#FFF5F5",
+        "text_color": "#4A2C12",
+        "hover_color": "#FF6B6B",
+        "hover_bg_color": "#FFE8E8",
+        "border_color": "#FFD6D6",
+        "show_border": true
+      }
+    },
+    "header": {
+      "block_id": 2,
+      "settings": {
+        "custom_appearance": true,
+        "background_color": "#FFF5F5",
+        "text_color": "#4A2C12",
+        "secondary_color": "#8B5A2B",
+        "primary_color": "#FF6B6B",
+        "button_bg_color": "#FF8E53",
+        "button_text_color": "#FFFFFF",
+        "button_hover_color": "#FF6B6B",
+        "rating_color": "#FFD166",
+        "show_login_button": true,
+        "show_bonus_button": true,
+        "show_rating": true,
+        "alignment": "left",
+        "padding_x": 24,
+        "padding_y": 16
+      }
+    },
+    "banner": {
+      "block_id": 3,
+      "settings": {
+        "custom_appearance": true,
+        "bg_gradient_from": "#FF8E53",
+        "bg_gradient_to": "#FF6B6B",
+        "text_color": "#FFFFFF",
+        "button_bg_color": "#FFFFFF",
+        "button_text_color": "#FF6B6B",
+        "button_hover_color": "#FFE8E8",
+        "alignment": "left",
+        "img_style": "glow",
+        "hover_effect": true,
+        "layout_variant": "wide",
+        "reverse_layout": false
+      }
+    },
+    "quickinfo": {
+      "block_id": 4,
+      "settings": {
+        "custom_appearance": true,
+        "bg_color": "#FFF5F5",
+        "title_color": "#8B5A2B",
+        "desc_color": "#FF6B6B",
+        "gap": 24,
+        "grid_cols": 4,
+        "border_radius": 12,
+        "font_size_title": 14,
+        "font_size_desc": 16,
+        "card_bg_color": "#FFFFFF",
+        "card_border_color": "#FFD6D6",
+        "card_variant": "hover-shadow",
+        "show_cards": true
+      }
+    },
+    "promocards": {
+      "block_id": 5,
+      "settings": {
+        "custom_appearance": true,
+        "bg_color": "#FFFFFF",
+        "border_color": "#FFD6D6",
+        "title_color": "#4A2C12",
+        "desc_color": "#8B5A2B",
+        "title_size": 14,
+        "desc_size": 12,
+        "border_radius": 16,
+        "gap": 16,
+        "card_width": 160,
+        "card_padding": 6,
+        "card_style": "elevated",
+        "hover_effect": "scale",
+        "hover_shadow": "medium"
+      }
+    },
+    "popularitems": {
+      "block_id": 6,
+      "settings": {
+        "custom_appearance": true,
+        "bg_color": "#FFFFFF",
+        "border_color": "#FFD6D6",
+        "title_color": "#4A2C12",
+        "price_color": "#8B5A2B",
+        "card_shadow": "medium",
+        "card_radius": 16,
+        "font_size_title": 16,
+        "font_size_price": 14,
+        "spacing_x": 20,
+        "image_size": "medium",
+        "padding_top": 32,
+        "padding_bottom": 48
+      }
+    },
+    "menutabs": {
+      "block_id": 7,
+      "settings": {
+        "custom_appearance": true,
+        "bg_color": "#FFF5F5",
+        "active_bg_color": "#FF8E53",
+        "active_text_color": "#FFFFFF",
+        "text_color": "#4A2C12",
+        "border_color": "rgba(255,214,214,0.5)",
+        "hover_bg_color": "#FFE8E8",
+        "hover_text_color": "#FF6B6B",
+        "tab_spacing": 12,
+        "font_size_tab": 14,
+        "show_cart_button": true,
+        "cart_bg_color": "#FF8E53",
+        "cart_text_color": "#FFFFFF",
+        "cart_hover_bg_color": "#FF6B6B",
+        "cart_hover_text_color": "#FFFFFF",
+        "cart_badge_bg_color": "#FF6B6B",
+        "cart_badge_text_color": "#FFFFFF",
+        "cart_badge_hover_bg_color": "#FF4757",
+        "cart_badge_hover_text_color": "#FFFFFF"
+      }
+    },
+    "productgrid": {
+      "block_id": 8,
+      "settings": {
+        "custom_appearance": true,
+        "bg_color": "#FFFFFF",
+        "text_color": "#4A2C12",
+        "price_bg_color": "rgba(255,142,83,0.1)",
+        "price_color": "#8B5A2B",
+        "button_bg_color": "#FF8E53",
+        "button_text_color": "#FFFFFF",
+        "button_hover_color": "#FF6B6B",
+        "card_border_radius": 16,
+        "card_shadow": "medium",
+        "font_size_name": 16,
+        "font_size_desc": 14,
+        "font_size_price": 14,
+        "columns_mobile": 2,
+        "columns_tablet": 3,
+        "columns_desktop": 4
+      }
+    },
+    "reviewspreview": {
+      "block_id": 9,
+      "settings": {
+        "custom_appearance": true,
+        "section_bg_color": "#FFF5F5",
+        "text_color": "#4A2C12",
+        "subtle_text_color": "#8B5A2B",
+        "card_bg_color": "#FFFFFF",
+        "card_border_color": "#FFD6D6",
+        "rating_color": "#FFD166",
+        "primary_color": "#FF8E53",
+        "show_modal_button": true,
+        "slider_enabled": true,
+        "avatar_size": "medium",
+        "card_shadow": "low",
+        "transition_effect": "slide"
+      }
+    },
+    "deliveryinfo": {
+      "block_id": 10,
+      "settings": {
+        "custom_appearance": true,
+        "background_color": "#FFF5F5",
+        "card_bg_color": "#FFFFFF",
+        "card_shadow": "medium",
+        "text_color": "#4A2C12",
+        "desc_color": "#8B5A2B",
+        "icon_color": "#FF8E53",
+        "map_border_radius": 16,
+        "map_shadow": "medium",
+        "section_spacing_top": 48,
+        "section_spacing_bottom": 48,
+        "font_size_title": 20,
+        "font_size_desc": 14
+      }
+    },
+    "aboutcompany": {
+      "block_id": 11,
+      "settings": {
+        "custom_appearance": true,
+        "background_color": "#FFF5F5",
+        "text_color": "#4A2C12",
+        "subtle_text_color": "#8B5A2B",
+        "padding_top": 64,
+        "padding_bottom": 64,
+        "title_font_size": 28,
+        "desc_font_size": 16,
+        "max_width": 768,
+        "text_align": "center"
+      }
+    },
+    "footer": {
+      "block_id": 12,
+      "settings": {
+        "custom_appearance": true,
+        "background_color": "#FFF5F5",
+        "text_color": "#4A2C12",
+        "border_color": "#FFD6D6",
+        "font_size_base": 14,
+        "icon_color": "#FF8E53",
+        "icon_color_hover": "#FF6B6B",
+        "section_spacing_top": 48,
+        "section_spacing_bottom": 48,
+        "alignment": "spread",
+        "show_sections": {
+          "about": true,
+          "contacts": true,
+          "socials": true
+        },
+        "show_payment_icons": true
+      }
+    }
+  }
+}

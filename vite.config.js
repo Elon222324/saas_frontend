@@ -7,6 +7,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@blocks': path.resolve(__dirname, './src/pages/Sites/SiteSettings/PagesTab/BlocksEditor'),
+      '@preview': path.resolve(__dirname, './src/pages/Sites/SiteSettings/PagesTab/BlocksEditor/preview'),
     },
   },
 })
