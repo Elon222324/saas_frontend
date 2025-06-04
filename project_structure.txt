@@ -14,6 +14,14 @@
 ├── postcss.config.cjs
 ├── preview_structure.txt
 ├── project_structure.txt
+├── public
+│   └── themes
+│       ├── aqua.json
+│       ├── candy.json
+│       ├── dark.json
+│       ├── juicy.json
+│       ├── light.json
+│       └── sunset.json
 ├── README.md
 ├── src
 │   ├── App.jsx
@@ -38,11 +46,13 @@
 │   │   │   │   └── ItemsEditor.jsx
 │   │   │   ├── Header
 │   │   │   │   ├── Appearance.jsx
+│   │   │   │   ├── Editor copy.jsx
 │   │   │   │   ├── Editor.jsx
 │   │   │   │   ├── index.js
 │   │   │   │   └── ItemsEditor.jsx
 │   │   │   ├── hooks
-│   │   │   │   └── useBlockAppearance.js
+│   │   │   │   ├── useBlockAppearance.js
+│   │   │   │   └── useBlockData.js
 │   │   │   ├── MenuTabs
 │   │   │   │   ├── Appearance.jsx
 │   │   │   │   ├── Editor.jsx
@@ -91,6 +101,7 @@
 │   │   │   ├── DurationInput.jsx
 │   │   │   ├── FontSizeInput.jsx
 │   │   │   ├── ImageInput.jsx
+│   │   │   ├── MultiCheckboxField.jsx
 │   │   │   ├── NumberInput.jsx
 │   │   │   ├── SelectInput.jsx
 │   │   │   ├── TextAreaInput.jsx
@@ -106,7 +117,9 @@
 │   │   │   ├── bannerSchema.js
 │   │   │   ├── deliverySchema.js
 │   │   │   ├── footerSchema.js
-│   │   │   ├── headerSchema.js
+│   │   │   ├── Header
+│   │   │   │   ├── headerDataSchema.js
+│   │   │   │   └── headerSchema.js
 │   │   │   ├── navigationSchema.js
 │   │   │   ├── productGridSchema.js
 │   │   │   ├── productsSchema.js
@@ -130,10 +143,13 @@
 │   │   ├── Dashboard.jsx
 │   │   ├── Login.jsx
 │   │   ├── settings
+│   │   │   ├── BlockEditorPanel.jsx
+│   │   │   ├── BlockListSidebar.jsx
 │   │   │   ├── GeneralSettings.jsx
 │   │   │   ├── Integrations.jsx
 │   │   │   ├── PageEditor.jsx
 │   │   │   ├── Pages.jsx
+│   │   │   ├── PageSelectHeader.jsx
 │   │   │   └── Products.jsx
 │   │   ├── Sites.jsx
 │   │   ├── SiteSettings.jsx
@@ -142,6 +158,8 @@
 │   │   ├── App.css
 │   │   ├── blockMap.js
 │   │   ├── blocks
+│   │   │   ├── Header.jsx
+│   │   │   ├── HeaderPreview.jsx
 │   │   │   ├── MenuBlock.jsx
 │   │   │   ├── Navigation.jsx
 │   │   │   └── NavigationPreview.jsx
@@ -152,11 +170,15 @@
 │   │   ├── PreviewWrapper.jsx
 │   │   └── SkeletonPage.jsx
 │   ├── site_themes
+│   │   ├── aqua.js
+│   │   ├── candy.js
 │   │   ├── dark.js
-│   │   └── light.js
+│   │   ├── juicy.js
+│   │   ├── light.js
+│   │   └── sunset.js
 │   └── utils
 │       └── applyCssVariables.js
 ├── tailwind.config.js
 └── vite.config.js
 
-33 directories, 127 files
+36 directories, 146 files

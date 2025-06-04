@@ -1,3 +1,5 @@
+// src/blocks/Header.jsx
+
 import { LogIn, Star, CircleDollarSign, Menu, X } from 'lucide-react'
 import { useState } from 'react'
 
@@ -41,11 +43,11 @@ export const Header = ({ settings = {}, data = {}, commonSettings = {}, navigati
       <div
         className="max-w-screen-xl mx-auto grid grid-cols-[auto_1fr_auto] items-center px-8 py-2 text-[13px] gap-x-2"
       >
-        <div className="flex flex-col items-start max-w-[120px]"> {/* Increased max-width */}
+        <div className="flex flex-col items-start max-w-[100px]">
           <img
             src="/images/logo.webp"
             alt="Logo"
-            className="w-[80px] h-auto object-contain" // Adjusted logo width
+            className="w-[96px] h-auto object-contain"
           />
           <div
             className="mt-0.5 leading-snug hidden sm:block truncate"
@@ -55,11 +57,11 @@ export const Header = ({ settings = {}, data = {}, commonSettings = {}, navigati
           </div>
         </div>
 
-        <div className="flex flex-col gap-[2px] text-left pl-1"> {/* Changed text-right to text-left and removed pl-1 */}
+        <div className="flex flex-col gap-[2px] text-right pl-1">
           <div style={{ color: textColor, fontSize: '12px' }}>
             {labelBeforeCity} <span style={{ color: primaryColor }}>{city}</span>
           </div>
-          <div className="flex items-center" style={{ color: secondaryColor, fontSize: '11.5px' }}> {/* Removed justify-end */}
+          <div className="flex items-center justify-end" style={{ color: secondaryColor, fontSize: '11.5px' }}>
             <span>{deliveryTime}</span>
             {showRating && (
               <>
