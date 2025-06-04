@@ -26,12 +26,14 @@ export default function BlockDetails({ block, data, onSave }) {
   useEffect(() => {
     if (!block?.real_id) return
 
-    console.log('📦 BlockDetails: Исходный пропс "block" (полный объект блока):', block)
+    const combinedSettings = { ...(data?.settings || data || {}), ...(block.settings || {}) }
+    const combinedData = { ...(data?.data || {}), ...(block.data || {}) }
+
     setForm({
-      ...block.settings,
-      ...block.data,
-      data: { ...block.data },
-      settings: { ...block.settings },
+      ...combinedSettings,
+      ...combinedData,
+      data: { ...combinedData },
+      settings: { ...combinedSettings },
       block_id: block.real_id,
       slug: block.slug,
       id: block.id,
@@ -40,8 +42,7 @@ export default function BlockDetails({ block, data, onSave }) {
       active: block.active,
       label: block.label,
     })
-    console.log('📦 BlockDetails: Инициализированное состояние формы (form):', form)
-  }, [block])
+  }, [block, data])
 
   if (!block || !block.real_id) {
     return <p className="text-gray-500 text-sm">❗ Выберите блок для редактирования</p>
@@ -73,8 +74,10 @@ export default function BlockDetails({ block, data, onSave }) {
     )
   }
 
+  const mergedBlock = { ...block, settings: form.settings, data: form.data }
+
   const sharedProps = {
-    block,
+    block: mergedBlock,
     data: form,
     onChange: setForm,
     slug,

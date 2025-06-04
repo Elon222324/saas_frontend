@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
 import { headerSchema } from './headerSchema'
 import { headerDataSchema } from './headerDataSchema'
@@ -17,6 +17,11 @@ export default function HeaderEditor({ block, slug, onChange }) {
 
   const [dataState, setDataState] = useState(block?.data || {})
   const [settingsState, setSettingsState] = useState(block?.settings || {})
+
+  useEffect(() => {
+    setDataState(block?.data || {})
+    setSettingsState(block?.settings || {})
+  }, [block])
 
   const {
     handleFieldChange,
