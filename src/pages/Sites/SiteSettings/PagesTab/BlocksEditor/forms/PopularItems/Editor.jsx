@@ -108,17 +108,7 @@ export default function ProductsEditor({ block, slug, onChange }) {
         uiDefaults={uiDefaults}
       />
 
-      <div className="text-sm text-gray-500 italic pl-1 pt-4 border-t">
-        👁️ Живой предпросмотр блока
-      </div>
 
-      <div className="border rounded p-4 bg-white shadow-inner">
-        <PopularItemsPreview
-          settings={settingsState}
-          data={dataState}
-          commonSettings={siteData?.common || {}}
-        />
-      </div>
     </div>
   )
 }
