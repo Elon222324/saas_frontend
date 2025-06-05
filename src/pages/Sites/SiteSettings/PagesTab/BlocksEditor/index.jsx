@@ -75,7 +75,7 @@ export default function PageEditor() {
   const selectedData = selectedBlock ? blockDataMap[selectedBlock.real_id] || {} : {}
 
   return (
-    <div className="-mt-6 p-6 pt-0 space-y-4">
+    <div className="px-6 pt-0 space-y-4">
       <PageSelectHeader slug={slug} data={data} />
       <div className="flex gap-6">
         <BlockListSidebar

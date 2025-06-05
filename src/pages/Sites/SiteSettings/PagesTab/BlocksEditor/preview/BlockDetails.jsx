@@ -132,7 +132,7 @@ export default function BlockDetails({ block, data, onSave }) {
   return (
     <div className="space-y-6">
       {showPreview ? (
-        <div className="sticky top-14 z-10 bg-white pt-2 pb-4">
+        <div className="sticky top-0 z-10 bg-white pt-2 pb-4">
           <div className="flex justify-between items-center mb-2">
             <div className="text-sm text-gray-500">🔍 Предпросмотр</div>
             <button
@@ -145,7 +145,7 @@ export default function BlockDetails({ block, data, onSave }) {
           {renderPreview()}
         </div>
       ) : (
-        <div className="sticky top-14 z-10 bg-white pt-2 pb-2">
+        <div className="sticky top-0 z-10 bg-white pt-2 pb-2">
           <button
             onClick={() => setShowPreview(true)}
             className="text-xs text-blue-600 hover:underline"
