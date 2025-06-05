@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
 import { headerSchema } from './headerSchema'
 import { headerDataSchema } from './headerDataSchema'
@@ -18,6 +18,11 @@ export default function HeaderEditor({ block, slug, onChange }) {
   const [dataState, setDataState] = useState(block?.data || {})
   const [settingsState, setSettingsState] = useState(block?.settings || {})
 
+  useEffect(() => {
+    setDataState(block?.data || {})
+    setSettingsState(block?.settings || {})
+  }, [block])
+
   const {
     handleFieldChange,
     handleSaveAppearance,
@@ -33,12 +38,19 @@ export default function HeaderEditor({ block, slug, onChange }) {
     siteData,
     site_name,
     setData,
-    onChange: (newSettings) => {
-      setSettingsState(newSettings)
-      onChange((prevBlockState) => ({
-        ...prevBlockState,
-        settings: newSettings,
-      }))
+    onChange: (update) => {
+      setSettingsState(update)
+      onChange(prevBlockState => {
+        const resolved =
+          typeof update === 'function'
+            ? update(prevBlockState.settings || {})
+            : update
+        return {
+          ...prevBlockState,
+          ...resolved,
+          settings: resolved,
+        }
+      })
     },
   })
 
@@ -55,13 +67,19 @@ export default function HeaderEditor({ block, slug, onChange }) {
     slug,
     site_name,
     setData,
-    onChange: (newData) => {
-      console.log('HeaderEditor: onChange вызван с newData:', newData)
-      setDataState(newData)
-      onChange((prevBlockState) => ({
-        ...prevBlockState,
-        data: newData,
-      }))
+    onChange: (update) => {
+      setDataState(update)
+      onChange(prevBlockState => {
+        const resolved =
+          typeof update === 'function'
+            ? update(prevBlockState.data || {})
+            : update
+        return {
+          ...prevBlockState,
+          ...resolved,
+          data: resolved,
+        }
+      })
     },
   })
 
