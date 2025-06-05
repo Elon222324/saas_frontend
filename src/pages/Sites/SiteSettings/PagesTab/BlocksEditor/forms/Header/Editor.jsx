@@ -21,7 +21,7 @@ export default function HeaderEditor({ block, slug, onChange }) {
   useEffect(() => {
     setDataState(block?.data || {})
     setSettingsState(block?.settings || {})
-  }, [block])
+  }, [block_id])
 
   const {
     handleFieldChange,

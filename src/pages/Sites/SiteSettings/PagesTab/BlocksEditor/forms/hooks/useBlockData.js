@@ -108,6 +108,7 @@ export function useBlockData({ schema, data, block_id, slug, site_name, setData,
     setReadyToCheck(changed)
   }, [data, initialData])
 
+  // show the save button only after initial data is loaded and user modified something
   const showSaveButton = readyToCheck && hasDataChanged()
 
   return {
