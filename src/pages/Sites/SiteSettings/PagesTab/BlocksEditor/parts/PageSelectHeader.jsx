@@ -23,9 +23,6 @@ export default function PageSelectHeader({ slug, data }) {
         </select>
         {pageId && <span className="text-sm text-gray-500">ID страницы: {pageId}</span>}
       </div>
-      <Link to={`/settings/${domain}/pages`} className="text-blue-600 hover:underline text-sm">
-        ← Назад к списку
-      </Link>
     </div>
   )
 }
