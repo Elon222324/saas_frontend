@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { PreviewWrapper } from '@preview/PreviewWrapper'
 import { TopBanner } from './TopBanner'
 import { applyCssVariablesFromUiSchema } from '@preview/utils/applyCssVariables'
@@ -7,6 +7,10 @@ import { useSiteSettings } from '@/context/SiteSettingsContext'
 export default function BannerPreview({ settings = {}, data = {}, commonSettings = {} }) {
   const { data: globalSiteData } = useSiteSettings()
   const [styleVars, setStyleVars] = useState({})
+  const highlightKey = useMemo(
+    () => JSON.stringify({ settings, data, commonSettings }),
+    [settings, data, commonSettings]
+  )
 
   useEffect(() => {
     if (!globalSiteData?.ui_schema) return
@@ -34,7 +38,7 @@ export default function BannerPreview({ settings = {}, data = {}, commonSettings
   }, [settings, globalSiteData?.ui_schema])
 
   return (
-    <PreviewWrapper>
+    <PreviewWrapper highlightKey={highlightKey}>
       <div style={styleVars} className="flex justify-center">
         <div className="max-w-full mx-auto leading-tight origin-top">
           <TopBanner settings={settings} data={data} commonSettings={commonSettings} />

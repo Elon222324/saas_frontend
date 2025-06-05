@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { PreviewWrapper } from '@preview/PreviewWrapper'
 import { Header } from './Header'
 import { applyCssVariablesFromUiSchema } from '@preview/utils/applyCssVariables'
@@ -7,6 +7,10 @@ import { useSiteSettings } from '@/context/SiteSettingsContext'
 export default function HeaderPreview({ settings = {}, data = {}, commonSettings = {}, navigation = [] }) {
   const { data: globalSiteData } = useSiteSettings()
   const [styleVars, setStyleVars] = useState({})
+  const highlightKey = useMemo(
+    () => JSON.stringify({ settings, data, commonSettings, navigation }),
+    [settings, data, commonSettings, navigation]
+  )
 
   useEffect(() => {
     if (!globalSiteData?.ui_schema) return
@@ -34,7 +38,7 @@ export default function HeaderPreview({ settings = {}, data = {}, commonSettings
   }, [settings, globalSiteData?.ui_schema])
 
   return (
-    <PreviewWrapper>
+    <PreviewWrapper highlightKey={highlightKey}>
       <div style={styleVars}>
         <div className="max-w-full mx-auto text-[13px] leading-tight">
           <Header

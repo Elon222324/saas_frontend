@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
 import { PreviewWrapper } from '@preview/PreviewWrapper'
 import { PopularItems } from './PopularItems'
@@ -7,6 +7,10 @@ import { applyCssVariablesFromUiSchema } from '@preview/utils/applyCssVariables'
 export default function PopularItemsPreview({ settings = {}, commonSettings = {} }) {
   const { data: globalSiteData } = useSiteSettings()
   const [styleVars, setStyleVars] = useState({})
+  const highlightKey = useMemo(
+    () => JSON.stringify({ settings, commonSettings }),
+    [settings, commonSettings]
+  )
 
   useEffect(() => {
     if (!globalSiteData?.ui_schema) return
@@ -34,7 +38,7 @@ export default function PopularItemsPreview({ settings = {}, commonSettings = {}
   }, [settings, globalSiteData?.ui_schema])
 
   return (
-    <PreviewWrapper>
+    <PreviewWrapper highlightKey={highlightKey}>
       <div style={styleVars}>
         <div className="max-w-full mx-auto text-[13px] leading-tight">
           <PopularItems settings={settings} commonSettings={commonSettings} />

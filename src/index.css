@@ -4,7 +4,7 @@
 
 body {
   @apply font-sans;
-}
+} 
 
 
 
@@ -122,4 +122,18 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Preview highlight effect */
+@keyframes preview-glow {
+  from {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5);
+  }
+  to {
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0);
+  }
+}
+
+.preview-glow {
+  animation: preview-glow 0.8s ease-out;
 }
