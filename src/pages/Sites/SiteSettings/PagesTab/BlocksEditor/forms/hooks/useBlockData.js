@@ -7,18 +7,11 @@ export function useBlockData({ schema, data, block_id, slug, site_name, setData,
   const [resetButton, setResetButton] = useState(false)
 
   useEffect(() => {
-    const values = {}
-    for (const field of schema) {
-      values[field.key] =
-        data?.[field.key] !== undefined ? data[field.key] : field.default ?? ''
-    }
-
-    setInitialData(values)
-
-    const isChanged = schema.some(
-      (field) => data?.[field.key] !== values[field.key]
-    )
-    setReadyToCheck(isChanged)
+    // При открытии редактора фиксируем текущее состояние данных
+    // как исходное, чтобы кнопка "Сохранить" не отображалась
+    // пока пользователь не внесет изменения
+    setInitialData({ ...data })
+    setReadyToCheck(false)
   }, [block_id])
 
   const handleFieldChange = (key, value) => {
@@ -105,11 +98,15 @@ export function useBlockData({ schema, data, block_id, slug, site_name, setData,
 
   useEffect(() => {
     console.log('🟡 Сравниваем data и initialData:', data, initialData)
+    if (Object.keys(initialData).length === 0) {
+      setReadyToCheck(false)
+      return
+    }
     const changed = schema.some(
       (field) => data?.[field.key] !== initialData[field.key]
     )
     setReadyToCheck(changed)
-  }, [data])
+  }, [data, initialData])
 
   const showSaveButton = readyToCheck && hasDataChanged()
 
