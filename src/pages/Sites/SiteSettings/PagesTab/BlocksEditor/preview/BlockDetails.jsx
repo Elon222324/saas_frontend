@@ -130,7 +130,9 @@ export default function BlockDetails({ block, data, onSave }) {
 
   return (
     <div className="space-y-6">
-      {renderPreview()}
+      <div className="sticky top-0 z-10 bg-white pt-2 pb-4">
+        {renderPreview()}
+      </div>
       <h2 className="text-lg font-semibold mt-4">
         Редактирование "{block.label || block.type}"
       </h2>

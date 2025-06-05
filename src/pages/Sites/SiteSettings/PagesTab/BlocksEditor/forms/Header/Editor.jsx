@@ -6,7 +6,6 @@ import { fieldTypes } from '@/components/fields/fieldTypes'
 
 import HeaderItemsEditor from './ItemsEditor'
 import HeaderAppearance from './Appearance'
-import HeaderPreview from './HeaderPreview'
 
 import { useBlockAppearance } from '@blocks/forms/hooks/useBlockAppearance'
 import { useBlockData } from '@blocks/forms/hooks/useBlockData'
