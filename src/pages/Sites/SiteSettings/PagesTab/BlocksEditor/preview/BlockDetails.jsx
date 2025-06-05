@@ -20,6 +20,7 @@ import FooterEditor from '@blocks/forms/Footer'
 
 export default function BlockDetails({ block, data, onSave }) {
   const [form, setForm] = useState({})
+  const [showPreview, setShowPreview] = useState(true)
   const { slug } = useParams()
   const { site_name, data: siteData } = useSiteSettings()
 
@@ -130,9 +131,29 @@ export default function BlockDetails({ block, data, onSave }) {
 
   return (
     <div className="space-y-6">
-      <div className="sticky top-0 z-10 bg-white pt-2 pb-4">
-        {renderPreview()}
-      </div>
+      {showPreview ? (
+        <div className="sticky top-0 z-10 bg-white pt-2 pb-4">
+          <div className="flex justify-between items-center mb-2">
+            <div className="text-sm text-gray-500">🔍 Предпросмотр</div>
+            <button
+              onClick={() => setShowPreview(false)}
+              className="text-xs text-blue-600 hover:underline"
+            >
+              ⬆ Скрыть
+            </button>
+          </div>
+          {renderPreview()}
+        </div>
+      ) : (
+        <div className="sticky top-0 z-10 bg-white pt-2 pb-2">
+          <button
+            onClick={() => setShowPreview(true)}
+            className="text-xs text-blue-600 hover:underline"
+          >
+            ⬇ Показать превью
+          </button>
+        </div>
+      )}
       <h2 className="text-lg font-semibold mt-4">
         Редактирование "{block.label || block.type}"
       </h2>
