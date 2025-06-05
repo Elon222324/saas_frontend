@@ -1,28 +1,37 @@
-import React from 'react'
+import { useState } from 'react'
+import CloudModal from '@/cloud/CloudModal'
 
-export default function ImageInput({ label, value, onChange }) {
-  const handleFileChange = (e) => {
-    const file = e.target.files[0]
-    if (!file) return
-
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      onChange(e.target.result) // base64 или url
-    }
-    reader.readAsDataURL(file)
-  }
+export default function ImageInput({ label, value, onChange, category = 'logo' }) {
+  const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <label className="block space-y-1">
-      <span className="font-medium">{label}</span>
-      <input type="file" accept="image/*" onChange={handleFileChange} />
-      {value && (
-        <img
-          src={value}
-          alt="preview"
-          className="mt-2 max-h-40 rounded border"
+    <div className="space-y-1">
+      <span className="font-medium block">{label}</span>
+      
+      <div
+        onClick={() => setIsOpen(true)}
+        className="w-full border rounded px-3 py-2 cursor-pointer hover:bg-gray-50 flex items-center gap-3"
+      >
+        {value ? (
+          <>
+            <img src={value} alt="preview" className="w-10 h-10 object-contain" />
+            <span className="text-sm text-gray-600 truncate">{value}</span>
+          </>
+        ) : (
+          <span className="text-sm text-gray-400">Нажмите, чтобы выбрать изображение</span>
+        )}
+      </div>
+
+      {isOpen && (
+        <CloudModal
+          isOpen={isOpen}
+          category={category}
+          onSelect={(url) => {
+            if (url) onChange(url)
+            setIsOpen(false)
+          }}
         />
       )}
-    </label>
+    </div>
   )
 }
