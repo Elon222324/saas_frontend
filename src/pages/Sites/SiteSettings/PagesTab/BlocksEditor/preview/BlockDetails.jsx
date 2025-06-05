@@ -71,7 +71,7 @@ export default function BlockDetails({ block, data, onSave }) {
         siteData?.navigation?.filter(n => n.block_id === block.real_id && n.visible) || []
     }
 
-    if (block.type === 'banner' || block.type === 'info') {
+    if (['banner', 'info', 'promo'].includes(block.type)) {
       previewProps.data = form.data || form
       previewProps.commonSettings = siteData?.common || {}
     }
