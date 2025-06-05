@@ -20,6 +20,8 @@ export default function HeaderItemsEditor({
 
     if (showButton) {
       setInternalVisible(true)
+    } else {
+      setInternalVisible(false)
     }
   }, [showButton, resetButton])
 

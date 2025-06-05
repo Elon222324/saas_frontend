@@ -98,11 +98,15 @@ export function useBlockData({ schema, data, block_id, slug, site_name, setData,
 
   useEffect(() => {
     console.log('🟡 Сравниваем data и initialData:', data, initialData)
+    if (Object.keys(initialData).length === 0) {
+      setReadyToCheck(false)
+      return
+    }
     const changed = schema.some(
       (field) => data?.[field.key] !== initialData[field.key]
     )
     setReadyToCheck(changed)
-  }, [data])
+  }, [data, initialData])
 
   const showSaveButton = readyToCheck && hasDataChanged()
 
