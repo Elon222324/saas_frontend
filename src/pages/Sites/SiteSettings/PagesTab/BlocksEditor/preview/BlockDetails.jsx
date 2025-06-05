@@ -21,15 +21,19 @@ import FooterEditor from '@blocks/forms/Footer'
 export default function BlockDetails({ block, data, onSave }) {
   const [form, setForm] = useState({})
   const { slug } = useParams()
-  const { site_name } = useSiteSettings()
+  const { site_name, data: siteData } = useSiteSettings()
 
   useEffect(() => {
     if (!block?.real_id) return
 
-    console.log('📦 BlockDetails: Исходный пропс "block" (полный объект блока):', block)
+    const combinedSettings = { ...(data?.settings || data || {}), ...(block.settings || {}) }
+    const combinedData = { ...(data?.data || {}), ...(block.data || {}) }
+
     setForm({
-      ...block.settings,
-      ...block.data,
+      ...combinedSettings,
+      ...combinedData,
+      data: { ...combinedData },
+      settings: { ...combinedSettings },
       block_id: block.real_id,
       slug: block.slug,
       id: block.id,
@@ -38,8 +42,7 @@ export default function BlockDetails({ block, data, onSave }) {
       active: block.active,
       label: block.label,
     })
-    console.log('📦 BlockDetails: Инициализированное состояние формы (form):', form)
-  }, [block])
+  }, [block, data])
 
   if (!block || !block.real_id) {
     return <p className="text-gray-500 text-sm">❗ Выберите блок для редактирования</p>
@@ -55,15 +58,30 @@ export default function BlockDetails({ block, data, onSave }) {
       )
     }
 
+    const previewProps = { settings: form.settings || form }
+
+    if (block.type === 'navigation') {
+      previewProps.settings = { ...(form.settings || {}) }
+    }
+
+    if (block.type === 'header') {
+      previewProps.data = form.data || form
+      previewProps.commonSettings = siteData?.common || {}
+      previewProps.navigation =
+        siteData?.navigation?.filter(n => n.block_id === block.real_id && n.visible) || []
+    }
+
     return (
       <div>
-        <PreviewComponent settings={form} />
+        <PreviewComponent {...previewProps} />
       </div>
     )
   }
 
+  const mergedBlock = { ...block, settings: form.settings, data: form.data }
+
   const sharedProps = {
-    block,
+    block: mergedBlock,
     data: form,
     onChange: setForm,
     slug,
