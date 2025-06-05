@@ -3,6 +3,7 @@ import HeaderPreview from '@blocks/forms/Header/HeaderPreview'
 import BannerPreview from '@blocks/forms/Banner/BannerPreview'
 import QuickInfoPreview from '@blocks/forms/QuickInfo/QuickInfoPreview'
 import PromoCardsPreview from '@blocks/forms/PromoCards/PromoCardsPreview'
+import PopularItemsPreview from '@blocks/forms/PopularItems/PopularItemsPreview'
 
 export const previewBlocks = {
   navigation: NavigationPreview,
@@ -10,6 +11,7 @@ export const previewBlocks = {
   banner: BannerPreview,
   info: QuickInfoPreview,
   promo: PromoCardsPreview,
+  products: PopularItemsPreview,
 }
 
 // Добавляй сюда остальные блоки по мере добавления
