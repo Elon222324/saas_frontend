@@ -1,0 +1,203 @@
+.
+├── .env
+├── .gitignore
+├── components.json
+├── docs
+│   ├── полезные команды
+│   ├── отображение.md
+│   ├── git.md
+│   └── histiry
+├── eslint.config.js
+├── index.html
+├── jsconfig.json
+├── package-lock.json
+├── package.json
+├── postcss.config.cjs
+├── project_structure.txt
+├── public
+│   └── images
+│       ├── 1.png
+│       ├── 2.webp
+│       ├── 3.webp
+│       ├── 4.webp
+│       ├── 5.webp
+│       ├── 6.webp
+│       ├── 7.webp
+│       ├── 8.webp
+│       ├── 9.webp
+│       └── logo.webp
+├── README.md
+├── src
+│   ├── App.jsx
+│   ├── components
+│   │   ├── fields
+│   │   │   ├── CheckboxField.jsx
+│   │   │   ├── ColorInput.jsx
+│   │   │   ├── DurationInput.jsx
+│   │   │   ├── fieldTypes.js
+│   │   │   ├── FontSizeInput.jsx
+│   │   │   ├── ImageInput.jsx
+│   │   │   ├── MultiCheckboxField.jsx
+│   │   │   ├── NumberInput.jsx
+│   │   │   ├── README.md
+│   │   │   ├── SelectInput.jsx
+│   │   │   ├── TextAreaInput.jsx
+│   │   │   ├── TextInput.jsx
+│   │   │   └── ToggleInput.jsx
+│   │   ├── README.md
+│   │   └── ui
+│   │       ├── button.jsx
+│   │       ├── input.jsx
+│   │       ├── label.jsx
+│   │       └── switch.jsx
+│   ├── context
+│   │   ├── README.md
+│   │   └── SiteSettingsContext.jsx
+│   ├── index.css
+│   ├── layouts
+│   │   ├── MainLayout.jsx
+│   │   └── README.md
+│   ├── lib
+│   │   ├── authFetch.js
+│   │   ├── axios.js
+│   │   └── utils.js
+│   ├── main.jsx
+│   ├── pages
+│   │   ├── Dashboard
+│   │   │   └── index.jsx
+│   │   ├── Login
+│   │   │   └── index.jsx
+│   │   ├── Sites
+│   │   │   ├── index.jsx
+│   │   │   └── SiteSettings
+│   │   │       ├── GeneralSettings
+│   │   │       │   └── index.jsx
+│   │   │       ├── index.jsx
+│   │   │       ├── Integrations
+│   │   │       │   └── index.jsx
+│   │   │       ├── PagesTab
+│   │   │       │   ├── BlocksEditor
+│   │   │       │   │   ├── forms
+│   │   │       │   │   │   ├── Banner
+│   │   │       │   │   │   │   ├── Appearance.jsx
+│   │   │       │   │   │   │   ├── bannerDataSchema.js
+│   │   │       │   │   │   │   ├── BannerPreview.jsx
+│   │   │       │   │   │   │   ├── bannerSchema.js
+│   │   │       │   │   │   │   ├── Editor.jsx
+│   │   │       │   │   │   │   ├── index.js
+│   │   │       │   │   │   │   ├── ItemsEditor.jsx
+│   │   │       │   │   │   │   └── TopBanner.jsx
+│   │   │       │   │   │   ├── Delivery
+│   │   │       │   │   │   │   ├── Appearance.jsx
+│   │   │       │   │   │   │   ├── deliverySchema.js
+│   │   │       │   │   │   │   ├── Editor.jsx
+│   │   │       │   │   │   │   ├── index.js
+│   │   │       │   │   │   │   └── ItemsEditor.jsx
+│   │   │       │   │   │   ├── Footer
+│   │   │       │   │   │   │   ├── Appearance.jsx
+│   │   │       │   │   │   │   ├── Editor.jsx
+│   │   │       │   │   │   │   ├── footerSchema.js
+│   │   │       │   │   │   │   ├── index.js
+│   │   │       │   │   │   │   └── ItemsEditor.jsx
+│   │   │       │   │   │   ├── Header
+│   │   │       │   │   │   │   ├── Appearance.jsx
+│   │   │       │   │   │   │   ├── Editor.jsx
+│   │   │       │   │   │   │   ├── Header.jsx
+│   │   │       │   │   │   │   ├── headerDataSchema.js
+│   │   │       │   │   │   │   ├── HeaderPreview.jsx
+│   │   │       │   │   │   │   ├── headerSchema.js
+│   │   │       │   │   │   │   ├── index.js
+│   │   │       │   │   │   │   └── ItemsEditor.jsx
+│   │   │       │   │   │   ├── hooks
+│   │   │       │   │   │   │   ├── useBlockAppearance.js
+│   │   │       │   │   │   │   └── useBlockData.js
+│   │   │       │   │   │   ├── MenuTabs
+│   │   │       │   │   │   │   ├── Appearance.jsx
+│   │   │       │   │   │   │   ├── Editor.jsx
+│   │   │       │   │   │   │   ├── index.js
+│   │   │       │   │   │   │   ├── ItemsEditor.jsx
+│   │   │       │   │   │   │   └── tabsSchema.js
+│   │   │       │   │   │   ├── Navigation
+│   │   │       │   │   │   │   ├── Appearance.jsx
+│   │   │       │   │   │   │   ├── Editor.jsx
+│   │   │       │   │   │   │   ├── index.js
+│   │   │       │   │   │   │   ├── ItemsEditor.jsx
+│   │   │       │   │   │   │   ├── Navigation.jsx
+│   │   │       │   │   │   │   ├── NavigationPreview.jsx
+│   │   │       │   │   │   │   └── navigationSchema.js
+│   │   │       │   │   │   ├── PopularItems
+│   │   │       │   │   │   │   ├── Appearance.jsx
+│   │   │       │   │   │   │   ├── Editor.jsx
+│   │   │       │   │   │   │   ├── index.js
+│   │   │       │   │   │   │   ├── ItemsEditor.jsx
+│   │   │       │   │   │   │   ├── PopularItems.jsx
+│   │   │       │   │   │   │   ├── PopularItemsPreview.jsx
+│   │   │       │   │   │   │   ├── productsDataSchema.js
+│   │   │       │   │   │   │   └── productsSchema.js
+│   │   │       │   │   │   ├── ProductGrid
+│   │   │       │   │   │   │   ├── Appearance.jsx
+│   │   │       │   │   │   │   ├── Editor.jsx
+│   │   │       │   │   │   │   ├── index.js
+│   │   │       │   │   │   │   ├── ItemsEditor.jsx
+│   │   │       │   │   │   │   └── productGridSchema.js
+│   │   │       │   │   │   ├── PromoCards
+│   │   │       │   │   │   │   ├── Appearance.jsx
+│   │   │       │   │   │   │   ├── Editor.jsx
+│   │   │       │   │   │   │   ├── index.js
+│   │   │       │   │   │   │   ├── ItemsEditor.jsx
+│   │   │       │   │   │   │   ├── PromoCards.jsx
+│   │   │       │   │   │   │   ├── PromoCardsPreview.jsx
+│   │   │       │   │   │   │   ├── promoDataSchema.js
+│   │   │       │   │   │   │   └── promoSchema.js
+│   │   │       │   │   │   ├── QuickInfo
+│   │   │       │   │   │   │   ├── Appearance.jsx
+│   │   │       │   │   │   │   ├── Editor.jsx
+│   │   │       │   │   │   │   ├── index.js
+│   │   │       │   │   │   │   ├── ItemsEditor.jsx
+│   │   │       │   │   │   │   ├── QuickInfo.jsx
+│   │   │       │   │   │   │   ├── quickInfoDataSchema.js
+│   │   │       │   │   │   │   ├── QuickInfoPreview.jsx
+│   │   │       │   │   │   │   └── quickInfoSchema.js
+│   │   │       │   │   │   ├── Reviews
+│   │   │       │   │   │   │   ├── Appearance.jsx
+│   │   │       │   │   │   │   ├── Editor.jsx
+│   │   │       │   │   │   │   ├── index.js
+│   │   │       │   │   │   │   ├── ItemsEditor.jsx
+│   │   │       │   │   │   │   └── reviewsSchema.js
+│   │   │       │   │   │   ├── Text
+│   │   │       │   │   │   │   ├── Appearance.jsx
+│   │   │       │   │   │   │   ├── Editor.jsx
+│   │   │       │   │   │   │   ├── index.js
+│   │   │       │   │   │   │   ├── ItemsEditor.jsx
+│   │   │       │   │   │   │   └── textSchema.js
+│   │   │       │   │   │   └── utils
+│   │   │       │   │   │       └── initBlockAppearanceFromCommon.js
+│   │   │       │   │   ├── index.jsx
+│   │   │       │   │   ├── parts
+│   │   │       │   │   │   ├── BlockAppearance.jsx
+│   │   │       │   │   │   ├── BlockEditorPanel.jsx
+│   │   │       │   │   │   ├── BlockListSidebar.jsx
+│   │   │       │   │   │   └── PageSelectHeader.jsx
+│   │   │       │   │   └── preview
+│   │   │       │   │       ├── BlockDetails.jsx
+│   │   │       │   │       ├── blockMap.js
+│   │   │       │   │       ├── PreviewWrapper.jsx
+│   │   │       │   │       └── utils
+│   │   │       │   │           └── applyCssVariables.js
+│   │   │       │   └── index.jsx
+│   │   │       └── Products
+│   │   │           └── index.jsx
+│   │   └── Users
+│   │       └── index.jsx
+│   └── site_themes
+│       ├── aqua.json
+│       ├── candy.json
+│       ├── dark.json
+│       ├── index.js
+│       ├── juicy.json
+│       ├── light.json
+│       └── sunset.json
+├── tailwind.config.js
+└── vite.config.js
+
+41 directories, 160 files
