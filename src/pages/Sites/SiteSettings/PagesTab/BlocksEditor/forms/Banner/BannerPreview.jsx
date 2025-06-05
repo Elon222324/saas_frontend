@@ -35,8 +35,8 @@ export default function BannerPreview({ settings = {}, data = {}, commonSettings
 
   return (
     <PreviewWrapper>
-      <div style={styleVars}>
-        <div className="max-w-full mx-auto text-[13px] leading-tight">
+      <div style={styleVars} className="flex justify-center">
+        <div className="max-w-full mx-auto leading-tight origin-top">
           <TopBanner settings={settings} data={data} commonSettings={commonSettings} />
         </div>
       </div>

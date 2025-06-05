@@ -65,10 +65,10 @@ export const TopBanner = ({ settings = {}, data = {}, commonSettings = {} }) => 
         <div className="hidden md:flex items-center justify-between px-10 lg:px-16 py-8 gap-8">
           {!reverse && (
             <div className="w-1/2 text-left space-y-4 z-10 text-[var(--text-color)]">
-              <h2 className="text-3xl md:text-5xl font-extrabold drop-shadow transition duration-300 hover:scale-105">
+              <h2 className="text-sm md:text-base font-semibold drop-shadow transition duration-300 hover:scale-105">
                 {titleText}
               </h2>
-              <p className="text-lg md:text-xl text-white/90 transition duration-300 hover:scale-105">
+              <p className="text-xs md:text-sm text-white/90 transition duration-300 hover:scale-105">
                 {subtitleText}
               </p>
               <button className="group inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold text-sm shadow transition duration-300 hover:scale-105 bg-[var(--button-bg-color)] text-[var(--button-text-color)] hover:bg-[var(--button-hover-color)]">

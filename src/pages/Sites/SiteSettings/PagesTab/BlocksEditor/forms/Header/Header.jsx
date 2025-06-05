@@ -57,11 +57,11 @@ export const Header = ({ settings = {}, data = {}, commonSettings = {}, navigati
           </div>
         </div>
 
-        <div className="flex flex-col gap-[2px] text-right pl-1">
+        <div className="flex flex-col gap-[2px] items-center text-center">
           <div style={{ color: textColor, fontSize: '12px' }}>
             {labelBeforeCity} <span style={{ color: primaryColor }}>{city}</span>
           </div>
-          <div className="flex items-center justify-end" style={{ color: secondaryColor, fontSize: '11.5px' }}>
+          <div className="flex items-center justify-center" style={{ color: secondaryColor, fontSize: '11.5px' }}>
             <span>{deliveryTime}</span>
             {showRating && (
               <>
