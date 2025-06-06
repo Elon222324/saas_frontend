@@ -1,9 +1,20 @@
+// src/cloud/hooks/useCloudStorage.js
+
 import { useState } from 'react'
 
 export default function useCloudStorage() {
   const [selected, setSelected] = useState(null)
 
-  const categories = ['logo', 'pizza', 'drinks']
+  const groups = [
+    {
+      title: 'Системные',
+      categories: ['logo', 'banners', 'icons'],
+    },
+    {
+      title: 'Товары',
+      categories: ['pizza', 'rolls', 'drinks'],
+    },
+  ]
 
   const files = [
     { id: 1, name: 'logo1.png', url: 'https://via.placeholder.com/150', category: 'logo' },
@@ -20,5 +31,5 @@ export default function useCloudStorage() {
   const used = 73.2
   const limit = 200
 
-  return { categories, files, selected, setSelected, used, limit }
+  return { groups, files, selected, setSelected, used, limit }
 }
