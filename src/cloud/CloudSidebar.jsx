@@ -1,14 +1,14 @@
-// src/cloud/CloudSidebar.jsx
-
 import { useEffect, useState } from 'react'
 
 export default function CloudSidebar({ active, onSelectCategory, groups }) {
   const [openGroups, setOpenGroups] = useState({})
 
   useEffect(() => {
-    setOpenGroups(
-      Object.fromEntries(groups.map(g => [g.title, g.title === 'Системные']))
-    )
+    const initial = {}
+    for (const group of groups) {
+      initial[group.title] = true // раскрываем по умолчанию
+    }
+    setOpenGroups(initial)
   }, [groups])
 
   const toggleGroup = (title) => {
@@ -33,25 +33,23 @@ export default function CloudSidebar({ active, onSelectCategory, groups }) {
             <span className="text-[10px]">{openGroups[group.title] ? '−' : '+'}</span>
           </button>
 
-          {openGroups[group.title] && (
+          {openGroups[group.title] && group.children && (
             <div className="space-y-1">
-              {group.categories.map(cat => (
+              {group.children.map(sub => (
                 <button
-                  key={cat}
-                  onClick={() => onSelectCategory(cat)}
-                  className={`block w-full text-left px-2 py-1 rounded text-sm ${
-                    active === cat ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100'
+                  key={sub.title}
+                  onClick={() => onSelectCategory?.(sub.categories[0])}
+                  className={`text-left block w-full text-sm px-2 py-1 rounded hover:bg-gray-100 ${
+                    active === sub.categories[0] ? 'bg-gray-200 font-semibold' : ''
                   }`}
                 >
-                  {cat}
+                  {sub.title}
                 </button>
               ))}
             </div>
           )}
         </div>
       ))}
-
-      <button className="text-blue-600 text-sm mt-4">➕ Создать категорию</button>
     </div>
   )
 }

@@ -29,6 +29,17 @@
 ├── README.md
 ├── src
 │   ├── App.jsx
+│   ├── cloud
+│   │   ├── CloudFileCard.jsx
+│   │   ├── CloudGrid.jsx
+│   │   ├── CloudModal.jsx
+│   │   ├── CloudSidebar.jsx
+│   │   ├── CloudStorageInfo.jsx
+│   │   ├── CloudUploadZone.jsx
+│   │   ├── hooks
+│   │   │   ├── useCloudStorage.js
+│   │   │   └── useTemplateGallery.js
+│   │   └── README.md
 │   ├── components
 │   │   ├── fields
 │   │   │   ├── CheckboxField.jsx
@@ -200,4 +211,4 @@
 ├── tailwind.config.js
 └── vite.config.js
 
-41 directories, 160 files
+43 directories, 169 files

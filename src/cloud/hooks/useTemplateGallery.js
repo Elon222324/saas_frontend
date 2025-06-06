@@ -1,4 +1,3 @@
-// src/cloud/hooks/useTemplateGallery.js
 import { useEffect, useState } from 'react'
 
 export default function useTemplateGallery() {
@@ -10,20 +9,33 @@ export default function useTemplateGallery() {
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/cloud/library`)
         const data = await res.json()
+        const base = import.meta.env.VITE_LIBRARY_ASSETS_URL
 
-        if (data.groups) {
-          setGroups(data.groups)
+        const grouped = {}
+
+        for (const group of data) {
+          const parent = group.category_type === 'products' ? 'ТОВАРЫ' : 'СИСТЕМНЫЕ'
+          if (!grouped[parent]) grouped[parent] = []
+          grouped[parent].push({
+            title: group.description || group.name,
+            categories: [group.name],
+          })
         }
 
-        if (data.files) {
-          const base = import.meta.env.VITE_LIBRARY_ASSETS_URL
-          setFiles(
-            data.files.map(img => ({
-              ...img,
-              url: base + img.url,
-            }))
-          )
-        }
+        const mergedGroups = Object.entries(grouped).map(([title, children]) => ({
+          title,
+          children,
+        }))
+        setGroups(mergedGroups)
+
+        const allFiles = data.flatMap(group =>
+          group.images.map(img => ({
+            ...img,
+            category: group.name,
+            url: base + img.url,
+          }))
+        )
+        setFiles(allFiles)
       } catch (err) {
         console.error('Failed to load library', err)
       }
