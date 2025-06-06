@@ -1,25 +1,36 @@
 // src/cloud/hooks/useTemplateGallery.js
+import { useEffect, useState } from 'react'
 
 export default function useTemplateGallery() {
-  const groups = [
-    {
-      title: 'Пиццы',
-      categories: ['classic', 'veggie', 'pepperoni'],
-    },
-    {
-      title: 'Напитки',
-      categories: ['cola', 'juice', 'water'],
-    },
-  ]
+  const [groups, setGroups] = useState([])
+  const [files, setFiles] = useState([])
 
-  const files = [
-    { id: 'g1', name: 'classic1.jpg', url: 'https://via.placeholder.com/150?text=Classic+Pizza', category: 'classic' },
-    { id: 'g2', name: 'veggie1.jpg', url: 'https://via.placeholder.com/150?text=Veggie+Pizza', category: 'veggie' },
-    { id: 'g3', name: 'pepperoni1.jpg', url: 'https://via.placeholder.com/150?text=Pepperoni', category: 'pepperoni' },
-    { id: 'g4', name: 'cola.jpg', url: 'https://via.placeholder.com/150?text=Cola', category: 'cola' },
-    { id: 'g5', name: 'juice.jpg', url: 'https://via.placeholder.com/150?text=Juice', category: 'juice' },
-    { id: 'g6', name: 'water.jpg', url: 'https://via.placeholder.com/150?text=Water', category: 'water' },
-  ]
+  useEffect(() => {
+    async function fetchLibrary() {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/cloud/library`)
+        const data = await res.json()
+
+        if (data.groups) {
+          setGroups(data.groups)
+        }
+
+        if (data.files) {
+          const base = import.meta.env.VITE_LIBRARY_ASSETS_URL
+          setFiles(
+            data.files.map(img => ({
+              ...img,
+              url: base + img.url,
+            }))
+          )
+        }
+      } catch (err) {
+        console.error('Failed to load library', err)
+      }
+    }
+
+    fetchLibrary()
+  }, [])
 
   return { groups, files }
 }

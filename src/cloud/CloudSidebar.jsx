@@ -1,11 +1,15 @@
 // src/cloud/CloudSidebar.jsx
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function CloudSidebar({ active, onSelectCategory, groups }) {
-  const [openGroups, setOpenGroups] = useState(() =>
-    Object.fromEntries(groups.map(g => [g.title, g.title === 'Системные']))
-  )
+  const [openGroups, setOpenGroups] = useState({})
+
+  useEffect(() => {
+    setOpenGroups(
+      Object.fromEntries(groups.map(g => [g.title, g.title === 'Системные']))
+    )
+  }, [groups])
 
   const toggleGroup = (title) => {
     setOpenGroups(prev => ({ ...prev, [title]: !prev[title] }))
