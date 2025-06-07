@@ -1,33 +1,45 @@
-import { Trash2, Pencil } from 'lucide-react'
+import { useMemo, useEffect } from 'react'
 
-export default function CloudFileCard({ file, isSelected, onSelect }) {
-  const fallback = 'https://placehold.co/150x100?text=Image+Not+Found'
+export default function CloudFileCard({ file, selected, onSelect }) {
+  const fallback = 'https://placehold.co/300x200?text=No+Image'
+
+  const src = useMemo(() => {
+    if (!file?.url) return fallback
+
+    if (file.url.startsWith('http')) {
+      return file.url
+    }
+
+    if (file.url.startsWith('/')) {
+      return `${import.meta.env.VITE_LIBRARY_ASSETS_URL || ''}${file.url}`
+    }
+
+    return fallback
+  }, [file])
+
+  useEffect(() => {
+    console.log('[🖼️ image src]', src)
+  }, [src])
 
   return (
     <div
-      onClick={() => onSelect(file)}
-      className={`relative border rounded p-2 cursor-pointer hover:border-blue-500 ${
-        isSelected ? 'ring-2 ring-blue-500' : ''
+      onClick={() => onSelect?.(file)}
+      className={`cursor-pointer flex flex-col items-center border rounded overflow-hidden shadow hover:shadow-md relative group ${
+        selected?.url === file.url ? 'ring-2 ring-blue-500' : ''
       }`}
     >
-      <img
-        src={file.url}
-        alt={file.name}
-        onError={(e) => {
-          e.target.onerror = null
-          e.target.src = fallback
-        }}
-        className="w-full h-24 object-cover rounded"
-      />
-      <p className="mt-1 text-sm truncate">{file.name}</p>
-      <div className="absolute top-1 right-1 flex gap-1 opacity-0 hover:opacity-100">
-        <button className="bg-white rounded p-1 shadow">
-          <Trash2 size={14} />
-        </button>
-        <button className="bg-white rounded p-1 shadow">
-          <Pencil size={14} />
-        </button>
+      <div className="w-full h-[150px] bg-gray-100 flex items-center justify-center">
+        <img
+          src={src}
+          alt={file.name}
+          className="max-w-full max-h-full object-contain"
+          onError={(e) => {
+            e.currentTarget.onerror = null
+            e.currentTarget.src = fallback
+          }}
+        />
       </div>
+      <div className="p-2 text-sm w-full text-center truncate">{file.name}</div>
     </div>
   )
 }

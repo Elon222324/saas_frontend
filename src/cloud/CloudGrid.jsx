@@ -16,57 +16,51 @@ export default function CloudGrid({ files, selected, onSelect, onDelete, onEdit 
     <>
       <div className="grid grid-cols-3 gap-4 p-4">
         {files.map((file, i) => (
-          <button
+          <div
             key={file.id}
-            onClick={() => onSelect(file)}
-            className={`flex flex-col items-center border rounded overflow-hidden shadow hover:shadow-md transition bg-white relative group ${
-              selected?.id === file.id ? 'ring-2 ring-blue-500' : ''
+            className={`relative group ${
+              selected?.id === file.id ? 'ring-2 ring-blue-500 rounded' : ''
             }`}
           >
-            <div className="w-full h-[120px] bg-gray-50 flex items-center justify-center relative">
-              <img
-                src={file.url}
-                alt={file.filename}
-                className="max-h-full max-w-full object-contain"
-              />
-              <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition">
+            <CloudFileCard
+              file={file}
+              selected={selected}
+              onSelect={onSelect}
+            />
+            <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handlePreview(i)
+                }}
+                className="bg-white rounded-full p-1 shadow"
+              >
+                <Search size={16} />
+              </button>
+              {onEdit && (
                 <button
                   onClick={(e) => {
                     e.stopPropagation()
-                    handlePreview(i)
+                    onEdit(file)
                   }}
                   className="bg-white rounded-full p-1 shadow"
                 >
-                  <Search size={16} />
+                  <Pencil size={16} />
                 </button>
-                {onEdit && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onEdit(file)
-                    }}
-                    className="bg-white rounded-full p-1 shadow"
-                  >
-                    <Pencil size={16} />
-                  </button>
-                )}
-                {onDelete && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onDelete(file)
-                    }}
-                    className="bg-white rounded-full p-1 shadow"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                )}
-              </div>
+              )}
+              {onDelete && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onDelete(file.id)
+                  }}
+                  className="bg-white rounded-full p-1 shadow"
+                >
+                  <Trash2 size={16} />
+                </button>
+              )}
             </div>
-            <div className="px-2 py-1 w-full text-xs text-center text-gray-700 truncate border-t">
-              {file.filename}
-            </div>
-          </button>
+          </div>
         ))}
       </div>
 

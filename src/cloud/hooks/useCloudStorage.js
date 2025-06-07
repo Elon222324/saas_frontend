@@ -36,7 +36,7 @@ export default function useCloudStorage() {
             allFiles.push({
               ...img,
               category: cat.id,
-              url: API_URL + img.url,
+              url: `${import.meta.env.VITE_LIBRARY_ASSETS_URL || ''}${img.url}`,
             })
           })
         }
@@ -88,10 +88,11 @@ export default function useCloudStorage() {
           }
         )
         if (res.ok) {
+          await fetchData()
           const img = await res.json()
           setFiles((prev) => [
             ...prev,
-            { ...img, category: categoryId, url: API_URL + img.url },
+            { ...img, category: categoryId, url: `${import.meta.env.VITE_LIBRARY_ASSETS_URL || ''}${img.url}` },
           ])
         }
       } catch (err) {

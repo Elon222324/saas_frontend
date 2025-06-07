@@ -5,6 +5,7 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 export default function ImagePreviewModal({ isOpen, files = [], initialIndex = 0, onClose, onSelect }) {
   const [index, setIndex] = useState(initialIndex)
   const fallback = 'https://placehold.co/600x400?text=No+Image'
+  
 
   useEffect(() => {
     setIndex(initialIndex)
