@@ -127,13 +127,16 @@ export default function CloudModal({ isOpen, category, onSelect }) {
               files={filtered}
               selected={selected}
               onSelect={setSelected}
-              onDelete={deleteImage}
-              onEdit={(file) => {
-                const alt = window.prompt('Alt text', file.alt_text || '')
-                if (alt !== null) {
-                  updateImage(file.id, { alt_text: alt })
-                }
-              }}
+              onDelete={activeTab === 'site' ? deleteImage : undefined}
+              onEdit=
+                {activeTab === 'site'
+                  ? (file) => {
+                      const alt = window.prompt('Alt text', file.alt_text || '')
+                      if (alt !== null) {
+                        updateImage(file.id, { alt_text: alt })
+                      }
+                    }
+                  : undefined}
             />
           </div>
         </div>

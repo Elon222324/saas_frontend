@@ -33,7 +33,11 @@ export default function useCloudStorage() {
         grouped[parent].push({ id: cat.id, title: cat.description || cat.name })
         if (cat.images) {
           cat.images.forEach((img) => {
-            allFiles.push({ ...img, category: cat.id })
+            allFiles.push({
+              ...img,
+              category: cat.id,
+              url: API_URL + img.url,
+            })
           })
         }
       }
@@ -85,7 +89,10 @@ export default function useCloudStorage() {
         )
         if (res.ok) {
           const img = await res.json()
-          setFiles((prev) => [...prev, { ...img, category: categoryId }])
+          setFiles((prev) => [
+            ...prev,
+            { ...img, category: categoryId, url: API_URL + img.url },
+          ])
         }
       } catch (err) {
         console.error('Upload failed', err)
