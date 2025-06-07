@@ -17,8 +17,8 @@ export default function useTemplateGallery() {
           const parent = group.category_type === 'products' ? 'ТОВАРЫ' : 'СИСТЕМНЫЕ'
           if (!grouped[parent]) grouped[parent] = []
           grouped[parent].push({
+            id: group.id,
             title: group.description || group.name,
-            categories: [group.name],
           })
         }
 
@@ -28,10 +28,10 @@ export default function useTemplateGallery() {
         }))
         setGroups(mergedGroups)
 
-        const allFiles = data.flatMap(group =>
-          group.images.map(img => ({
+        const allFiles = data.flatMap((group) =>
+          group.images.map((img) => ({
             ...img,
-            category: group.name,
+            category: group.id,
             url: base + img.url,
           }))
         )

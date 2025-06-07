@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-export default function CloudSidebar({ active, onSelectCategory, groups }) {
+export default function CloudSidebar({ active, onSelectCategory, groups, onAddCategory }) {
   const [openGroups, setOpenGroups] = useState({})
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export default function CloudSidebar({ active, onSelectCategory, groups }) {
         className="w-full border rounded px-2 py-1 text-sm"
       />
 
-      {groups.map(group => (
+      {groups.map((group) => (
         <div key={group.title} className="space-y-1">
           <button
             onClick={() => toggleGroup(group.title)}
@@ -35,12 +35,12 @@ export default function CloudSidebar({ active, onSelectCategory, groups }) {
 
           {openGroups[group.title] && group.children && (
             <div className="space-y-1">
-              {group.children.map(sub => (
+              {group.children.map((sub) => (
                 <button
-                  key={sub.title}
-                  onClick={() => onSelectCategory?.(sub.categories[0])}
+                  key={sub.id}
+                  onClick={() => onSelectCategory?.(sub.id)}
                   className={`text-left block w-full text-sm px-2 py-1 rounded hover:bg-gray-100 ${
-                    active === sub.categories[0] ? 'bg-gray-200 font-semibold' : ''
+                    active === sub.id ? 'bg-gray-200 font-semibold' : ''
                   }`}
                 >
                   {sub.title}
@@ -50,6 +50,18 @@ export default function CloudSidebar({ active, onSelectCategory, groups }) {
           )}
         </div>
       ))}
+
+      {onAddCategory && (
+        <button
+          onClick={() => {
+            const name = window.prompt('Название категории')
+            if (name) onAddCategory(name)
+          }}
+          className="text-sm text-blue-600 hover:underline mt-4"
+        >
+          + Добавить категорию
+        </button>
+      )}
     </div>
   )
 }
