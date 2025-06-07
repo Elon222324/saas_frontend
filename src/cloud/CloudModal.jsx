@@ -19,6 +19,11 @@ export default function CloudModal({ isOpen, category, onSelect }) {
     used,
     limit,
     handleUploadClick,
+    uploadInputRef,
+    handleInputChange,
+    createCategory,
+    deleteImage,
+    updateImage,
   } = useCloudStorage()
 
   const {
@@ -55,6 +60,13 @@ export default function CloudModal({ isOpen, category, onSelect }) {
       onClose={() => onSelect(null)}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30"
     >
+      <input
+        ref={uploadInputRef}
+        type="file"
+        multiple
+        className="hidden"
+        onChange={handleInputChange}
+      />
       <div className="bg-white rounded-lg w-full max-w-4xl h-[32rem] flex flex-col shadow-lg">
         <div className="border-b px-4 pt-4">
           <div className="flex justify-between items-start">
@@ -91,7 +103,7 @@ export default function CloudModal({ isOpen, category, onSelect }) {
                   Сгенерировать с помощью ИИ
                 </button>
                 <button
-                  onClick={handleUploadClick}
+                  onClick={() => handleUploadClick(activeCategory)}
                   className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
                 >
                   Загрузить с компьютера
@@ -108,9 +120,21 @@ export default function CloudModal({ isOpen, category, onSelect }) {
             groups={currentGroups}
             active={activeCategory}
             onSelectCategory={setActiveCategory}
+            onAddCategory={createCategory}
           />
           <div className="flex-1 p-4 space-y-4 overflow-y-auto">
-            <CloudGrid files={filtered} selected={selected} onSelect={setSelected} />
+            <CloudGrid
+              files={filtered}
+              selected={selected}
+              onSelect={setSelected}
+              onDelete={deleteImage}
+              onEdit={(file) => {
+                const alt = window.prompt('Alt text', file.alt_text || '')
+                if (alt !== null) {
+                  updateImage(file.id, { alt_text: alt })
+                }
+              }}
+            />
           </div>
         </div>
 
