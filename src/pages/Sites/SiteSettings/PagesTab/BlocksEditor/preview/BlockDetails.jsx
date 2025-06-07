@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
-import { previewBlocks } from './blockMap'
 
 // Импорты редакторов блоков
 import NavigationEditor from '@blocks/forms/Navigation'
@@ -20,9 +19,8 @@ import FooterEditor from '@blocks/forms/Footer'
 
 export default function BlockDetails({ block, data, onSave }) {
   const [form, setForm] = useState({})
-  const [showPreview, setShowPreview] = useState(true)
   const { slug } = useParams()
-  const { site_name, data: siteData } = useSiteSettings()
+  const { site_name } = useSiteSettings()
 
   useEffect(() => {
     if (!block?.real_id) return
@@ -47,41 +45,6 @@ export default function BlockDetails({ block, data, onSave }) {
 
   if (!block || !block.real_id) {
     return <p className="text-gray-500 text-sm">❗ Выберите блок для редактирования</p>
-  }
-
-  const renderPreview = () => {
-    const PreviewComponent = previewBlocks[block.type]
-    if (!PreviewComponent) {
-      return (
-        <div className="border rounded shadow-sm p-4 bg-gray-50 text-sm text-gray-500">
-          Нет визуального preview для блока типа <strong>{block.type}</strong>
-        </div>
-      )
-    }
-
-    const previewProps = { settings: form.settings || form }
-
-    if (block.type === 'navigation') {
-      previewProps.settings = { ...(form.settings || {}) }
-    }
-
-    if (block.type === 'header') {
-      previewProps.data = form.data || form
-      previewProps.commonSettings = siteData?.common || {}
-      previewProps.navigation =
-        siteData?.navigation?.filter(n => n.block_id === block.real_id && n.visible) || []
-    }
-
-    if (['banner', 'info', 'promo'].includes(block.type)) {
-      previewProps.data = form.data || form
-      previewProps.commonSettings = siteData?.common || {}
-    }
-
-    return (
-      <div>
-        <PreviewComponent {...previewProps} />
-      </div>
-    )
   }
 
   const mergedBlock = { ...block, settings: form.settings, data: form.data }
@@ -131,29 +94,6 @@ export default function BlockDetails({ block, data, onSave }) {
 
   return (
     <div className="space-y-6">
-      {showPreview ? (
-        <div className="sticky top-0 z-10 bg-white pt-2 pb-4">
-          <div className="flex justify-between items-center mb-2">
-            <div className="text-sm text-gray-500">🔍 Предпросмотр</div>
-            <button
-              onClick={() => setShowPreview(false)}
-              className="text-xs text-blue-600 hover:underline"
-            >
-              ⬆ Скрыть
-            </button>
-          </div>
-          {renderPreview()}
-        </div>
-      ) : (
-        <div className="sticky top-0 z-10 bg-white pt-2 pb-2">
-          <button
-            onClick={() => setShowPreview(true)}
-            className="text-xs text-blue-600 hover:underline"
-          >
-            ⬇ Показать превью
-          </button>
-        </div>
-      )}
       <h2 className="text-lg font-semibold mt-4">
         Редактирование "{block.label || block.type}"
       </h2>

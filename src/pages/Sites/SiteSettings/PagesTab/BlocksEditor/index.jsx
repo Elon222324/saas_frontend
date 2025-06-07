@@ -5,6 +5,7 @@ import { useSiteSettings } from '@/context/SiteSettingsContext'
 import PageSelectHeader from './parts/PageSelectHeader'
 import BlockListSidebar from './parts/BlockListSidebar'
 import BlockEditorPanel from './parts/BlockEditorPanel'
+import StickyPreview from './parts/StickyPreview'
 
 export default function PageEditor() {
   const { slug } = useParams()
@@ -77,6 +78,7 @@ export default function PageEditor() {
   return (
     <div className="px-6 pt-0 space-y-4">
       <PageSelectHeader slug={slug} data={data} />
+      <StickyPreview block={selectedBlock} data={selectedData} siteData={data} />
       <div className="flex gap-6">
         <BlockListSidebar
           blocks={blocks}
