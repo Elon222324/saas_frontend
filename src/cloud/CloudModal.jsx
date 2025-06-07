@@ -6,6 +6,7 @@ import CloudStorageInfo from './CloudStorageInfo'
 import useCloudStorage from './hooks/useCloudStorage'
 import useTemplateGallery from './hooks/useTemplateGallery'
 import { Sparkles } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 
 export default function CloudModal({ isOpen, category, onSelect }) {
   const [activeTab, setActiveTab] = useState('site') // 'site' | 'library' | 'shared'
@@ -24,6 +25,7 @@ export default function CloudModal({ isOpen, category, onSelect }) {
     createCategory,
     deleteImage,
     updateImage,
+    isUploading,
   } = useCloudStorage()
 
   const {
@@ -104,12 +106,11 @@ export default function CloudModal({ isOpen, category, onSelect }) {
                 </button>
                 <button
                   onClick={() => handleUploadClick(activeCategory)}
-                  className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                  className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center gap-2"
                 >
+                  {isUploading && <Loader2 className="w-4 h-4 animate-spin" />}
                   Загрузить с компьютера
                 </button>
-
-
               </div>
             )}
           </div>
@@ -128,15 +129,16 @@ export default function CloudModal({ isOpen, category, onSelect }) {
               selected={selected}
               onSelect={setSelected}
               onDelete={activeTab === 'site' ? deleteImage : undefined}
-              onEdit=
-                {activeTab === 'site'
+              onEdit={
+                activeTab === 'site'
                   ? (file) => {
                       const alt = window.prompt('Alt text', file.alt_text || '')
                       if (alt !== null) {
                         updateImage(file.id, { alt_text: alt })
                       }
                     }
-                  : undefined}
+                  : undefined
+              }
             />
           </div>
         </div>

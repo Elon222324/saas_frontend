@@ -10,6 +10,7 @@ export default function useCloudStorage() {
   const [selected, setSelected] = useState(null)
   const [used, setUsed] = useState(0)
   const [limit, setLimit] = useState(0)
+  const [isUploading, setIsUploading] = useState(false)
 
   const uploadInputRef = useRef(null)
 
@@ -72,6 +73,7 @@ export default function useCloudStorage() {
   }
 
   const uploadFiles = async (filesList, categoryId) => {
+    setIsUploading(true)
     for (const file of filesList) {
       const formData = new FormData()
       formData.append('file', file)
@@ -88,7 +90,6 @@ export default function useCloudStorage() {
           }
         )
         if (res.ok) {
-          await fetchData()
           const img = await res.json()
           setFiles((prev) => [
             ...prev,
@@ -99,6 +100,8 @@ export default function useCloudStorage() {
         console.error('Upload failed', err)
       }
     }
+    await fetchData()
+    setIsUploading(false)
   }
 
   const deleteImage = async (id) => {
@@ -155,6 +158,7 @@ export default function useCloudStorage() {
     setSelected,
     used,
     limit,
+    isUploading,
     handleUploadClick,
     uploadInputRef,
     handleInputChange,
