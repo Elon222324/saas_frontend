@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Dialog } from '@headlessui/react'
-import { X, ChevronLeft, ChevronRight, Trash2, Pencil } from 'lucide-react'
+import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 
 export default function ImagePreviewModal({ isOpen, files = [], initialIndex = 0, onClose, onSelect }) {
   const [index, setIndex] = useState(initialIndex)
@@ -29,46 +29,52 @@ export default function ImagePreviewModal({ isOpen, files = [], initialIndex = 0
   return (
     <Dialog open={isOpen} onClose={onClose} className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black bg-opacity-70" />
-      <div className="relative z-10 flex flex-col items-center group">
-        <button onClick={onClose} className="absolute top-2 right-2 text-white">
+
+      <div className="relative z-10 bg-white rounded-lg shadow max-w-[800px] w-full h-[600px] flex flex-col overflow-hidden">
+        <button onClick={onClose} className="absolute top-3 right-3 text-gray-600 hover:text-black z-10">
           <X size={24} />
         </button>
-        <div className="absolute top-2 right-10 flex gap-2 opacity-0 group-hover:opacity-100 transition">
-          <button className="bg-white rounded p-1 shadow">
-            <Trash2 size={16} />
-          </button>
-          <button className="bg-white rounded p-1 shadow">
-            <Pencil size={16} />
-          </button>
-        </div>
+
         {files.length > 1 && (
           <>
-            <button onClick={prev} className="absolute left-0 top-1/2 -translate-y-1/2 text-white p-2">
-              <ChevronLeft size={32} />
+            <button
+              onClick={prev}
+              className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 p-1 rounded-full"
+            >
+              <ChevronLeft size={28} />
             </button>
-            <button onClick={next} className="absolute right-0 top-1/2 -translate-y-1/2 text-white p-2">
-              <ChevronRight size={32} />
+            <button
+              onClick={next}
+              className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 p-1 rounded-full"
+            >
+              <ChevronRight size={28} />
             </button>
           </>
         )}
-        <img
-          src={file.url}
-          alt={file.name || file.filename}
-          onError={(e) => {
-            e.currentTarget.onerror = null
-            e.currentTarget.src = fallback
-          }}
-          className="max-h-[80vh] max-w-[90vw] object-contain bg-white rounded"
-        />
-        <button
-          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          onClick={() => {
-            onSelect?.(file)
-            onClose?.()
-          }}
-        >
-          Выбрать
-        </button>
+
+        <div className="flex-1 flex items-center justify-center px-4">
+          <img
+            src={file.url}
+            alt={file.name || file.filename}
+            onError={(e) => {
+              e.currentTarget.onerror = null
+              e.currentTarget.src = fallback
+            }}
+            className="max-h-full max-w-full object-contain"
+          />
+        </div>
+
+        <div className="py-4 text-center border-t">
+          <button
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            onClick={() => {
+              onSelect?.(file)
+              onClose?.()
+            }}
+          >
+            Выбрать
+          </button>
+        </div>
       </div>
     </Dialog>
   )
