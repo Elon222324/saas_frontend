@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Dialog } from '@headlessui/react'
-import { X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { X, ChevronLeft, ChevronRight, Info } from 'lucide-react'
 
 export default function ImagePreviewModal({ isOpen, files = [], initialIndex = 0, onClose, onSelect }) {
   const [index, setIndex] = useState(initialIndex)
+  const [showInfo, setShowInfo] = useState(false)
   const fallback = 'https://placehold.co/600x400?text=No+Image'
 
   useEffect(() => {
@@ -43,10 +44,10 @@ export default function ImagePreviewModal({ isOpen, files = [], initialIndex = 0
   }
 
   return (
-    <Dialog open={isOpen} onClose={onClose} className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden">
+    <Dialog open={isOpen} onClose={onClose} className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black bg-opacity-70" />
 
-      <div className="relative z-10 bg-white rounded-lg shadow max-w-[90vw] w-full max-h-[80vh] flex flex-col overflow-hidden">
+      <div className="relative z-10 bg-white rounded-lg shadow max-w-[90vw] w-full max-h-[90vh] flex flex-col overflow-hidden">
         <button onClick={onClose} className="absolute top-3 right-3 text-gray-600 hover:text-black z-10">
           <X size={24} />
         </button>
@@ -68,7 +69,28 @@ export default function ImagePreviewModal({ isOpen, files = [], initialIndex = 0
           </>
         )}
 
-        <div className="flex-1 flex flex-col items-center justify-center px-4 py-4 overflow-hidden">
+        <div className="flex-1 flex flex-col items-center justify-center px-4 py-4 overflow-auto relative">
+          <div className="absolute top-4 left-4 z-10">
+            <div
+              className="text-white bg-black/50 rounded-full p-1 cursor-pointer relative group"
+              onMouseEnter={() => setShowInfo(true)}
+              onMouseLeave={() => setShowInfo(false)}
+            >
+              <Info size={20} />
+              {showInfo && (
+                <div className="absolute left-full top-1 ml-2 bg-black/80 text-white text-xs p-3 rounded w-max space-y-1 whitespace-nowrap">
+                  <div>{getLabel('small')}: {formatSize(file.small_size_bytes)} — {file.small_width}×{file.small_height}</div>
+                  <div>{getLabel('medium')}: {formatSize(file.medium_size_bytes)} — {file.medium_width}×{file.medium_height}</div>
+                  <div>{getLabel('big')}: {formatSize(file.big_size_bytes)} — {file.big_width}×{file.big_height}</div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="text-sm text-gray-600 text-center break-all mb-4 mt-6">
+            <div className="font-medium">{file.filename}</div>
+          </div>
+
           <div className="max-w-full max-h-[60vh]">
             <img
               src={file.big_url || file.url}
@@ -77,22 +99,8 @@ export default function ImagePreviewModal({ isOpen, files = [], initialIndex = 0
                 e.currentTarget.onerror = null
                 e.currentTarget.src = fallback
               }}
-              className="max-w-[80vw] max-h-[60vh] max-w-[600px] object-contain rounded"
+              className="max-w-[80vw] max-h-[60vh] object-contain rounded"
             />
-          </div>
-          <div className="mt-6 text-sm text-gray-600 text-center break-all space-y-1">
-            <div className="font-medium">{file.filename}</div>
-            <div className="text-xs text-gray-500 space-y-1">
-              <div>
-                {getLabel('small')}: {formatSize(file.small_size_bytes)}{file.small_width && file.small_height ? ` — ${file.small_width}×${file.small_height}` : ''}
-              </div>
-              <div>
-                {getLabel('medium')}: {formatSize(file.medium_size_bytes)}{file.medium_width && file.medium_height ? ` — ${file.medium_width}×${file.medium_height}` : ''}
-              </div>
-              <div>
-                {getLabel('big')}: {formatSize(file.big_size_bytes)}{file.big_width && file.big_height ? ` — ${file.big_width}×${file.big_height}` : ''}
-              </div>
-            </div>
           </div>
         </div>
 
