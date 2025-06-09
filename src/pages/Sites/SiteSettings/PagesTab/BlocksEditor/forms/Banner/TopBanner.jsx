@@ -13,7 +13,10 @@ export const TopBanner = ({ settings = {}, data = {}, commonSettings = {} }) => 
   const titleText = data?.title_text || 'Дарим подарки'
   const subtitleText = data?.subtitle_text || 'Выбирай на свой вкус из нашего ассортимента!'
   const buttonText = data?.button_text || 'Подробнее'
-  const imageUrl = data?.image_url || pizzaImg
+
+  const rawImagePath = data?.image_url || ''
+  const baseUrl = import.meta.env.VITE_LIBRARY_ASSETS_URL || ''
+  const imageUrl = rawImagePath.startsWith('/sites') ? baseUrl + rawImagePath : pizzaImg
 
   const getGradient = () => {
     if (isCustom) {
@@ -42,7 +45,7 @@ export const TopBanner = ({ settings = {}, data = {}, commonSettings = {} }) => 
         className="relative overflow-hidden mx-auto max-w-7xl rounded-3xl transition-shadow duration-300 hover:shadow-2xl"
         style={style}
       >
-        {/* \uD83D\uDCF1 \u041C\u043E\u0431\u0438\u043B\u044C\u043D\u0430\u044F \u0432\u0435\u0440\u0441\u0438\u044F */}
+        {/* 📱 Мобильная версия */}
         <div className="flex md:hidden items-center gap-4 px-4 py-4">
           <img
             src={imageUrl}
@@ -61,7 +64,7 @@ export const TopBanner = ({ settings = {}, data = {}, commonSettings = {} }) => 
           </div>
         </div>
 
-        {/* \uD83D\uDCBB \u0414\u0435\u0441\u043A\u0442\u043E\u043F\u043D\u0430\u044F \u0432\u0435\u0440\u0441\u0438\u044F */}
+        {/* 💻 Десктопная версия */}
         <div className="hidden md:flex items-center justify-between px-10 lg:px-16 py-8 gap-8">
           {!reverse && (
             <div className="w-1/2 text-left space-y-4 z-10 text-[var(--text-color)]">

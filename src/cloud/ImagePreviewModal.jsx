@@ -43,6 +43,15 @@ export default function ImagePreviewModal({ isOpen, files = [], initialIndex = 0
     }
   }
 
+  const getRelativeUrl = (url) => {
+    try {
+      const u = new URL(url, import.meta.env.VITE_LIBRARY_ASSETS_URL || window.location.origin)
+      return u.pathname + u.search
+    } catch {
+      return url
+    }
+  }
+
   return (
     <Dialog open={isOpen} onClose={onClose} className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black bg-opacity-70" />
@@ -115,7 +124,8 @@ export default function ImagePreviewModal({ isOpen, files = [], initialIndex = 0
           <button
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             onClick={() => {
-              onSelect?.(file)
+              const relativeUrl = getRelativeUrl(file.url)
+              onSelect?.({ ...file, url: relativeUrl })
               onClose?.()
             }}
           >

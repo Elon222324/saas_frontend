@@ -3,13 +3,23 @@ import CloudFileCard from './CloudFileCard'
 import ImagePreviewModal from './ImagePreviewModal'
 import { Search, Trash2, Pencil } from 'lucide-react'
 
-export default function CloudGrid({ files, selected, onSelect, onDelete, onEdit }) {
+export default function CloudGrid({ files, selected, onSelect, onDelete, onEdit, onCloseModal }) {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
   const [previewIndex, setPreviewIndex] = useState(0)
 
   const handlePreview = (index) => {
     setPreviewIndex(index)
     setIsPreviewOpen(true)
+  }
+
+  const handleSelect = (file) => {
+    const relativeUrl = file.url?.startsWith('/')
+      ? file.url
+      : new URL(file.url, window.location.origin).pathname
+
+    onSelect?.({ ...file, url: relativeUrl })
+    setIsPreviewOpen(false)
+    onCloseModal?.()  // ← закрыть внешнюю модалку
   }
 
   return (
@@ -23,9 +33,9 @@ export default function CloudGrid({ files, selected, onSelect, onDelete, onEdit 
             }`}
           >
             <CloudFileCard
-              file={{ ...file, url: file.medium_url || file.url }} // ← используем medium_url
+              file={{ ...file, url: file.medium_url || file.url }}
               selected={selected}
-              onSelect={onSelect}
+              onSelect={(f) => handleSelect(f)}
             />
             <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition">
               <button
@@ -69,7 +79,7 @@ export default function CloudGrid({ files, selected, onSelect, onDelete, onEdit 
         onClose={() => setIsPreviewOpen(false)}
         files={files}
         initialIndex={previewIndex}
-        onSelect={onSelect}
+        onSelect={handleSelect}
       />
     </>
   )

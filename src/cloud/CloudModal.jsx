@@ -5,12 +5,13 @@ import CloudGrid from './CloudGrid'
 import CloudStorageInfo from './CloudStorageInfo'
 import useCloudStorage from './hooks/useCloudStorage'
 import useTemplateGallery from './hooks/useTemplateGallery'
-import { Sparkles } from 'lucide-react'
-import { Loader2 } from 'lucide-react'
+import { Sparkles, Loader2 } from 'lucide-react'
 
 export default function CloudModal({ isOpen, category, onSelect }) {
   const [activeTab, setActiveTab] = useState('site') // 'site' | 'library' | 'shared'
   const [activeCategory, setActiveCategory] = useState(null)
+  const [previewOpen, setPreviewOpen] = useState(false)
+  const [previewIndex, setPreviewIndex] = useState(0)
 
   const {
     groups: userGroups,
@@ -55,6 +56,14 @@ export default function CloudModal({ isOpen, category, onSelect }) {
     sharedFiles
 
   const filtered = currentFiles.filter(f => !activeCategory || f.category === activeCategory)
+
+  const handleSelect = (file) => {
+    const relativeUrl = file.url?.startsWith('/')
+      ? file.url
+      : new URL(file.url, window.location.origin).pathname
+
+    onSelect?.(relativeUrl)
+  }
 
   return (
     <Dialog
@@ -127,7 +136,10 @@ export default function CloudModal({ isOpen, category, onSelect }) {
             <CloudGrid
               files={filtered}
               selected={selected}
-              onSelect={setSelected}
+              onSelect={(file) => {
+                setSelected(file)
+                handleSelect(file)
+              }}
               onDelete={activeTab === 'site' ? deleteImage : undefined}
               onEdit={
                 activeTab === 'site'
@@ -139,6 +151,7 @@ export default function CloudModal({ isOpen, category, onSelect }) {
                     }
                   : undefined
               }
+              onCloseModal={() => onSelect(null)}
             />
           </div>
         </div>
@@ -153,7 +166,7 @@ export default function CloudModal({ isOpen, category, onSelect }) {
             <button
               className="px-4 py-2 rounded bg-blue-600 text-white disabled:bg-gray-300"
               disabled={!selected}
-              onClick={() => onSelect(selected?.url)}
+              onClick={() => handleSelect(selected)}
             >
               Выбрать
             </button>

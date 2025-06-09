@@ -1,5 +1,11 @@
 export default function CloudStorageInfo({ files = [], limit = 100 }) {
-  const totalUsedBytes = files.reduce((sum, f) => sum + (parseInt(f.size_bytes) || 0), 0)
+  const totalUsedBytes = files.reduce((sum, f) => {
+    const small = parseInt(f.small_size_bytes) || 0
+    const medium = parseInt(f.medium_size_bytes) || 0
+    const big = parseInt(f.big_size_bytes) || 0
+    return sum + small + medium + big
+  }, 0)
+
   const usedMB = Math.round(totalUsedBytes / (1024 * 1024))
   const percent = Math.min(100, Math.round((usedMB / limit) * 100))
 
