@@ -48,21 +48,28 @@ export default function ImagePreviewModal({ isOpen, files = [], initialIndex = 0
       <div className="absolute inset-0 bg-black bg-opacity-70" />
 
       <div className="relative z-10 bg-white rounded-lg shadow max-w-[90vw] w-full max-h-[90vh] flex flex-col overflow-hidden">
-        <button onClick={onClose} className="absolute top-3 right-3 text-gray-600 hover:text-black z-10">
-          <X size={24} />
-        </button>
+        <div className="absolute top-3 right-3 flex items-center gap-2 z-20">
+          {files.length > 1 && (
+            <span className="text-xs text-gray-500">{index + 1} / {files.length}</span>
+          )}
+          <button onClick={onClose} className="text-gray-600 hover:text-black">
+            <X size={24} />
+          </button>
+        </div>
 
         {files.length > 1 && (
           <>
             <button
               onClick={prev}
-              className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 p-1 rounded-full"
+              className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 p-2 rounded-full z-20"
+              style={{ touchAction: 'manipulation' }}
             >
               <ChevronLeft size={28} />
             </button>
             <button
               onClick={next}
-              className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 p-1 rounded-full"
+              className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 p-2 rounded-full z-20"
+              style={{ touchAction: 'manipulation' }}
             >
               <ChevronRight size={28} />
             </button>
