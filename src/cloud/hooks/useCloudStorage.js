@@ -29,7 +29,7 @@ export default function useCloudStorage() {
       const grouped = {}
       const allFiles = []
       for (const cat of data) {
-        const parent = cat.category_type === 'products' ? 'ТОВАРЫ' : 'СИСТЕМНЫЕ'
+        const parent = cat.is_system ? 'СИСТЕМНЫЕ' : 'ТОВАРЫ'
         if (!grouped[parent]) grouped[parent] = []
         grouped[parent].push({ id: cat.id, title: cat.description || cat.name })
         if (cat.images) {
@@ -37,7 +37,8 @@ export default function useCloudStorage() {
             allFiles.push({
               ...img,
               category: cat.id,
-              url: `${import.meta.env.VITE_LIBRARY_ASSETS_URL || ''}${img.url}`,
+              url: `${import.meta.env.VITE_LIBRARY_ASSETS_URL || ''}${img.medium_url || img.url}`,
+              big_url: `${import.meta.env.VITE_LIBRARY_ASSETS_URL || ''}${img.big_url || img.url}`,
             })
           })
         }
@@ -93,7 +94,12 @@ export default function useCloudStorage() {
           const img = await res.json()
           setFiles((prev) => [
             ...prev,
-            { ...img, category: categoryId, url: `${import.meta.env.VITE_LIBRARY_ASSETS_URL || ''}${img.url}` },
+            {
+              ...img,
+              category: categoryId,
+              url: `${import.meta.env.VITE_LIBRARY_ASSETS_URL || ''}${img.medium_url || img.url}`,
+              big_url: `${import.meta.env.VITE_LIBRARY_ASSETS_URL || ''}${img.big_url || img.url}`,
+            },
           ])
         }
       } catch (err) {

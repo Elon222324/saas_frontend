@@ -5,7 +5,6 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 export default function ImagePreviewModal({ isOpen, files = [], initialIndex = 0, onClose, onSelect }) {
   const [index, setIndex] = useState(initialIndex)
   const fallback = 'https://placehold.co/600x400?text=No+Image'
-  
 
   useEffect(() => {
     setIndex(initialIndex)
@@ -27,11 +26,27 @@ export default function ImagePreviewModal({ isOpen, files = [], initialIndex = 0
   const file = files[index]
   if (!file) return null
 
+  const formatSize = (bytes) => {
+    if (!bytes) return '-'
+    if (bytes < 1024) return `${bytes} B`
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+    return `${(bytes / 1024 / 1024).toFixed(1)} MB`
+  }
+
+  const getLabel = (type) => {
+    switch (type) {
+      case 'small': return 'Мобильное превью'
+      case 'medium': return 'Изображение для сетки'
+      case 'big': return 'Изображение для страницы товара'
+      default: return type
+    }
+  }
+
   return (
-    <Dialog open={isOpen} onClose={onClose} className="fixed inset-0 z-50 flex items-center justify-center">
+    <Dialog open={isOpen} onClose={onClose} className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 bg-black bg-opacity-70" />
 
-      <div className="relative z-10 bg-white rounded-lg shadow max-w-[800px] w-full h-[600px] flex flex-col overflow-hidden">
+      <div className="relative z-10 bg-white rounded-lg shadow max-w-[90vw] w-full max-h-[80vh] flex flex-col overflow-hidden">
         <button onClick={onClose} className="absolute top-3 right-3 text-gray-600 hover:text-black z-10">
           <X size={24} />
         </button>
@@ -53,19 +68,35 @@ export default function ImagePreviewModal({ isOpen, files = [], initialIndex = 0
           </>
         )}
 
-        <div className="flex-1 flex items-center justify-center px-4">
-          <img
-            src={file.url}
-            alt={file.name || file.filename}
-            onError={(e) => {
-              e.currentTarget.onerror = null
-              e.currentTarget.src = fallback
-            }}
-            className="max-h-full max-w-full object-contain"
-          />
+        <div className="flex-1 flex flex-col items-center justify-center px-4 py-4 overflow-hidden">
+          <div className="max-w-full max-h-[60vh]">
+            <img
+              src={file.big_url || file.url}
+              alt={file.name || file.filename}
+              onError={(e) => {
+                e.currentTarget.onerror = null
+                e.currentTarget.src = fallback
+              }}
+              className="max-w-[80vw] max-h-[60vh] max-w-[600px] object-contain rounded"
+            />
+          </div>
+          <div className="mt-6 text-sm text-gray-600 text-center break-all space-y-1">
+            <div className="font-medium">{file.filename}</div>
+            <div className="text-xs text-gray-500 space-y-1">
+              <div>
+                {getLabel('small')}: {formatSize(file.small_size_bytes)}{file.small_width && file.small_height ? ` — ${file.small_width}×${file.small_height}` : ''}
+              </div>
+              <div>
+                {getLabel('medium')}: {formatSize(file.medium_size_bytes)}{file.medium_width && file.medium_height ? ` — ${file.medium_width}×${file.medium_height}` : ''}
+              </div>
+              <div>
+                {getLabel('big')}: {formatSize(file.big_size_bytes)}{file.big_width && file.big_height ? ` — ${file.big_width}×${file.big_height}` : ''}
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="py-4 text-center border-t">
+        <div className="py-3 text-center border-t">
           <button
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             onClick={() => {

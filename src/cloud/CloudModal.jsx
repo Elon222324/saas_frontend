@@ -145,7 +145,7 @@ export default function CloudModal({ isOpen, category, onSelect }) {
 
         <div className="border-t px-4 py-3 flex justify-between items-center">
           {activeTab === 'site' ? (
-            <CloudStorageInfo used={used} limit={limit} compact />
+            <CloudStorageInfo files={userFiles} limit={limit} compact />
           ) : <div />}
 
           <div className="flex gap-2">

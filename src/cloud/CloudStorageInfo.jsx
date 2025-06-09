@@ -1,5 +1,7 @@
-export default function CloudStorageInfo({ used, limit }) {
-  const percent = Math.min(100, Math.round((used / limit) * 100))
+export default function CloudStorageInfo({ files = [], limit = 100 }) {
+  const totalUsedBytes = files.reduce((sum, f) => sum + (parseInt(f.size_bytes) || 0), 0)
+  const usedMB = Math.round(totalUsedBytes / (1024 * 1024))
+  const percent = Math.min(100, Math.round((usedMB / limit) * 100))
 
   let color = 'bg-green-500'
   if (percent > 80) color = 'bg-red-500'
@@ -7,7 +9,7 @@ export default function CloudStorageInfo({ used, limit }) {
 
   return (
     <div className="space-y-1">
-      <p className="text-sm">Использовано {used} MB из {limit} MB</p>
+      <p className="text-sm">Использовано {usedMB} MB из {limit} MB</p>
       <div className="w-full h-2 bg-gray-200 rounded">
         <div className={`h-full rounded ${color}`} style={{ width: `${percent}%` }} />
       </div>

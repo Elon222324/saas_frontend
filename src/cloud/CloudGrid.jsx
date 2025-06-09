@@ -23,7 +23,7 @@ export default function CloudGrid({ files, selected, onSelect, onDelete, onEdit 
             }`}
           >
             <CloudFileCard
-              file={file}
+              file={{ ...file, url: file.medium_url || file.url }} // ← используем medium_url
               selected={selected}
               onSelect={onSelect}
             />

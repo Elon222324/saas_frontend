@@ -16,7 +16,7 @@ export default function CloudSidebar({ active, onSelectCategory, groups, onAddCa
   }
 
   return (
-    <div className="w-52 border-r p-4 space-y-4">
+    <div className="w-52 border-r p-4 space-y-4 overflow-y-auto max-h-[28rem]">
       <input
         type="text"
         placeholder="Поиск"
