@@ -10,6 +10,7 @@ import { Sparkles, Loader2 } from 'lucide-react'
 export default function CloudModal({ isOpen, category, onSelect }) {
   const [activeTab, setActiveTab] = useState('site') // 'site' | 'library'
   const [activeCategory, setActiveCategory] = useState(null)
+  const [search, setSearch] = useState('')
 
   const {
     groups: userGroups,
@@ -38,9 +39,15 @@ export default function CloudModal({ isOpen, category, onSelect }) {
   const currentFiles =
     activeTab === 'site' ? userFiles : galleryFiles
 
-  const filtered = currentFiles.filter(
-    (f) => !activeCategory || f.category === activeCategory
-  )
+  const filtered = currentFiles.filter((f) => {
+    const matchesCategory = !activeCategory || f.category === activeCategory
+    const term = search.trim().toLowerCase()
+    const matchesSearch =
+      !term ||
+      f.name?.toLowerCase().includes(term) ||
+      f.filename?.toLowerCase().includes(term)
+    return matchesCategory && matchesSearch
+  })
 
   const handleSelect = (file) => {
     const relativeUrl = file.url?.startsWith('/')
@@ -122,6 +129,7 @@ export default function CloudModal({ isOpen, category, onSelect }) {
             active={activeCategory}
             onSelectCategory={setActiveCategory}
             onAddCategory={createCategory}
+            onSearchChange={setSearch}
           />
           <div className="flex-1 p-4 space-y-4 overflow-y-auto">
             <CloudGrid

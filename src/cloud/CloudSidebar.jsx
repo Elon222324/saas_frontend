@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react'
 
-export default function CloudSidebar({ active, onSelectCategory, groups, onAddCategory }) {
+export default function CloudSidebar({
+  active,
+  onSelectCategory,
+  groups,
+  onAddCategory,
+  onSearchChange,
+}) {
   const [openGroups, setOpenGroups] = useState({})
 
   useEffect(() => {
@@ -21,6 +27,7 @@ export default function CloudSidebar({ active, onSelectCategory, groups, onAddCa
         type="text"
         placeholder="Поиск"
         className="w-full border rounded px-2 py-1 text-sm"
+        onChange={(e) => onSearchChange?.(e.target.value)}
       />
 
       {groups.map((group) => (
