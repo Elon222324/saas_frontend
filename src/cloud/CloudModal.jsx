@@ -40,13 +40,18 @@ export default function CloudModal({ isOpen, category, onSelect }) {
     activeTab === 'site' ? userFiles : galleryFiles
 
   const filtered = currentFiles.filter((f) => {
-    const matchesCategory = !activeCategory || f.category === activeCategory
     const term = search.trim().toLowerCase()
-    const matchesSearch =
-      !term ||
-      f.name?.toLowerCase().includes(term) ||
-      f.filename?.toLowerCase().includes(term)
-    return matchesCategory && matchesSearch
+
+    // When searching, ignore the selected category and show files from all
+    // groups that match the query. Otherwise filter by the active category.
+    if (term) {
+      return (
+        f.name?.toLowerCase().includes(term) ||
+        f.filename?.toLowerCase().includes(term)
+      )
+    }
+
+    return !activeCategory || f.category === activeCategory
   })
 
   const handleSelect = (file) => {
