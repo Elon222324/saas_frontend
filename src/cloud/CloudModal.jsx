@@ -107,7 +107,7 @@ export default function CloudModal({ isOpen, category, onSelect }) {
             {activeTab === 'site' && (
               <div className="flex flex-col gap-2 items-end">
                 <button
-                  onClick={() => alert('Открыть генератор ИИ')}
+                  onClick={() => alert('Генератор ИИ-картинок еще в разработке')}
                   className="text-sm text-gray-600 hover:text-black flex items-center gap-1"
                 >
                   <Sparkles className="w-4 h-4" />
@@ -158,7 +158,7 @@ export default function CloudModal({ isOpen, category, onSelect }) {
 
         <div className="border-t px-4 py-3 flex justify-between items-center">
           {activeTab === 'site' ? (
-            <CloudStorageInfo files={userFiles} limit={limit} compact />
+            <CloudStorageInfo files={userFiles} limit={250} compact />
           ) : <div />}
 
           <div className="flex gap-2">
