@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import CloudFileCard from './CloudFileCard'
 import ImagePreviewModal from './ImagePreviewModal'
 import { Search, Trash2, Pencil } from 'lucide-react'
@@ -6,6 +6,12 @@ import { Search, Trash2, Pencil } from 'lucide-react'
 export default function CloudGrid({ files, selected, onSelect, onDelete, onEdit, onCloseModal }) {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
   const [previewIndex, setPreviewIndex] = useState(0)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setIsLoading(false), 400) // имитация загрузки
+    return () => clearTimeout(timeout)
+  }, [files])
 
   const handlePreview = (index) => {
     setPreviewIndex(index)
@@ -19,16 +25,21 @@ export default function CloudGrid({ files, selected, onSelect, onDelete, onEdit,
 
     onSelect?.({ ...file, url: relativeUrl })
     setIsPreviewOpen(false)
-    onCloseModal?.()  // ← закрыть внешнюю модалку
+    onCloseModal?.()
   }
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-4 p-4">
+      <div className="relative grid grid-cols-3 gap-4 p-4 min-h-[200px] transition-opacity duration-300">
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white/80 z-10">
+            <div className="w-10 h-10 border-4 border-blue-300 border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
         {files.map((file, i) => (
           <div
             key={file.id}
-            className={`relative group ${
+            className={`relative group transition-opacity duration-500 ${isLoading ? 'opacity-0' : 'opacity-100'} ${
               selected?.id === file.id ? 'ring-2 ring-blue-500 rounded' : ''
             }`}
           >

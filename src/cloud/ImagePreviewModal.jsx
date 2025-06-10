@@ -5,6 +5,7 @@ import { X, ChevronLeft, ChevronRight, Info } from 'lucide-react'
 export default function ImagePreviewModal({ isOpen, files = [], initialIndex = 0, onClose, onSelect }) {
   const [index, setIndex] = useState(initialIndex)
   const [showInfo, setShowInfo] = useState(false)
+  const [loading, setLoading] = useState(true)
   const fallback = 'https://placehold.co/600x400?text=No+Image'
 
   useEffect(() => {
@@ -21,8 +22,14 @@ export default function ImagePreviewModal({ isOpen, files = [], initialIndex = 0
     return () => window.removeEventListener('keydown', handleKey)
   }, [isOpen])
 
-  const prev = () => setIndex((i) => (i - 1 + files.length) % files.length)
-  const next = () => setIndex((i) => (i + 1) % files.length)
+  const prev = () => {
+    setLoading(true)
+    setIndex((i) => (i - 1 + files.length) % files.length)
+  }
+  const next = () => {
+    setLoading(true)
+    setIndex((i) => (i + 1) % files.length)
+  }
 
   const file = files[index]
   if (!file) return null
@@ -107,15 +114,20 @@ export default function ImagePreviewModal({ isOpen, files = [], initialIndex = 0
             <div className="font-medium">{file.filename}</div>
           </div>
 
-          <div className="max-w-full max-h-[60vh]">
+          <div className="max-w-full max-h-[60vh] flex items-center justify-center">
+            {loading && (
+              <div className="w-20 h-20 border-4 border-blue-300 border-t-transparent rounded-full animate-spin" />
+            )}
             <img
               src={file.big_url || file.url}
               alt={file.name || file.filename}
+              onLoad={() => setLoading(false)}
               onError={(e) => {
                 e.currentTarget.onerror = null
                 e.currentTarget.src = fallback
+                setLoading(false)
               }}
-              className="max-w-[80vw] max-h-[60vh] object-contain rounded"
+              className={`max-w-[80vw] max-h-[60vh] object-contain rounded transition-opacity duration-300 ${loading ? 'opacity-0' : 'opacity-100'}`}
             />
           </div>
         </div>
