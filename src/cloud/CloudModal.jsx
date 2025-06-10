@@ -162,6 +162,7 @@ export default function CloudModal({ isOpen, category, onSelect }) {
             <div />
           )}
 
+
           <div className="flex gap-2">
             <button
               className="px-4 py-2 rounded bg-gray-200"
