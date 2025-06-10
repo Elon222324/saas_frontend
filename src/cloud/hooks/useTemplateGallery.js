@@ -9,7 +9,7 @@ export default function useTemplateGallery() {
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/cloud/library`)
         const data = await res.json()
-        const base = import.meta.env.VITE_LIBRARY_ASSETS_URL
+        const base = import.meta.env.VITE_LIBRARY_ASSETS_URL || ''
 
         const grouped = {}
 
@@ -32,7 +32,10 @@ export default function useTemplateGallery() {
           group.images.map((img) => ({
             ...img,
             category: group.id,
-            url: base + img.url,
+            url: base + (img.medium_url || img.url),
+            big_url: base + (img.big_url || img.url),
+            medium_url: base + (img.medium_url || img.url),
+            small_url: base + (img.small_url || img.url),
           }))
         )
         setFiles(allFiles)
