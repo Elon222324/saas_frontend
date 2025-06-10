@@ -1,5 +1,12 @@
 export const headerDataSchema = [
   {
+    key: 'logo_url',
+    label: 'Логотип',
+    type: 'image',
+    default: '/images/logo.webp',
+    editable: true,
+  },
+  {
     key: 'subtitle',
     label: 'Подзаголовок (сеть или описание)',
     type: 'text',

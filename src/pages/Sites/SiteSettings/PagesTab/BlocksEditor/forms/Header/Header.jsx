@@ -28,6 +28,10 @@ export const Header = ({ settings = {}, data = {}, commonSettings = {}, navigati
   const buttonHover = source?.button_hover_color || '#1565C0'
   const bgColor = source?.background_color || '#FFFFFF'
 
+  const rawLogoPath = data.logo_url || '/images/logo.webp'
+  const baseUrl = import.meta.env.VITE_LIBRARY_ASSETS_URL || ''
+  const logoUrl = rawLogoPath.startsWith('/') ? baseUrl + rawLogoPath : rawLogoPath
+
   const subtitle = data.subtitle || 'Описание'
   const city = data.city || 'Город'
   const deliveryTime = data.delivery_time || '33 мин'
@@ -45,7 +49,7 @@ export const Header = ({ settings = {}, data = {}, commonSettings = {}, navigati
       >
         <div className="flex flex-col items-start max-w-[100px]">
           <img
-            src="/images/logo.webp"
+            src={logoUrl}
             alt="Logo"
             className="w-[96px] h-auto object-contain"
           />
