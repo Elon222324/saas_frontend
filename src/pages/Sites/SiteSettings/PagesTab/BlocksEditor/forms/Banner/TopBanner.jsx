@@ -16,7 +16,11 @@ export const TopBanner = ({ settings = {}, data = {}, commonSettings = {} }) => 
 
   const rawImagePath = data?.image_url || ''
   const baseUrl = import.meta.env.VITE_LIBRARY_ASSETS_URL || ''
-  const imageUrl = rawImagePath.startsWith('/sites') ? baseUrl + rawImagePath : pizzaImg
+  const imageUrl = rawImagePath
+    ? rawImagePath.startsWith('/')
+      ? baseUrl + rawImagePath
+      : rawImagePath
+    : pizzaImg
 
   const getGradient = () => {
     if (isCustom) {
