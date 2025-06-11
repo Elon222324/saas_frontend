@@ -104,5 +104,13 @@ export const reviewsSchema = [
     default: 'slide',
     editable: true,
     visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'reviews_count',
+    label: 'Количество отзывов',
+    type: 'number',
+    default: 4,
+    editable: true,
+    visible_if: { custom_appearance: true }
   }
 ]
