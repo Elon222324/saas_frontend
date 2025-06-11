@@ -14,6 +14,13 @@ export const promoDataSchema = [
     editable: true,
   },
   {
+    key: 'card1_img',
+    label: 'Изображение первой карточки',
+    type: 'image',
+    default: '/images/9.webp',
+    editable: true,
+  },
+  {
     key: 'card2_title',
     label: 'Заголовок второй карточки',
     type: 'text',
@@ -25,6 +32,13 @@ export const promoDataSchema = [
     label: 'Описание второй карточки',
     type: 'text',
     default: 'Только сегодня',
+    editable: true,
+  },
+  {
+    key: 'card2_img',
+    label: 'Изображение второй карточки',
+    type: 'image',
+    default: '/images/9.webp',
     editable: true,
   },
   {
@@ -42,6 +56,13 @@ export const promoDataSchema = [
     editable: true,
   },
   {
+    key: 'card3_img',
+    label: 'Изображение третьей карточки',
+    type: 'image',
+    default: '/images/9.webp',
+    editable: true,
+  },
+  {
     key: 'card4_title',
     label: 'Заголовок четвертой карточки',
     type: 'text',
@@ -53,6 +74,13 @@ export const promoDataSchema = [
     label: 'Описание четвертой карточки',
     type: 'text',
     default: 'Пицца с трюфелем',
+    editable: true,
+  },
+  {
+    key: 'card4_img',
+    label: 'Изображение четвертой карточки',
+    type: 'image',
+    default: '/images/9.webp',
     editable: true,
   },
   {
@@ -70,6 +98,13 @@ export const promoDataSchema = [
     editable: true,
   },
   {
+    key: 'card5_img',
+    label: 'Изображение пятой карточки',
+    type: 'image',
+    default: '/images/9.webp',
+    editable: true,
+  },
+  {
     key: 'card6_title',
     label: 'Заголовок шестой карточки',
     type: 'text',
@@ -81,6 +116,13 @@ export const promoDataSchema = [
     label: 'Описание шестой карточки',
     type: 'text',
     default: 'Премиум рецепт',
+    editable: true,
+  },
+  {
+    key: 'card6_img',
+    label: 'Изображение шестой карточки',
+    type: 'image',
+    default: '/images/9.webp',
     editable: true,
   },
 ]

@@ -49,12 +49,15 @@ export const PromoCards = ({ settings = {}, data = {}, commonSettings = {} }) =>
     { id: 6, title: 'Супер сырная', desc: 'Премиум рецепт', img_url: pizzaImg },
   ]
 
+  const cardCount = settings?.card_count || defaultCards.length
+
   const cards = Array.isArray(data.cards)
-    ? data.cards
-    : defaultCards.map((card, idx) => ({
+    ? data.cards.slice(0, cardCount)
+    : defaultCards.slice(0, cardCount).map((card, idx) => ({
         ...card,
         title: data[`card${idx + 1}_title`] || card.title,
         desc: data[`card${idx + 1}_desc`] || card.desc,
+        img_url: data[`card${idx + 1}_img`] || card.img_url,
       }))
 
   const scrollRef = useRef(null)
