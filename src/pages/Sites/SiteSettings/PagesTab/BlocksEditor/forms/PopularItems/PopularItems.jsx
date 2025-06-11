@@ -65,8 +65,9 @@ export const PopularItems = ({ settings = {}, data = {}, commonSettings = {} }) 
         img_url: data[`item${idx + 1}_img`] || item.img_url,
       }))
 
-  const cards_count = settings?.cards_count || defaultItems.length
-  const items = rawItems.slice(0, cards_count)
+  const parsedCount = parseInt(settings?.cards_count, 10)
+  const cardsCount = Number.isFinite(parsedCount) && parsedCount > 0 ? parsedCount : defaultItems.length
+  const items = rawItems.slice(0, cardsCount)
 
   const baseUrl = import.meta.env.VITE_LIBRARY_ASSETS_URL || ''
 
