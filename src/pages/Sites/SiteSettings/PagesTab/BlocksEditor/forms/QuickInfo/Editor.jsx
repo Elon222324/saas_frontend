@@ -5,7 +5,6 @@ import { quickInfoDataSchema } from './quickInfoDataSchema'
 import { fieldTypes } from '@/components/fields/fieldTypes'
 import QuickInfoItemsEditor from './ItemsEditor'
 import QuickInfoAppearance from './Appearance'
-import QuickInfoPreview from './QuickInfoPreview'
 import { useBlockAppearance } from '@blocks/forms/hooks/useBlockAppearance'
 import { useBlockData } from '@blocks/forms/hooks/useBlockData'
 
@@ -14,7 +13,6 @@ export default function QuickInfoEditor({ block, slug, onChange }) {
   const block_id = block?.real_id
   const [dataState, setDataState] = useState(block?.data || {})
   const [settingsState, setSettingsState] = useState(block?.settings || {})
-  const [showToast, setShowToast] = useState(false)
 
   useEffect(() => {
     setDataState(block?.data || {})
@@ -79,11 +77,6 @@ export default function QuickInfoEditor({ block, slug, onChange }) {
 
   return (
     <div className="space-y-6 relative">
-      {showToast && (
-        <div className="absolute top-0 right-0 bg-green-100 text-green-800 px-3 py-1 rounded shadow text-sm transition-opacity duration-300">
-          ✅ Порядок сохранён
-        </div>
-      )}
       {(savedAppearance || savedData) && (
         <div className="text-green-600 text-sm font-medium">
           ✅ {savedAppearance ? 'Внешний вид' : 'Содержимое'} сохранено
@@ -95,12 +88,14 @@ export default function QuickInfoEditor({ block, slug, onChange }) {
       </div>
 
       <QuickInfoItemsEditor
+        schema={quickInfoDataSchema}
+        data={dataState}
         settings={settingsState}
-        siteName={site_name}
-        siteData={siteData}
-        setData={setData}
-        onChange={onChange}
-        setShowToast={setShowToast}
+        onTextChange={handleTextFieldChange}
+        onSaveData={() => handleSaveData(dataState)}
+        showButton={showDataButton}
+        resetButton={resetData}
+        uiDefaults={uiDefaults}
       />
 
       <QuickInfoAppearance
