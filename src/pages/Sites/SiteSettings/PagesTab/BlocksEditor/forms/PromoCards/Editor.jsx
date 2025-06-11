@@ -83,6 +83,7 @@ export default function PromoEditor({ block, slug, onChange }) {
       <PromoItemsEditor
         schema={promoDataSchema}
         data={dataState}
+        settings={settingsState}
         onTextChange={handleDataChange}
         onSaveData={() => handleSaveData(dataState)}
         showButton={showDataButton}
