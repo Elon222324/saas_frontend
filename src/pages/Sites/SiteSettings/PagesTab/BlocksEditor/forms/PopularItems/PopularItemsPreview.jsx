@@ -4,7 +4,7 @@ import { PreviewWrapper } from '@preview/PreviewWrapper'
 import { PopularItems } from './PopularItems'
 import { applyCssVariablesFromUiSchema } from '@preview/utils/applyCssVariables'
 
-export default function PopularItemsPreview({ settings = {}, commonSettings = {} }) {
+export default function PopularItemsPreview({ settings = {}, data = {}, commonSettings = {} }) {
   const { data: globalSiteData } = useSiteSettings()
   const [styleVars, setStyleVars] = useState({})
 
@@ -37,7 +37,7 @@ export default function PopularItemsPreview({ settings = {}, commonSettings = {}
     <PreviewWrapper>
       <div style={styleVars}>
         <div className="max-w-full mx-auto text-[13px] leading-tight">
-          <PopularItems settings={settings} commonSettings={commonSettings} />
+          <PopularItems settings={settings} data={data} commonSettings={commonSettings} />
         </div>
       </div>
     </PreviewWrapper>
