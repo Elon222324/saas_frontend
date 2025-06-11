@@ -71,14 +71,6 @@ export const promoSchema = [
     visible_if: { custom_appearance: true }
   },
   {
-    key: 'card_count',
-    label: 'Количество карточек',
-    type: 'number',
-    default: 6,
-    editable: true,
-    visible_if: { custom_appearance: true }
-  },
-  {
     key: 'card_width',
     label: 'Ширина карточек (в px)',
     type: 'number',
