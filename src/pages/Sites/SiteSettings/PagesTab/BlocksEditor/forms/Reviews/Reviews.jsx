@@ -74,7 +74,7 @@ export const Reviews = ({ settings = {}, data = {}, commonSettings = {} }) => {
 
     imgs?.forEach((img) => observer.observe(img))
     return () => observer.disconnect()
-  }, [])
+  }, [reviews])
 
   useEffect(() => {
     if (!source?.slider_enabled) return
@@ -187,6 +187,7 @@ export const Reviews = ({ settings = {}, data = {}, commonSettings = {} }) => {
             >
               <div className="flex items-center gap-3 mb-2">
                 <img
+                  src={review.img_url && review.img_url.startsWith('/') ? `${assetsBase}${review.img_url}` : review.img_url || pizzaImg}
                   data-src={review.img_url && review.img_url.startsWith('/') ? `${assetsBase}${review.img_url}` : review.img_url || pizzaImg}
                   alt={review.name}
                   className="object-cover rounded-full border"
