@@ -4,6 +4,7 @@ import { fieldTypes } from '@/components/fields/fieldTypes'
 export default function ReviewsItemsEditor({
   schema,
   data,
+  settings = {},
   onTextChange,
   onSaveData,
   showButton,
@@ -22,6 +23,13 @@ export default function ReviewsItemsEditor({
       setInternalVisible(true)
     }
   }, [showButton, resetButton])
+
+  const fieldsPerReview = 4
+  const defaultReviews = schema.length / fieldsPerReview
+  const count = settings?.reviews_count || defaultReviews
+  const limitedSchema = Array.isArray(schema)
+    ? schema.slice(0, count * fieldsPerReview)
+    : []
 
   const renderField = (field) => {
     if (!field.editable) return null
@@ -43,7 +51,7 @@ export default function ReviewsItemsEditor({
 
   return (
     <div className="pt-4 border-t mt-6 space-y-4 relative z-0">
-      {schema.map(renderField)}
+      {limitedSchema.map(renderField)}
 
       {internalVisible && (
         <div>

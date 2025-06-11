@@ -20,6 +20,7 @@ export const Reviews = ({ settings = {}, data = {}, commonSettings = {} }) => {
         avatar_size: 'medium',
         card_shadow: 'low',
         transition_effect: 'slide',
+        reviews_count: defaultReviews.length,
       }
 
   const sectionBg = source?.section_bg_color || '#F9FAFB'
@@ -50,7 +51,8 @@ export const Reviews = ({ settings = {}, data = {}, commonSettings = {} }) => {
         img_url: data[`review${idx + 1}_img`] ?? rev.img_url,
       }))
 
-  const reviews = rawReviews
+  const reviews_count = source?.reviews_count || rawReviews.length
+  const reviews = rawReviews.slice(0, reviews_count)
 
   const sectionRef = useRef(null)
   const scrollRef = useRef(null)

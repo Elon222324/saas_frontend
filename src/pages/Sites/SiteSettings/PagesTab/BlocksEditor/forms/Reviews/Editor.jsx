@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
 import { reviewsSchema } from './reviewsSchema'
-import { reviewsDataSchema } from './reviewsDataSchema'
+import { createReviewsDataSchema } from './reviewsDataSchema'
 import { fieldTypes } from '@/components/fields/fieldTypes'
 import ReviewsItemsEditor from './ItemsEditor'
 import ReviewsAppearance from './Appearance'
@@ -50,7 +50,7 @@ export default function ReviewsEditor({ block, slug, onChange }) {
     resetButton: resetData,
     showSaveButton: showDataButton,
   } = useBlockData({
-    schema: reviewsDataSchema,
+    schema: createReviewsDataSchema(settingsState?.reviews_count || 4),
     data: dataState,
     block_id,
     slug,
@@ -80,8 +80,9 @@ export default function ReviewsEditor({ block, slug, onChange }) {
       </div>
 
       <ReviewsItemsEditor
-        schema={reviewsDataSchema}
+        schema={createReviewsDataSchema(settingsState?.reviews_count || 4)}
         data={dataState}
+        settings={settingsState}
         onTextChange={handleDataChange}
         onSaveData={() => handleSaveData(dataState)}
         showButton={showDataButton}
