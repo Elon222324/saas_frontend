@@ -38,6 +38,7 @@ export const PromoCards = ({ settings = {}, data = {}, commonSettings = {} }) =>
     block_padding_y = 24,
     card_width = 192,
     card_padding = 6,
+    cards_count = 6,
   } = source
 
   const defaultCards = [
@@ -49,16 +50,16 @@ export const PromoCards = ({ settings = {}, data = {}, commonSettings = {} }) =>
     { id: 6, title: 'Супер сырная', desc: 'Премиум рецепт', img_url: pizzaImg },
   ]
 
-  const cardCount = settings?.card_count || defaultCards.length
 
-  const cards = Array.isArray(data.cards)
-    ? data.cards.slice(0, cardCount)
-    : defaultCards.slice(0, cardCount).map((card, idx) => ({
+  const rawCards = Array.isArray(data.cards)
+    ? data.cards
+    : defaultCards.map((card, idx) => ({
         ...card,
         title: data[`card${idx + 1}_title`] || card.title,
         desc: data[`card${idx + 1}_desc`] || card.desc,
         img_url: data[`card${idx + 1}_img`] || card.img_url,
       }))
+  const cards = rawCards.slice(0, cards_count)
 
   const scrollRef = useRef(null)
   let isDown = false
@@ -110,6 +111,8 @@ export const PromoCards = ({ settings = {}, data = {}, commonSettings = {} }) =>
     high: 'shadow-xl',
   }[hover_shadow] || ''
 
+  const baseUrl = import.meta.env.VITE_LIBRARY_ASSETS_URL || ''
+
   return (
     <div
       className="w-full mt-4 mb-6 overflow-visible"
@@ -124,7 +127,13 @@ export const PromoCards = ({ settings = {}, data = {}, commonSettings = {} }) =>
         className="flex overflow-x-auto overflow-y-visible no-scrollbar px-2 cursor-grab select-none"
         style={{ gap: `${gap}px`, WebkitOverflowScrolling: 'touch' }}
       >
-        {cards.map((card) => (
+        {cards.map((card) => {
+          const imageUrl = card.img_url
+            ? card.img_url.startsWith('/')
+              ? baseUrl + card.img_url
+              : card.img_url
+            : pizzaImg
+          return (
           <div key={card.id} style={{ perspective: '1000px' }}>
             <div style={{ paddingTop: `${card_padding}px`, paddingBottom: `${card_padding}px` }}>
               <div
@@ -137,7 +146,7 @@ export const PromoCards = ({ settings = {}, data = {}, commonSettings = {} }) =>
               >
                 <div className="w-full h-[60%] flex items-center justify-center">
                   <img
-                    src={card.img_url || pizzaImg}
+                    src={imageUrl}
                     alt={card.title}
                     className="w-full h-full object-contain p-4"
                     draggable={false}
@@ -160,7 +169,7 @@ export const PromoCards = ({ settings = {}, data = {}, commonSettings = {} }) =>
               </div>
             </div>
           </div>
-        ))}
+        )})}
       </div>
     </div>
   )

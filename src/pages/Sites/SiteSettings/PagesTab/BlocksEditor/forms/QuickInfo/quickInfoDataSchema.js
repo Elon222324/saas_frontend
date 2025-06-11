@@ -1,10 +1,37 @@
-export const quickInfoDataSchema = [
-  { key: 'title1', label: 'Заголовок 1', type: 'text', default: 'Мин. заказ на доставку', editable: true },
-  { key: 'desc1', label: 'Описание 1', type: 'text', default: 'от 500 руб.', editable: true },
-  { key: 'title2', label: 'Заголовок 2', type: 'text', default: 'Стоимость доставки', editable: true },
-  { key: 'desc2', label: 'Описание 2', type: 'text', default: 'от 100 руб.', editable: true },
-  { key: 'title3', label: 'Заголовок 3', type: 'text', default: 'Время доставки', editable: true },
-  { key: 'desc3', label: 'Описание 3', type: 'text', default: 'до 59 мин.', editable: true },
-  { key: 'title4', label: 'Заголовок 4', type: 'text', default: 'Скидка за самовывоз', editable: true },
-  { key: 'desc4', label: 'Описание 4', type: 'text', default: '−10%', editable: true },
+export const defaultQuickInfoItems = [
+  { title: 'Мин. заказ на доставку', desc: 'от 500 руб.' },
+  { title: 'Стоимость доставки', desc: 'от 100 руб.' },
+  { title: 'Время доставки', desc: 'до 59 мин.' },
+  { title: 'Скидка за самовывоз', desc: '−10%' },
 ]
+
+export const createQuickInfoDataSchema = (count = 4) => {
+  const schema = []
+  for (let i = 1; i <= count; i++) {
+    const base = defaultQuickInfoItems[i - 1] || {
+      title: `Заголовок ${i}`,
+      desc: `Описание ${i}`,
+    }
+
+    schema.push(
+      {
+        key: `title${i}`,
+        label: `Заголовок ${i}`,
+        type: 'text',
+        default: base.title,
+        editable: true,
+      },
+      {
+        key: `desc${i}`,
+        label: `Описание ${i}`,
+        type: 'text',
+        default: base.desc,
+        editable: true,
+      },
+    )
+  }
+
+  return schema
+}
+
+export const quickInfoDataSchema = createQuickInfoDataSchema(4)

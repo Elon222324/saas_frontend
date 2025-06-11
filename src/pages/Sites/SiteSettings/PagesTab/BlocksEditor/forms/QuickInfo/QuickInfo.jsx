@@ -1,4 +1,5 @@
 import React from 'react'
+import { defaultQuickInfoItems } from './quickInfoDataSchema'
 
 export const QuickInfo = ({ settings = {}, data = {}, commonSettings = {} }) => {
   const isCustom = settings?.custom_appearance === true
@@ -38,21 +39,19 @@ export const QuickInfo = ({ settings = {}, data = {}, commonSettings = {} }) => 
   const variant = source?.card_variant || 'flat'
   const showCards = source?.show_cards !== false
 
-  const defaultItems = [
-    { title: 'Мин. заказ на доставку', description: 'от 500 руб.' },
-    { title: 'Стоимость доставки', description: 'от 100 руб.' },
-    { title: 'Время доставки', description: 'до 59 мин.' },
-    { title: 'Скидка за самовывоз', description: '−10%' },
-  ]
+  const defaultItems = defaultQuickInfoItems
 
   const items = []
-  const count = Math.min(cols, defaultItems.length)
-  for (let i = 1; i <= count; i++) {
+  for (let i = 1; i <= cols; i++) {
     const titleKey = `title${i}`
     const descKey = `desc${i}`
+    const defaults = defaultItems[i - 1] || {
+      title: `Заголовок ${i}`,
+      desc: `Описание ${i}`,
+    }
     items.push({
-      title: data?.[titleKey] ?? defaultItems[i - 1].title,
-      description: data?.[descKey] ?? defaultItems[i - 1].description,
+      title: data?.[titleKey] ?? defaults.title,
+      description: data?.[descKey] ?? defaults.desc,
     })
   }
 

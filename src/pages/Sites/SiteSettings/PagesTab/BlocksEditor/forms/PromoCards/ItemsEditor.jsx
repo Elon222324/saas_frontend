@@ -24,8 +24,8 @@ export default function PromoItemsEditor({
     }
   }, [showButton, resetButton])
 
-  const count = settings?.card_count || 6
-  const limitedSchema = Array.isArray(schema) ? schema.slice(0, count * 3) : []
+  const count = settings?.cards_count || schema.length / 2
+  const limitedSchema = Array.isArray(schema) ? schema.slice(0, count * 2) : []
 
   const renderField = (field) => {
     if (!field.editable) return null
@@ -61,4 +61,4 @@ export default function PromoItemsEditor({
       )}
     </div>
   )
-}
+}ф

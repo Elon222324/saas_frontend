@@ -24,8 +24,7 @@ export default function QuickInfoItemsEditor({
     }
   }, [showButton, resetButton])
 
-  const cols = settings?.grid_cols || 4
-  const limitedSchema = Array.isArray(schema) ? schema.slice(0, cols * 2) : []
+  const limitedSchema = Array.isArray(schema) ? schema : []
 
   const renderField = (field) => {
     if (!field.editable) return null
