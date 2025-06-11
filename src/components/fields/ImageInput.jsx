@@ -4,6 +4,13 @@ import CloudModal from '@/cloud/CloudModal'
 export default function ImageInput({ label, value, onChange, category = 'logo' }) {
   const [isOpen, setIsOpen] = useState(false)
 
+  // Подставляем полный URL для превью, если передан относительный путь
+  const previewSrc = value
+    ? value.startsWith('http')
+      ? value
+      : `${import.meta.env.VITE_ASSETS_URL}${value}`
+    : ''
+
   return (
     <div className="space-y-1">
       <span className="font-medium block">{label}</span>
@@ -14,7 +21,11 @@ export default function ImageInput({ label, value, onChange, category = 'logo' }
       >
         {value ? (
           <>
-            <img src={value} alt="preview" className="w-10 h-10 object-contain" />
+            <img
+              src={previewSrc}
+              alt="preview"
+              className="w-10 h-10 object-contain"
+            />
             <span className="text-sm text-gray-600 truncate">{value}</span>
           </>
         ) : (
@@ -27,7 +38,7 @@ export default function ImageInput({ label, value, onChange, category = 'logo' }
           isOpen={isOpen}
           category={category}
           onSelect={(url) => {
-            if (url) onChange(url)
+            if (url) onChange(url)  // сохраняем относительный URL
             setIsOpen(false)
           }}
         />
