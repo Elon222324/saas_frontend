@@ -48,12 +48,27 @@ export const PopularItems = ({ settings = {}, data = {}, commonSettings = {} }) 
   const imageSize = imageSizeMap[source?.image_size] || 'w-24 h-24'
 
   const defaultItems = [
-    { id: 1, name: 'Пепперони фреш', price: 'от 409 ₽' },
-    { id: 2, name: '3 пиццы 30 см', price: '1 449 ₽' },
-    { id: 3, name: '2 соуса', price: '75 ₽' },
+    { id: 1, name: 'Пепперони фреш', price: 'от 409 ₽', img_url: pizzaImg },
+    { id: 2, name: '3 пиццы 30 см', price: '1 449 ₽', img_url: pizzaImg },
+    { id: 3, name: '2 соуса', price: '75 ₽', img_url: pizzaImg },
+    { id: 4, name: 'Товар 4', price: '', img_url: pizzaImg },
+    { id: 5, name: 'Товар 5', price: '', img_url: pizzaImg },
+    { id: 6, name: 'Товар 6', price: '', img_url: pizzaImg },
   ]
 
-  const items = data.items?.length ? data.items : defaultItems
+  const rawItems = Array.isArray(data.items)
+    ? data.items
+    : defaultItems.map((item, idx) => ({
+        ...item,
+        name: data[`item${idx + 1}_name`] || item.name,
+        price: data[`item${idx + 1}_price`] || item.price,
+        img_url: data[`item${idx + 1}_img`] || item.img_url,
+      }))
+
+  const cards_count = settings?.cards_count || defaultItems.length
+  const items = rawItems.slice(0, cards_count)
+
+  const baseUrl = import.meta.env.VITE_LIBRARY_ASSETS_URL || ''
 
   const cssVars = {
     '--padding-top': `${paddingTop}px`,
@@ -90,7 +105,7 @@ export const PopularItems = ({ settings = {}, data = {}, commonSettings = {} }) 
               }}
             />
             <img
-              src={pizzaImg}
+              src={item.img_url ? (item.img_url.startsWith('/') ? baseUrl + item.img_url : item.img_url) : pizzaImg}
               alt={item.name}
               className={`${imageSize} object-cover`}
             />
