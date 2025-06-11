@@ -102,5 +102,13 @@ export const productsSchema = [
     default: 40,
     editable: true,
     visible_if: { custom_appearance: true }
+  },
+  {
+    key: 'cards_count',
+    label: 'Количество карточек',
+    type: 'number',
+    default: 3,
+    editable: true,
+    visible_if: { custom_appearance: true }
   }
 ]

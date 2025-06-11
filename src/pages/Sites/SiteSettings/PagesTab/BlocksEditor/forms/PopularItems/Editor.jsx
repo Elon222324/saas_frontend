@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
 import { productsSchema } from './productsSchema'
-import { productsDataSchema } from './productsDataSchema'
+import { createProductsDataSchema } from './productsDataSchema'
 import { fieldTypes } from '@/components/fields/fieldTypes'
 import ProductsItemsEditor from './ItemsEditor'
 import ProductsAppearance from './Appearance'
@@ -12,7 +12,6 @@ import { useBlockData } from '@blocks/forms/hooks/useBlockData'
 export default function ProductsEditor({ block, slug, onChange }) {
   const { data: siteData, site_name, setData } = useSiteSettings()
   const block_id = block?.real_id
-  const [showToast, setShowToast] = useState(false)
   const [dataState, setDataState] = useState(block?.data || {})
   const [settingsState, setSettingsState] = useState(block?.settings || {})
 
@@ -52,7 +51,7 @@ export default function ProductsEditor({ block, slug, onChange }) {
     resetButton: resetData,
     showSaveButton: showDataButton,
   } = useBlockData({
-    schema: productsDataSchema,
+    schema: createProductsDataSchema(settingsState?.cards_count || 3),
     data: dataState,
     block_id,
     slug,
@@ -69,11 +68,6 @@ export default function ProductsEditor({ block, slug, onChange }) {
 
   return (
     <div className="space-y-6 relative">
-      {showToast && (
-        <div className="absolute top-0 right-0 bg-green-100 text-green-800 px-3 py-1 rounded shadow text-sm transition-opacity duration-300">
-          ✅ Порядок сохранён
-        </div>
-      )}
       {(savedAppearance || savedData) && (
         <div className="text-green-600 text-sm font-medium">
           ✅ {savedAppearance ? 'Внешний вид' : 'Содержимое'} сохранено
@@ -85,16 +79,14 @@ export default function ProductsEditor({ block, slug, onChange }) {
       </div>
 
       <ProductsItemsEditor
-        settings={settingsState}
+        schema={createProductsDataSchema(settingsState?.cards_count || 3)}
         data={dataState}
-        siteName={site_name}
-        siteData={siteData}
-        setData={setData}
-        onChange={handleDataChange}
-        setShowToast={setShowToast}
+        settings={settingsState}
+        onTextChange={handleDataChange}
         onSaveData={() => handleSaveData(dataState)}
         showButton={showDataButton}
         resetButton={resetData}
+        uiDefaults={uiDefaults}
       />
 
       <ProductsAppearance
