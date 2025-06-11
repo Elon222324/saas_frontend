@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
 import { quickInfoSchema } from './quickInfoSchema'
-import { quickInfoDataSchema } from './quickInfoDataSchema'
+import {
+  quickInfoDataSchema,
+  createQuickInfoDataSchema,
+} from './quickInfoDataSchema'
 import { fieldTypes } from '@/components/fields/fieldTypes'
 import QuickInfoItemsEditor from './ItemsEditor'
 import QuickInfoAppearance from './Appearance'
@@ -55,7 +58,7 @@ export default function QuickInfoEditor({ block, slug, onChange }) {
     resetButton: resetData,
     showSaveButton: showDataButton,
   } = useBlockData({
-    schema: quickInfoDataSchema,
+    schema: createQuickInfoDataSchema(settingsState?.grid_cols || 4),
     data: dataState,
     block_id,
     slug,
@@ -88,7 +91,7 @@ export default function QuickInfoEditor({ block, slug, onChange }) {
       </div>
 
       <QuickInfoItemsEditor
-        schema={quickInfoDataSchema}
+        schema={createQuickInfoDataSchema(settingsState?.grid_cols || 4)}
         data={dataState}
         settings={settingsState}
         onTextChange={handleTextFieldChange}

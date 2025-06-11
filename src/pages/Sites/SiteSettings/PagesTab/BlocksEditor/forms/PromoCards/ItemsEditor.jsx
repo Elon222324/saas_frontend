@@ -4,6 +4,7 @@ import { fieldTypes } from '@/components/fields/fieldTypes'
 export default function PromoItemsEditor({
   schema,
   data,
+  settings = {},
   onTextChange,
   onSaveData,
   showButton,
@@ -22,6 +23,9 @@ export default function PromoItemsEditor({
       setInternalVisible(true)
     }
   }, [showButton, resetButton])
+
+  const count = settings?.cards_count || schema.length / 2
+  const limitedSchema = Array.isArray(schema) ? schema.slice(0, count * 2) : []
 
   const renderField = (field) => {
     if (!field.editable) return null
@@ -43,7 +47,7 @@ export default function PromoItemsEditor({
 
   return (
     <div className="pt-4 border-t mt-6 space-y-4 relative z-0">
-      {schema.map(renderField)}
+      {limitedSchema.map(renderField)}
 
       {internalVisible && (
         <div>
