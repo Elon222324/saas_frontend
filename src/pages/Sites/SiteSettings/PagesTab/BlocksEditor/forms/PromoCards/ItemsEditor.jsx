@@ -24,8 +24,12 @@ export default function PromoItemsEditor({
     }
   }, [showButton, resetButton])
 
-  const count = settings?.cards_count || schema.length / 2
-  const limitedSchema = Array.isArray(schema) ? schema.slice(0, count * 2) : []
+  const fieldsPerCard = 3
+  const defaultCards = schema.length / fieldsPerCard
+  const count = settings?.cards_count || defaultCards
+  const limitedSchema = Array.isArray(schema)
+    ? schema.slice(0, count * fieldsPerCard)
+    : []
 
   const renderField = (field) => {
     if (!field.editable) return null
