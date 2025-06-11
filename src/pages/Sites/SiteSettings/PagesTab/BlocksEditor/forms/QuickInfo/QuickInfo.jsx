@@ -45,26 +45,16 @@ export const QuickInfo = ({ settings = {}, data = {}, commonSettings = {} }) => 
     { title: 'Скидка за самовывоз', description: '−10%' },
   ]
 
-  const items = (() => {
-    if (
-      data?.title1 ||
-      data?.desc1 ||
-      data?.title2 ||
-      data?.desc2 ||
-      data?.title3 ||
-      data?.desc3 ||
-      data?.title4 ||
-      data?.desc4
-    ) {
-      return [
-        { title: data.title1, description: data.desc1 },
-        { title: data.title2, description: data.desc2 },
-        { title: data.title3, description: data.desc3 },
-        { title: data.title4, description: data.desc4 },
-      ]
-    }
-    return defaultItems
-  })()
+  const items = []
+  const count = Math.min(cols, defaultItems.length)
+  for (let i = 1; i <= count; i++) {
+    const titleKey = `title${i}`
+    const descKey = `desc${i}`
+    items.push({
+      title: data?.[titleKey] ?? defaultItems[i - 1].title,
+      description: data?.[descKey] ?? defaultItems[i - 1].description,
+    })
+  }
 
   const hexToRgba = (hex, alpha = 0.6) => {
     if (!hex || hex[0] !== '#' || (hex.length !== 7 && hex.length !== 4)) return hex
