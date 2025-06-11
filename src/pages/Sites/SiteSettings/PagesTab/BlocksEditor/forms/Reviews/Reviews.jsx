@@ -53,6 +53,7 @@ export const Reviews = ({ settings = {}, data = {}, commonSettings = {} }) => {
 
   const reviews_count = source?.reviews_count || rawReviews.length
   const reviews = rawReviews.slice(0, reviews_count)
+  const assetsBase = import.meta.env.VITE_ASSETS_URL || ''
 
   const sectionRef = useRef(null)
   const scrollRef = useRef(null)
@@ -186,7 +187,7 @@ export const Reviews = ({ settings = {}, data = {}, commonSettings = {} }) => {
             >
               <div className="flex items-center gap-3 mb-2">
                 <img
-                  data-src={review.img_url || pizzaImg}
+                  data-src={review.img_url && review.img_url.startsWith('/') ? `${assetsBase}${review.img_url}` : review.img_url || pizzaImg}
                   alt={review.name}
                   className="object-cover rounded-full border"
                   style={{ width: avatarSize, height: avatarSize }}
