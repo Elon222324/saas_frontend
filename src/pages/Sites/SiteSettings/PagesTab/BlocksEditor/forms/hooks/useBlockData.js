@@ -14,11 +14,8 @@ export function useBlockData({ schema, data, block_id, slug, site_name, setData,
     }
 
     setInitialData(values)
-
-    const isChanged = schema.some(
-      (field) => data?.[field.key] !== values[field.key]
-    )
-    setReadyToCheck(isChanged)
+    // freshly opened blocks should not show the save button
+    setReadyToCheck(false)
   }, [block_id])
 
   const handleFieldChange = (key, value) => {

@@ -35,19 +35,14 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
     const values = {}
     for (const field of schema) {
       if (field.visible_if?.custom_appearance) {
-        values[field.key] = data[field.key] !== undefined ? data[field.key] : uiDefaults[field.key]
+        values[field.key] =
+          data[field.key] !== undefined ? data[field.key] : uiDefaults[field.key]
       }
     }
 
     setInitialAppearance(values)
-
-    requestAnimationFrame(() => {
-      const isChanged = schema.some(field => {
-        if (!field.visible_if?.custom_appearance) return false
-        return data[field.key] !== values[field.key]
-      })
-      setReadyToCheck(isChanged)
-    })
+    // do not flag changes when the block just opened
+    setReadyToCheck(false)
   }, [block_id])
 
   const handleFieldChange = (key, value) => {
