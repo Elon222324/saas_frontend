@@ -53,9 +53,11 @@ export const Delivery = ({ settings = {}, data = {}, commonSettings = {} }) => {
     data.info_footer || 'Изображения продуктов могут отличаться от продуктов в заказе.'
   const mapTitle = data.map_title || 'ЗОНА ДОСТАВКИ ОГРАНИЧЕНА'
 
-  const rawMap = data.map_image || mapImage
-  const assetsBase = import.meta.env.VITE_LIBRARY_ASSETS_URL || ''
-  const mapUrl = rawMap.startsWith('/') ? assetsBase + rawMap : rawMap
+  const assetsBase = import.meta.env.VITE_ASSETS_URL || ''
+  const mapUrl =
+    data.map_image && data.map_image.startsWith('/')
+      ? `${assetsBase}${data.map_image}`
+      : data.map_image || mapImage
 
   return (
     <div
