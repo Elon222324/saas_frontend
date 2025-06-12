@@ -2,19 +2,7 @@ import { useState, useEffect } from 'react'
 import { initBlockAppearanceFromCommon } from '@blocks/forms/utils/initBlockAppearanceFromCommon'
 
 export function useBlockAppearance({ schema, data, block_id, slug, siteData, site_name, setData, onChange }) {
-  const normalize = (val) => (val !== undefined ? val : '')
-
-  const getValues = (source = {}) => {
-    const values = {}
-    for (const field of schema) {
-      if (field.visible_if?.custom_appearance) {
-        values[field.key] = normalize(source[field.key])
-      }
-    }
-    return values
-  }
-
-  const [initialAppearance, setInitialAppearance] = useState(getValues(data))
+  const [initialAppearance, setInitialAppearance] = useState({})
   const [readyToCheck, setReadyToCheck] = useState(false)
   const [showSavedToast, setShowSavedToast] = useState(false)
   const [resetButton, setResetButton] = useState(false)
@@ -29,6 +17,7 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
     }
   }
 
+  // авто-синхронизация синонимов
   if (uiDefaults.background_color && !uiDefaults.bg_color) {
     uiDefaults.bg_color = uiDefaults.background_color
   }
@@ -46,31 +35,20 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
     const values = {}
     for (const field of schema) {
       if (field.visible_if?.custom_appearance) {
-        values[field.key] =
-          data[field.key] !== undefined
-            ? data[field.key]
-            : uiDefaults[field.key]
+        values[field.key] = data[field.key] !== undefined ? data[field.key] : uiDefaults[field.key]
       }
     }
 
     setInitialAppearance(values)
-    setReadyToCheck(false)
-  }, [block_id])
 
-  useEffect(() => {
-    if (!data?.custom_appearance) {
-      setReadyToCheck(false)
-      return
-    }
-
-    const changed = schema.some(field => {
-      if (!field.visible_if?.custom_appearance) return false
-      const current = normalize(data[field.key])
-      const initVal = normalize(initialAppearance[field.key])
-      return current !== initVal
+    requestAnimationFrame(() => {
+      const isChanged = schema.some(field => {
+        if (!field.visible_if?.custom_appearance) return false
+        return data[field.key] !== values[field.key]
+      })
+      setReadyToCheck(isChanged)
     })
-    setReadyToCheck(changed)
-  }, [data])
+  }, [block_id])
 
   const handleFieldChange = (key, value) => {
     if (key === 'custom_appearance' && value === false) {
@@ -107,11 +85,9 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
       if (prev.custom_appearance) {
         const changed = schema.some(field => {
           if (!field.visible_if?.custom_appearance) return false
-          const newVal = normalize(updated[field.key])
-          const initVal = normalize(initialAppearance[field.key])
-          return newVal !== initVal
+          return updated[field.key] !== initialAppearance[field.key]
         })
-        setReadyToCheck(changed)
+        requestAnimationFrame(() => setReadyToCheck(changed))
       }
 
       return updated
@@ -120,12 +96,9 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
 
   const hasAppearanceChanged = () => {
     if (!readyToCheck || !data?.custom_appearance) return false
-    if (!Object.keys(initialAppearance).length) return false
     return schema.some(field => {
       if (!field.visible_if?.custom_appearance) return false
-      const current = normalize(data[field.key])
-      const initVal = normalize(initialAppearance[field.key])
-      return current !== initVal
+      return data[field.key] !== initialAppearance[field.key]
     })
   }
 
@@ -152,6 +125,7 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
           body: JSON.stringify({ settings: filteredSettings }),
         }
       )
+      if (!res.ok) throw new Error(await res.text())
 
       setInitialAppearance(filteredSettings)
       setReadyToCheck(false)
@@ -183,7 +157,7 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
     }
   }
 
-  const showSaveButton = data?.custom_appearance ? (readyToCheck && hasAppearanceChanged()) : false
+  const showSaveButton = readyToCheck && data?.custom_appearance && hasAppearanceChanged()
   console.log('[🔥 uiDefaults]', uiDefaults)
 
   return {
