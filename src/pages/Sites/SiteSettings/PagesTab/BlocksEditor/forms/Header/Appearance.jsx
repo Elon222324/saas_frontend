@@ -48,17 +48,6 @@ export default function NavigationAppearance({
   return (
     <div className="pt-4 border-t mt-6 space-y-4">
       {schema.map(field => field.editable && renderField(field))}
-
-      {internalVisible && (
-        <div>
-          <button
-            onClick={() => onSaveAppearance?.(settings)}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition text-sm"
-          >
-            📂 Сохранить внешний вид блока
-          </button>
-        </div>
-      )}
     </div>
   )
 }
