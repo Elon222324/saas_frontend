@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react'
 
 export function useBlockData({ schema, data, block_id, slug, site_name, setData, onChange }) {
-  const [initialData, setInitialData] = useState({})
+
+  const getValues = (source = {}) => {
+      values[field.key] = normalize(source[field.key])
+    return values
+  }
+  const [initialData, setInitialData] = useState(getValues(data))
   const [readyToCheck, setReadyToCheck] = useState(false)
   const [showSavedToast, setShowSavedToast] = useState(false)
   const [resetButton, setResetButton] = useState(false)
-  const [justMounted, setJustMounted] = useState(true)
-
-  const normalize = (val) => (val !== undefined ? val : '')
 
   useEffect(() => {
+    setInitialData(getValues(data))
     const values = {}
     for (const field of schema) {
       values[field.key] = normalize(data?.[field.key])
@@ -82,6 +85,10 @@ export function useBlockData({ schema, data, block_id, slug, site_name, setData,
       setReadyToCheck(false)
       setShowSavedToast(true)
       setResetButton(true)
+    if (!readyToCheck) {
+      setInitialData(getValues(data))
+    }
+
       setTimeout(() => {
         setShowSavedToast(false)
         setResetButton(false)

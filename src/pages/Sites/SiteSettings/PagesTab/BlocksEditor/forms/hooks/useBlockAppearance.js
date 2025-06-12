@@ -2,7 +2,19 @@ import { useState, useEffect } from 'react'
 import { initBlockAppearanceFromCommon } from '@blocks/forms/utils/initBlockAppearanceFromCommon'
 
 export function useBlockAppearance({ schema, data, block_id, slug, siteData, site_name, setData, onChange }) {
-  const [initialAppearance, setInitialAppearance] = useState({})
+  const normalize = (val) => (val !== undefined ? val : '')
+
+  const getValues = (source = {}) => {
+    const values = {}
+    for (const field of schema) {
+      if (field.visible_if?.custom_appearance) {
+        values[field.key] = normalize(source[field.key])
+      }
+    }
+    return values
+  }
+
+  const [initialAppearance, setInitialAppearance] = useState(getValues(data))
   const [readyToCheck, setReadyToCheck] = useState(false)
   const [showSavedToast, setShowSavedToast] = useState(false)
   const [resetButton, setResetButton] = useState(false)
@@ -25,24 +37,34 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
     uiDefaults.background_color = uiDefaults.bg_color
   }
 
-  const normalize = (val) => (val !== undefined ? val : '')
-
   useEffect(() => {
     if (!data?.custom_appearance) {
       setInitialAppearance({})
       setReadyToCheck(false)
       return
     }
-
-    const values = {}
-    for (const field of schema) {
-      if (field.visible_if?.custom_appearance) {
-        values[field.key] = normalize(data[field.key])
-      }
-    }
-
+    const values = getValues(data)
     setInitialAppearance(values)
     setReadyToCheck(false)
+
+  useEffect(() => {
+    if (!readyToCheck) {
+      setInitialAppearance(getValues(data))
+    }
+
+    if (!data?.custom_appearance) {
+      setReadyToCheck(false)
+      return
+    }
+
+    const changed = schema.some(field => {
+      if (!field.visible_if?.custom_appearance) return false
+      const current = data[field.key] !== undefined ? data[field.key] : ''
+      const initVal = initialAppearance[field.key] !== undefined ? initialAppearance[field.key] : ''
+      return current !== initVal
+    })
+    setReadyToCheck(changed)
+  }, [data])
 
     const changed = schema.some(field => {
       if (!field.visible_if?.custom_appearance) return false
@@ -132,7 +154,6 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
           body: JSON.stringify({ settings: filteredSettings }),
         }
       )
-      if (!res.ok) throw new Error(await res.text())
 
       setInitialAppearance(filteredSettings)
       setReadyToCheck(false)
