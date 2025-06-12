@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+
 import { fieldTypes } from '@/components/fields/fieldTypes'
 
 export default function TextItemsEditor({
@@ -6,22 +6,8 @@ export default function TextItemsEditor({
   data = {},
   onTextChange,
   onSaveData,
-  showButton,
-  resetButton,
   uiDefaults = {},
 }) {
-  const [internalVisible, setInternalVisible] = useState(false)
-
-  useEffect(() => {
-    if (resetButton) {
-      setInternalVisible(false)
-      return
-    }
-
-    if (showButton) {
-      setInternalVisible(true)
-    }
-  }, [showButton, resetButton])
 
   const renderField = field => {
     if (!field.editable) return null
@@ -44,16 +30,6 @@ export default function TextItemsEditor({
   return (
     <div className="pt-4 border-t mt-6 space-y-4 relative z-0">
       {schema.map(renderField)}
-      {internalVisible && (
-        <div>
-          <button
-            onClick={onSaveData}
-            className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition text-sm"
-          >
-            💾 Сохранить содержимое блока
-          </button>
-        </div>
-      )}
     </div>
   )
 }

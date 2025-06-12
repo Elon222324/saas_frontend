@@ -24,7 +24,6 @@ export default function DeliveryEditor({ block, slug, onChange }) {
     handleFieldChange,
     handleSaveAppearance,
     showSavedToast: savedAppearance,
-    resetButton: resetAppearance,
     showSaveButton: showAppearanceButton,
     uiDefaults,
   } = useBlockAppearance({
@@ -48,7 +47,6 @@ export default function DeliveryEditor({ block, slug, onChange }) {
     handleFieldChange: handleTextFieldChange,
     handleSaveData,
     showSavedToast: savedData,
-    resetButton: resetData,
     showSaveButton: showDataButton,
   } = useBlockData({
     schema: deliveryDataSchema,
@@ -79,8 +77,6 @@ export default function DeliveryEditor({ block, slug, onChange }) {
         data={dataState}
         onTextChange={handleTextFieldChange}
         onSaveData={() => handleSaveData(dataState)}
-        showButton={showDataButton}
-        resetButton={resetData}
         uiDefaults={uiDefaults}
       />
 
@@ -94,10 +90,20 @@ export default function DeliveryEditor({ block, slug, onChange }) {
         onChange={handleFieldChange}
         fieldTypes={fieldTypes}
         onSaveAppearance={() => handleSaveAppearance(settingsState)}
-        showButton={showAppearanceButton || settingsState?.custom_appearance === false}
-        resetButton={resetAppearance}
         uiDefaults={uiDefaults}
       />
+
+      {(showDataButton || showAppearanceButton) && (
+        <button
+          onClick={() => {
+            if (showDataButton) handleSaveData(dataState)
+            if (showAppearanceButton) handleSaveAppearance(settingsState)
+          }}
+          className="fixed bottom-4 right-4 z-50 bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition text-sm"
+        >
+          💾 Сохранить
+        </button>
+      )}
     </div>
   )
 }

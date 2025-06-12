@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+
 
 export default function NavigationAppearance({
   schema,
@@ -6,21 +6,8 @@ export default function NavigationAppearance({
   onChange,
   fieldTypes,
   onSaveAppearance,
-  showButton,
-  resetButton,
   uiDefaults = {},
 }) {
-  const [internalVisible, setInternalVisible] = useState(false)
-
-  useEffect(() => {
-    if (resetButton) {
-      setInternalVisible(false)
-      return
-    }
-
-    if (showButton) setInternalVisible(true)
-    if (!settings?.custom_appearance) setInternalVisible(false)
-  }, [showButton, settings?.custom_appearance, resetButton])
 
   const renderField = (field) => {
     if (field.visible_if) {
@@ -48,17 +35,6 @@ export default function NavigationAppearance({
   return (
     <div className="pt-4 border-t mt-6 space-y-4">
       {schema.map(field => field.editable && renderField(field))}
-
-      {internalVisible && (
-        <div>
-          <button
-            onClick={() => onSaveAppearance?.(settings)}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition text-sm"
-          >
-            📂 Сохранить внешний вид блока
-          </button>
-        </div>
-      )}
     </div>
   )
 }

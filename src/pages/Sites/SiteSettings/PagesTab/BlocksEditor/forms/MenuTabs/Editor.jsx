@@ -15,7 +15,6 @@ export default function TabsEditor({ block, data, onChange, slug }) {
     handleFieldChange,
     handleSaveAppearance,
     showSavedToast,
-    resetButton,
     showSaveButton,
     uiDefaults,
   } = useBlockAppearance({
@@ -59,10 +58,17 @@ export default function TabsEditor({ block, data, onChange, slug }) {
         onChange={handleFieldChange}
         fieldTypes={fieldTypes}
         onSaveAppearance={handleSaveAppearance}
-        showButton={showSaveButton || data?.custom_appearance === false}
-        resetButton={resetButton}
         uiDefaults={uiDefaults}
       />
+
+      {showSaveButton && (
+        <button
+          onClick={() => handleSaveAppearance(data)}
+          className="fixed bottom-4 right-4 z-50 bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition text-sm"
+        >
+          💾 Сохранить
+        </button>
+      )}
     </div>
   )
 }
