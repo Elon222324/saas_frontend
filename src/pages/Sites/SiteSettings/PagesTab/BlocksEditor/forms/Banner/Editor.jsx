@@ -76,6 +76,7 @@ export default function BannerEditor({ block, slug, onChange }) {
     },
   })
 
+  
   useEffect(() => {
     setCanShow(showDataButton || showAppearanceButton)
   }, [showDataButton, showAppearanceButton])
