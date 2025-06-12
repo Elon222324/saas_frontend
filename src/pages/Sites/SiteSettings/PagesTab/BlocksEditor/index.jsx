@@ -12,6 +12,11 @@ export default function PageEditor() {
   const [blocks, setBlocks] = useState([])
   const [blockDataMap, setBlockDataMap] = useState({})
   const [selectedId, setSelectedId] = useState(null)
+  const showFloating = true
+
+  const handleSaveAll = async () => {
+    // TODO: integrate actual save handlers
+  }
   const API_URL = import.meta.env.VITE_API_URL
 
   useEffect(() => {
@@ -29,27 +34,6 @@ export default function PageEditor() {
     setBlockDataMap(map)
   }, [data, slug])
 
-  const handleSave = async (blockId, newData) => {
-    const res = await fetch(`${API_URL}/sites/${site_name}/pages/${slug}/blocks/${blockId}`, {
-      method: 'PATCH',
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-      body: JSON.stringify(newData),
-    })
-    if (!res.ok) return alert('Не удалось сохранить данные')
-
-    setBlockDataMap(prev => ({ ...prev, [blockId]: newData }))
-    setData(prev => {
-      const updatedBlocks = prev.blocks?.[slug]?.map(b =>
-        b.real_id === blockId ? { ...b, settings: newData } : b
-      )
-      return { ...prev, blocks: { ...prev.blocks, [slug]: updatedBlocks } }
-    })
-    alert('Сохранено!')
-  }
 
   const handleReorder = async (newBlocks) => {
     const payload = newBlocks.map(({ real_id, order }) => ({ id: real_id, order }))
@@ -89,9 +73,16 @@ export default function PageEditor() {
         <BlockEditorPanel
           selectedBlock={selectedBlock}
           selectedData={selectedData}
-          onSave={handleSave}
         />
       </div>
+      {showFloating && (
+        <button
+          onClick={handleSaveAll}
+          className="fixed bottom-4 right-4 bg-blue-600 text-white px-4 py-2 rounded shadow-lg hover:bg-blue-700"
+        >
+          💾 Сохранить изменения
+        </button>
+      )}
     </div>
   )
 }
