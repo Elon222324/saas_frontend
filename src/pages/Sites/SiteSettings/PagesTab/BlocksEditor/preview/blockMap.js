@@ -7,6 +7,7 @@ import PopularItemsPreview from '@blocks/forms/PopularItems/PopularItemsPreview'
 import ReviewsPreview from '@blocks/forms/Reviews/ReviewsPreview'
 import DeliveryPreview from '@blocks/forms/Delivery/DeliveryPreview'
 import FooterPreview from '@blocks/forms/Footer/FooterPreview'
+import AboutCompanyPreview from '@blocks/forms/AboutCompany/AboutCompanyPreview'
 
 export const previewBlocks = {
   navigation: NavigationPreview,
@@ -17,6 +18,7 @@ export const previewBlocks = {
   products: PopularItemsPreview,
   reviews: ReviewsPreview,
   delivery: DeliveryPreview,
+  text: AboutCompanyPreview,
   footer: FooterPreview,
 }
 
