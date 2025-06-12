@@ -1,27 +1,41 @@
 import { useEffect, useState } from 'react'
 
 export function useBlockData({ schema, data, block_id, slug, site_name, setData, onChange }) {
+  const normalize = (val) => (val !== undefined ? val : '')
 
   const getValues = (source = {}) => {
+    const values = {}
+    for (const field of schema) {
       values[field.key] = normalize(source[field.key])
+    }
     return values
   }
+
   const [initialData, setInitialData] = useState(getValues(data))
   const [readyToCheck, setReadyToCheck] = useState(false)
   const [showSavedToast, setShowSavedToast] = useState(false)
   const [resetButton, setResetButton] = useState(false)
+  const [justMounted, setJustMounted] = useState(true)
 
   useEffect(() => {
     setInitialData(getValues(data))
-    const values = {}
-    for (const field of schema) {
-      values[field.key] = normalize(data?.[field.key])
-    }
-
-    setInitialData(values)
     setReadyToCheck(false)
     setJustMounted(true)
   }, [block_id])
+
+  useEffect(() => {
+    if (justMounted) {
+      setJustMounted(false)
+      return
+    }
+
+    const changed = schema.some((field) => {
+      const current = normalize(data?.[field.key])
+      const initVal = normalize(initialData[field.key])
+      return current !== initVal
+    })
+    setReadyToCheck(changed)
+  }, [data])
 
   const handleFieldChange = (key, value) => {
     onChange((prev) => {
@@ -48,17 +62,12 @@ export function useBlockData({ schema, data, block_id, slug, site_name, setData,
 
   const handleSaveData = async (updatedData = data) => {
     try {
-      console.log('🧪 handleSaveData: входящие данные:', updatedData)
-
       const filtered = {}
       for (const field of schema) {
         filtered[field.key] = updatedData?.[field.key]
       }
 
-      console.log('📤 Данные, которые пойдут в PATCH:', filtered)
-
       const url = `${import.meta.env.VITE_API_URL}/blocks/update-data/${site_name}/${slug}/${block_id}`
-      console.log('👉 URL:', url)
 
       const res = await fetch(url, {
         method: 'PATCH',
@@ -70,24 +79,17 @@ export function useBlockData({ schema, data, block_id, slug, site_name, setData,
         body: JSON.stringify({ data: filtered }),
       })
 
-      console.log('📦 Ответ сервера:', res.status)
-
       if (!res.ok) {
         const errorText = await res.text()
-        console.error('❌ PATCH ошибка:', errorText)
         throw new Error(errorText)
       }
 
-      const responseJson = await res.json()
-      console.log('✅ PATCH успешен. Ответ:', responseJson)
+      await res.json()
 
       setInitialData(filtered)
       setReadyToCheck(false)
       setShowSavedToast(true)
       setResetButton(true)
-    if (!readyToCheck) {
-      setInitialData(getValues(data))
-    }
 
       setTimeout(() => {
         setShowSavedToast(false)
@@ -114,20 +116,6 @@ export function useBlockData({ schema, data, block_id, slug, site_name, setData,
       alert('Ошибка сохранения')
     }
   }
-
-  useEffect(() => {
-    if (justMounted) {
-      setJustMounted(false)
-      return
-    }
-
-    const changed = schema.some((field) => {
-      const current = normalize(data?.[field.key])
-      const initVal = normalize(initialData[field.key])
-      return current !== initVal
-    })
-    setReadyToCheck(changed)
-  }, [data])
 
   const showSaveButton = readyToCheck
 

@@ -29,7 +29,6 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
     }
   }
 
-  // авто-синхронизация синонимов
   if (uiDefaults.background_color && !uiDefaults.bg_color) {
     uiDefaults.bg_color = uiDefaults.background_color
   }
@@ -46,12 +45,9 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
     const values = getValues(data)
     setInitialAppearance(values)
     setReadyToCheck(false)
+  }, [block_id])
 
   useEffect(() => {
-    if (!readyToCheck) {
-      setInitialAppearance(getValues(data))
-    }
-
     if (!data?.custom_appearance) {
       setReadyToCheck(false)
       return
@@ -59,21 +55,12 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
 
     const changed = schema.some(field => {
       if (!field.visible_if?.custom_appearance) return false
-      const current = data[field.key] !== undefined ? data[field.key] : ''
-      const initVal = initialAppearance[field.key] !== undefined ? initialAppearance[field.key] : ''
+      const current = normalize(data[field.key])
+      const initVal = normalize(initialAppearance[field.key])
       return current !== initVal
     })
     setReadyToCheck(changed)
   }, [data])
-
-    const changed = schema.some(field => {
-      if (!field.visible_if?.custom_appearance) return false
-      const current = normalize(data[field.key])
-      const initVal = normalize(values[field.key])
-      return current !== initVal
-    })
-    setReadyToCheck(changed)
-  }, [block_id])
 
   const handleFieldChange = (key, value) => {
     if (key === 'custom_appearance' && value === false) {
