@@ -41,7 +41,7 @@ export default function TextEditor({
     site_name,
     setData,
     onChange: update => {
-      setSettingsState(update)
+      setSettingsState(prev => (typeof update === 'function' ? update(prev) : update))
       onChange(prev => ({
         ...prev,
         settings:
@@ -64,7 +64,7 @@ export default function TextEditor({
     site_name,
     setData,
     onChange: update => {
-      setDataState(update)
+      setDataState(prev => (typeof update === 'function' ? update(prev) : update))
       onChange(prev => ({
         ...prev,
         data: typeof update === 'function' ? update(prev.data || {}) : update,

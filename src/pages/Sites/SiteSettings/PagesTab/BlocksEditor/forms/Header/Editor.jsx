@@ -44,7 +44,7 @@ export default function HeaderEditor({
     site_name,
     setData,
     onChange: (update) => {
-      setSettingsState(update)
+      setSettingsState(prev => (typeof update === 'function' ? update(prev) : update))
       onChange(prevBlockState => {
         const resolved =
           typeof update === 'function'
@@ -73,7 +73,7 @@ export default function HeaderEditor({
     site_name,
     setData,
     onChange: (update) => {
-      setDataState(update)
+      setDataState(prev => (typeof update === 'function' ? update(prev) : update))
       onChange(prevBlockState => {
         const resolved =
           typeof update === 'function'

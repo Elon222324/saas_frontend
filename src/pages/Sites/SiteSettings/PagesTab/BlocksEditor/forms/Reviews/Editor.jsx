@@ -44,7 +44,7 @@ export default function ReviewsEditor({
     site_name,
     setData,
     onChange: (update) => {
-      setSettingsState(update)
+      setSettingsState(prev => (typeof update === 'function' ? update(prev) : update))
       onChange(prev => ({ ...prev, settings: typeof update === 'function' ? update(prev.settings || {}) : update }))
     },
   })
@@ -63,7 +63,7 @@ export default function ReviewsEditor({
     site_name,
     setData,
     onChange: (update) => {
-      setDataState(update)
+      setDataState(prev => (typeof update === 'function' ? update(prev) : update))
       onChange(prev => ({ ...prev, data: typeof update === 'function' ? update(prev.data || {}) : update }))
     },
   })
