@@ -42,7 +42,17 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
       setReadyToCheck(false)
       return
     }
-    const values = getValues(data)
+
+    const values = {}
+    for (const field of schema) {
+      if (field.visible_if?.custom_appearance) {
+        values[field.key] =
+          data[field.key] !== undefined
+            ? data[field.key]
+            : uiDefaults[field.key]
+      }
+    }
+
     setInitialAppearance(values)
     setReadyToCheck(false)
   }, [block_id])
@@ -101,7 +111,7 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
           const initVal = normalize(initialAppearance[field.key])
           return newVal !== initVal
         })
-        requestAnimationFrame(() => setReadyToCheck(changed))
+        setReadyToCheck(changed)
       }
 
       return updated
@@ -110,6 +120,7 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
 
   const hasAppearanceChanged = () => {
     if (!readyToCheck || !data?.custom_appearance) return false
+    if (!Object.keys(initialAppearance).length) return false
     return schema.some(field => {
       if (!field.visible_if?.custom_appearance) return false
       const current = normalize(data[field.key])

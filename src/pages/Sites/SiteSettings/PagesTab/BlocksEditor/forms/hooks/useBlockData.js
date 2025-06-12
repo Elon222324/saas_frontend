@@ -11,20 +11,31 @@ export function useBlockData({ schema, data, block_id, slug, site_name, setData,
     return values
   }
 
-  const [initialData, setInitialData] = useState(getValues(data))
+  const [initialData, setInitialData] = useState({})
   const [readyToCheck, setReadyToCheck] = useState(false)
   const [showSavedToast, setShowSavedToast] = useState(false)
   const [resetButton, setResetButton] = useState(false)
   const [justMounted, setJustMounted] = useState(true)
+  const [initialized, setInitialized] = useState(false)
 
   useEffect(() => {
-    setInitialData(getValues(data))
+    // ждём, пока все поля будут не пустыми
+    const allFieldsReady = schema.every(f => {
+      const val = data?.[f.key]
+      return val !== undefined && val !== ''
+    })
+
+    if (!allFieldsReady) return
+
+    const values = getValues(data)
+    setInitialData(values)
     setReadyToCheck(false)
     setJustMounted(true)
-  }, [block_id])
+    setInitialized(true)
+  }, [block_id, data])
 
   useEffect(() => {
-    if (justMounted) {
+    if (!initialized || justMounted) {
       setJustMounted(false)
       return
     }
@@ -32,8 +43,14 @@ export function useBlockData({ schema, data, block_id, slug, site_name, setData,
     const changed = schema.some((field) => {
       const current = normalize(data?.[field.key])
       const initVal = normalize(initialData[field.key])
+      if (current !== initVal) {
+        console.log(`[🧨 Изменено поле]: ${field.key}`)
+        console.log('  └ current:', current)
+        console.log('  └ initial:', initVal)
+      }
       return current !== initVal
     })
+
     setReadyToCheck(changed)
   }, [data])
 
@@ -46,8 +63,8 @@ export function useBlockData({ schema, data, block_id, slug, site_name, setData,
         const initVal = normalize(initialData[field.key])
         return newVal !== initVal
       })
-      setReadyToCheck(changed)
 
+      setReadyToCheck(changed)
       return updated
     })
   }
