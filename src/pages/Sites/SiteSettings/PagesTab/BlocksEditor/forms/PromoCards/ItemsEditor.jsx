@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+
 import { fieldTypes } from '@/components/fields/fieldTypes'
 
 export default function PromoItemsEditor({
@@ -7,22 +7,8 @@ export default function PromoItemsEditor({
   settings = {},
   onTextChange,
   onSaveData,
-  showButton,
-  resetButton,
   uiDefaults = {},
 }) {
-  const [internalVisible, setInternalVisible] = useState(false)
-
-  useEffect(() => {
-    if (resetButton) {
-      setInternalVisible(false)
-      return
-    }
-
-    if (showButton) {
-      setInternalVisible(true)
-    }
-  }, [showButton, resetButton])
 
   const fieldsPerCard = 3
   const defaultCards = schema.length / fieldsPerCard
@@ -52,17 +38,6 @@ export default function PromoItemsEditor({
   return (
     <div className="pt-4 border-t mt-6 space-y-4 relative z-0">
       {limitedSchema.map(renderField)}
-
-      {internalVisible && (
-        <div>
-          <button
-            onClick={onSaveData}
-            className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition text-sm"
-          >
-            💾 Сохранить содержимое блока
-          </button>
-        </div>
-      )}
     </div>
   )
 }

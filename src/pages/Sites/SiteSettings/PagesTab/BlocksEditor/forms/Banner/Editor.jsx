@@ -27,7 +27,6 @@ export default function BannerEditor({ block, slug, onChange }) {
     handleFieldChange,
     handleSaveAppearance,
     showSavedToast: savedAppearance,
-    resetButton: resetAppearance,
     showSaveButton: showAppearanceButton,
     uiDefaults,
   } = useBlockAppearance({
@@ -55,7 +54,6 @@ export default function BannerEditor({ block, slug, onChange }) {
     handleFieldChange: handleTextFieldChange,
     handleSaveData,
     showSavedToast: savedData,
-    resetButton: resetData,
     showSaveButton: showDataButton,
   } = useBlockData({
     schema: bannerDataSchema,
@@ -90,8 +88,6 @@ export default function BannerEditor({ block, slug, onChange }) {
         data={dataState}
         onTextChange={handleTextFieldChange}
         onSaveData={() => handleSaveData(dataState)}
-        showButton={showDataButton}
-        resetButton={resetData}
       />
 
       <div className="text-sm text-gray-500 italic pl-1 pt-4 border-t">
@@ -104,10 +100,20 @@ export default function BannerEditor({ block, slug, onChange }) {
         onChange={handleFieldChange}
         fieldTypes={fieldTypes}
         onSaveAppearance={() => handleSaveAppearance(settingsState)}
-        showButton={showAppearanceButton || settingsState?.custom_appearance === false}
-        resetButton={resetAppearance}
         uiDefaults={uiDefaults}
       />
+
+      {(showDataButton || showAppearanceButton) && (
+        <button
+          onClick={() => {
+            if (showDataButton) handleSaveData(dataState)
+            if (showAppearanceButton) handleSaveAppearance(settingsState)
+          }}
+          className="fixed bottom-4 right-4 z-50 bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition text-sm"
+        >
+          💾 Сохранить
+        </button>
+      )}
 
     </div>
   )

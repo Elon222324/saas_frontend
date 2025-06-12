@@ -26,7 +26,6 @@ export default function ReviewsEditor({ block, slug, onChange }) {
     handleFieldChange,
     handleSaveAppearance,
     showSavedToast,
-    resetButton,
     showSaveButton,
     uiDefaults,
   } = useBlockAppearance({
@@ -47,7 +46,6 @@ export default function ReviewsEditor({ block, slug, onChange }) {
     handleFieldChange: handleDataChange,
     handleSaveData,
     showSavedToast: savedData,
-    resetButton: resetData,
     showSaveButton: showDataButton,
   } = useBlockData({
     schema: createReviewsDataSchema(settingsState?.reviews_count || 4),
@@ -85,8 +83,6 @@ export default function ReviewsEditor({ block, slug, onChange }) {
         settings={settingsState}
         onTextChange={handleDataChange}
         onSaveData={() => handleSaveData(dataState)}
-        showButton={showDataButton}
-        resetButton={resetData}
         uiDefaults={uiDefaults}
       />
 
@@ -96,10 +92,20 @@ export default function ReviewsEditor({ block, slug, onChange }) {
         onChange={handleFieldChange}
         fieldTypes={fieldTypes}
         onSaveAppearance={() => handleSaveAppearance(settingsState)}
-        showButton={showSaveButton || settingsState?.custom_appearance === false}
-        resetButton={resetButton}
         uiDefaults={uiDefaults}
       />
+
+      {(showDataButton || showSaveButton) && (
+        <button
+          onClick={() => {
+            if (showDataButton) handleSaveData(dataState)
+            if (showSaveButton) handleSaveAppearance(settingsState)
+          }}
+          className="fixed bottom-4 right-4 z-50 bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition text-sm"
+        >
+          💾 Сохранить
+        </button>
+      )}
     </div>
   )
 }
