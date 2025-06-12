@@ -1,4 +1,4 @@
-export const textSchema = [
+export const aboutSchema = [
   {
     key: 'custom_appearance',
     label: 'Изменить внешний вид блока (фон и цвета)',
