@@ -97,6 +97,29 @@ export const footerSchema = [
     visible_if: { custom_appearance: true }
   },
   {
+    key: 'show_social_icons',
+    label: 'Отображать соцсети',
+    type: 'multicheckbox',
+    options: [
+      { key: 'facebook', label: 'Facebook' },
+      { key: 'instagram', label: 'Instagram' },
+      { key: 'vk', label: 'VK' },
+      { key: 'youtube', label: 'YouTube' },
+      { key: 'telegram', label: 'Telegram' },
+      { key: 'twitter', label: 'Twitter' },
+    ],
+    default: {
+      facebook: true,
+      instagram: true,
+      vk: true,
+      youtube: true,
+      telegram: true,
+      twitter: true,
+    },
+    editable: true,
+    visible_if: { custom_appearance: true },
+  },
+  {
     key: 'show_payment_icons',
     label: 'Показывать иконки оплат',
     type: 'boolean',
