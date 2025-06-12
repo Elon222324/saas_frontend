@@ -39,6 +39,7 @@
 │   │   ├── hooks
 │   │   │   ├── useCloudStorage.js
 │   │   │   └── useTemplateGallery.js
+│   │   ├── ImagePreviewModal.jsx
 │   │   └── README.md
 │   ├── components
 │   │   ├── fields
@@ -89,6 +90,12 @@
 │   │   │       ├── PagesTab
 │   │   │       │   ├── BlocksEditor
 │   │   │       │   │   ├── forms
+│   │   │       │   │   │   ├── AboutCompany
+│   │   │       │   │   │   │   ├── aboutSchema.js
+│   │   │       │   │   │   │   ├── Appearance.jsx
+│   │   │       │   │   │   │   ├── Editor.jsx
+│   │   │       │   │   │   │   ├── index.js
+│   │   │       │   │   │   │   └── ItemsEditor.jsx
 │   │   │       │   │   │   ├── Banner
 │   │   │       │   │   │   │   ├── Appearance.jsx
 │   │   │       │   │   │   │   ├── bannerDataSchema.js
@@ -100,6 +107,9 @@
 │   │   │       │   │   │   │   └── TopBanner.jsx
 │   │   │       │   │   │   ├── Delivery
 │   │   │       │   │   │   │   ├── Appearance.jsx
+│   │   │       │   │   │   │   ├── Delivery.jsx
+│   │   │       │   │   │   │   ├── deliveryDataSchema.js
+│   │   │       │   │   │   │   ├── DeliveryPreview.jsx
 │   │   │       │   │   │   │   ├── deliverySchema.js
 │   │   │       │   │   │   │   ├── Editor.jsx
 │   │   │       │   │   │   │   ├── index.js
@@ -107,6 +117,9 @@
 │   │   │       │   │   │   ├── Footer
 │   │   │       │   │   │   │   ├── Appearance.jsx
 │   │   │       │   │   │   │   ├── Editor.jsx
+│   │   │       │   │   │   │   ├── Footer.jsx
+│   │   │       │   │   │   │   ├── footerDataSchema.js
+│   │   │       │   │   │   │   ├── FooterPreview.jsx
 │   │   │       │   │   │   │   ├── footerSchema.js
 │   │   │       │   │   │   │   ├── index.js
 │   │   │       │   │   │   │   └── ItemsEditor.jsx
@@ -174,13 +187,10 @@
 │   │   │       │   │   │   │   ├── Editor.jsx
 │   │   │       │   │   │   │   ├── index.js
 │   │   │       │   │   │   │   ├── ItemsEditor.jsx
+│   │   │       │   │   │   │   ├── Reviews.jsx
+│   │   │       │   │   │   │   ├── reviewsDataSchema.js
+│   │   │       │   │   │   │   ├── ReviewsPreview.jsx
 │   │   │       │   │   │   │   └── reviewsSchema.js
-│   │   │       │   │   │   ├── Text
-│   │   │       │   │   │   │   ├── Appearance.jsx
-│   │   │       │   │   │   │   ├── Editor.jsx
-│   │   │       │   │   │   │   ├── index.js
-│   │   │       │   │   │   │   ├── ItemsEditor.jsx
-│   │   │       │   │   │   │   └── textSchema.js
 │   │   │       │   │   │   └── utils
 │   │   │       │   │   │       └── initBlockAppearanceFromCommon.js
 │   │   │       │   │   ├── index.jsx
@@ -211,4 +221,4 @@
 ├── tailwind.config.js
 └── vite.config.js
 
-43 directories, 169 files
+43 directories, 179 files
