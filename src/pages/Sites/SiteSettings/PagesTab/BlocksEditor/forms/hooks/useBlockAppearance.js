@@ -43,6 +43,14 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
 
     setInitialAppearance(values)
     setReadyToCheck(false)
+
+    const changed = schema.some(field => {
+      if (!field.visible_if?.custom_appearance) return false
+      const current = normalize(data[field.key])
+      const initVal = normalize(values[field.key])
+      return current !== initVal
+    })
+    setReadyToCheck(changed)
   }, [block_id])
 
   const handleFieldChange = (key, value) => {
@@ -80,8 +88,8 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
       if (prev.custom_appearance) {
         const changed = schema.some(field => {
           if (!field.visible_if?.custom_appearance) return false
-          const newVal = updated[field.key] !== undefined ? updated[field.key] : ''
-          const initVal = initialAppearance[field.key] !== undefined ? initialAppearance[field.key] : ''
+          const newVal = normalize(updated[field.key])
+          const initVal = normalize(initialAppearance[field.key])
           return newVal !== initVal
         })
         requestAnimationFrame(() => setReadyToCheck(changed))
@@ -95,8 +103,8 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
     if (!readyToCheck || !data?.custom_appearance) return false
     return schema.some(field => {
       if (!field.visible_if?.custom_appearance) return false
-      const current = data[field.key] !== undefined ? data[field.key] : ''
-      const initVal = initialAppearance[field.key] !== undefined ? initialAppearance[field.key] : ''
+      const current = normalize(data[field.key])
+      const initVal = normalize(initialAppearance[field.key])
       return current !== initVal
     })
   }
@@ -156,7 +164,7 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
     }
   }
 
-  const showSaveButton = readyToCheck && data?.custom_appearance && hasAppearanceChanged()
+  const showSaveButton = data?.custom_appearance ? (readyToCheck && hasAppearanceChanged()) : false
   console.log('[🔥 uiDefaults]', uiDefaults)
 
   return {

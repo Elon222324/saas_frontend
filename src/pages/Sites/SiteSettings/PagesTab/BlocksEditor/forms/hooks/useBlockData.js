@@ -5,6 +5,7 @@ export function useBlockData({ schema, data, block_id, slug, site_name, setData,
   const [readyToCheck, setReadyToCheck] = useState(false)
   const [showSavedToast, setShowSavedToast] = useState(false)
   const [resetButton, setResetButton] = useState(false)
+  const [justMounted, setJustMounted] = useState(true)
 
   const normalize = (val) => (val !== undefined ? val : '')
 
@@ -16,6 +17,7 @@ export function useBlockData({ schema, data, block_id, slug, site_name, setData,
 
     setInitialData(values)
     setReadyToCheck(false)
+    setJustMounted(true)
   }, [block_id])
 
   const handleFieldChange = (key, value) => {
@@ -23,8 +25,8 @@ export function useBlockData({ schema, data, block_id, slug, site_name, setData,
       const updated = { ...prev, [key]: value }
 
       const changed = schema.some((field) => {
-        const newVal = updated[field.key] !== undefined ? updated[field.key] : ''
-        const initVal = initialData[field.key] !== undefined ? initialData[field.key] : ''
+        const newVal = normalize(updated[field.key])
+        const initVal = normalize(initialData[field.key])
         return newVal !== initVal
       })
       setReadyToCheck(changed)
@@ -35,8 +37,8 @@ export function useBlockData({ schema, data, block_id, slug, site_name, setData,
 
   const hasDataChanged = () => {
     return schema.some((field) => {
-      const current = data?.[field.key] !== undefined ? data[field.key] : ''
-      const initVal = initialData[field.key] !== undefined ? initialData[field.key] : ''
+      const current = normalize(data?.[field.key])
+      const initVal = normalize(initialData[field.key])
       return current !== initVal
     })
   }
@@ -107,15 +109,20 @@ export function useBlockData({ schema, data, block_id, slug, site_name, setData,
   }
 
   useEffect(() => {
+    if (justMounted) {
+      setJustMounted(false)
+      return
+    }
+
     const changed = schema.some((field) => {
-      const current = data?.[field.key] !== undefined ? data[field.key] : ''
-      const initVal = initialData[field.key] !== undefined ? initialData[field.key] : ''
+      const current = normalize(data?.[field.key])
+      const initVal = normalize(initialData[field.key])
       return current !== initVal
     })
     setReadyToCheck(changed)
   }, [data])
 
-  const showSaveButton = readyToCheck && hasDataChanged()
+  const showSaveButton = readyToCheck
 
   return {
     handleFieldChange,

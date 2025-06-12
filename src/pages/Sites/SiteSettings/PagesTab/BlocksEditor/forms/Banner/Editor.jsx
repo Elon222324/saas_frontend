@@ -17,6 +17,7 @@ export default function BannerEditor({ block, slug, onChange }) {
 
   const [dataState, setDataState] = useState(block?.data || {})
   const [settingsState, setSettingsState] = useState(block?.settings || {})
+  const [canShow, setCanShow] = useState(false)
 
   useEffect(() => {
     setDataState(block?.data || {})
@@ -75,6 +76,15 @@ export default function BannerEditor({ block, slug, onChange }) {
     },
   })
 
+  useEffect(() => {
+    setCanShow(showDataButton || showAppearanceButton)
+  }, [showDataButton, showAppearanceButton])
+
+  console.log('🧪 showDataButton:', showDataButton)
+  console.log('🧪 showAppearanceButton:', showAppearanceButton)
+  console.log('🧪 settingsState.custom_appearance:', settingsState?.custom_appearance)
+  console.log('🧪 dataState:', dataState)
+
   return (
     <div className="space-y-6 relative">
       {(savedAppearance || savedData) && (
@@ -103,7 +113,7 @@ export default function BannerEditor({ block, slug, onChange }) {
         uiDefaults={uiDefaults}
       />
 
-      {(showDataButton || showAppearanceButton) && (
+      {canShow && (
         <button
           onClick={() => {
             if (showDataButton) handleSaveData(dataState)
@@ -114,7 +124,6 @@ export default function BannerEditor({ block, slug, onChange }) {
           💾 Сохранить
         </button>
       )}
-
     </div>
   )
 }
