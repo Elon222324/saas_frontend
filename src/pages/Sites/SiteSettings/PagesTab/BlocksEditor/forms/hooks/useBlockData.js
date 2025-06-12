@@ -22,13 +22,18 @@ export function useBlockData({ schema, data, block_id, slug, site_name, setData,
   }, [block_id])
 
   const handleFieldChange = (key, value) => {
-    onChange((prev) => {
+    onChange(prev => {
       const updated = { ...prev, [key]: value }
 
-      const changed = schema.some(
-        (field) => updated[field.key] !== initialData[field.key]
-      )
-      setReadyToCheck(changed)
+      // react immediately when value differs from current state
+      if (value !== prev[key]) {
+        setReadyToCheck(true)
+      } else {
+        const anyChanged = schema.some(
+          (field) => updated[field.key] !== initialData[field.key]
+        )
+        setReadyToCheck(anyChanged)
+      }
 
       return updated
     })
