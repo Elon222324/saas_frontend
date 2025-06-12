@@ -5,6 +5,7 @@ import QuickInfoPreview from '@blocks/forms/QuickInfo/QuickInfoPreview'
 import PromoCardsPreview from '@blocks/forms/PromoCards/PromoCardsPreview'
 import PopularItemsPreview from '@blocks/forms/PopularItems/PopularItemsPreview'
 import ReviewsPreview from '@blocks/forms/Reviews/ReviewsPreview'
+import DeliveryPreview from '@blocks/forms/Delivery/DeliveryPreview'
 
 export const previewBlocks = {
   navigation: NavigationPreview,
@@ -14,6 +15,7 @@ export const previewBlocks = {
   promo: PromoCardsPreview,
   products: PopularItemsPreview,
   reviews: ReviewsPreview,
+  delivery: DeliveryPreview,
 }
 
 // Добавляй сюда остальные блоки по мере добавления
