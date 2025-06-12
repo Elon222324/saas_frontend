@@ -25,6 +25,8 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
     uiDefaults.background_color = uiDefaults.bg_color
   }
 
+  const normalize = (val) => (val !== undefined ? val : '')
+
   useEffect(() => {
     if (!data?.custom_appearance) {
       setInitialAppearance({})
@@ -35,19 +37,12 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
     const values = {}
     for (const field of schema) {
       if (field.visible_if?.custom_appearance) {
-        values[field.key] = data[field.key] !== undefined ? data[field.key] : uiDefaults[field.key]
+        values[field.key] = normalize(data[field.key])
       }
     }
 
     setInitialAppearance(values)
-
-    requestAnimationFrame(() => {
-      const isChanged = schema.some(field => {
-        if (!field.visible_if?.custom_appearance) return false
-        return data[field.key] !== values[field.key]
-      })
-      setReadyToCheck(isChanged)
-    })
+    setReadyToCheck(false)
   }, [block_id])
 
   const handleFieldChange = (key, value) => {
@@ -85,7 +80,9 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
       if (prev.custom_appearance) {
         const changed = schema.some(field => {
           if (!field.visible_if?.custom_appearance) return false
-          return updated[field.key] !== initialAppearance[field.key]
+          const newVal = updated[field.key] !== undefined ? updated[field.key] : ''
+          const initVal = initialAppearance[field.key] !== undefined ? initialAppearance[field.key] : ''
+          return newVal !== initVal
         })
         requestAnimationFrame(() => setReadyToCheck(changed))
       }
@@ -98,7 +95,9 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
     if (!readyToCheck || !data?.custom_appearance) return false
     return schema.some(field => {
       if (!field.visible_if?.custom_appearance) return false
-      return data[field.key] !== initialAppearance[field.key]
+      const current = data[field.key] !== undefined ? data[field.key] : ''
+      const initVal = initialAppearance[field.key] !== undefined ? initialAppearance[field.key] : ''
+      return current !== initVal
     })
   }
 

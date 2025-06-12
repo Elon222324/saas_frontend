@@ -6,28 +6,27 @@ export function useBlockData({ schema, data, block_id, slug, site_name, setData,
   const [showSavedToast, setShowSavedToast] = useState(false)
   const [resetButton, setResetButton] = useState(false)
 
+  const normalize = (val) => (val !== undefined ? val : '')
+
   useEffect(() => {
     const values = {}
     for (const field of schema) {
-      values[field.key] =
-        data?.[field.key] !== undefined ? data[field.key] : field.default ?? ''
+      values[field.key] = normalize(data?.[field.key])
     }
 
     setInitialData(values)
-
-    const isChanged = schema.some(
-      (field) => data?.[field.key] !== values[field.key]
-    )
-    setReadyToCheck(isChanged)
+    setReadyToCheck(false)
   }, [block_id])
 
   const handleFieldChange = (key, value) => {
     onChange((prev) => {
       const updated = { ...prev, [key]: value }
 
-      const changed = schema.some(
-        (field) => updated[field.key] !== initialData[field.key]
-      )
+      const changed = schema.some((field) => {
+        const newVal = updated[field.key] !== undefined ? updated[field.key] : ''
+        const initVal = initialData[field.key] !== undefined ? initialData[field.key] : ''
+        return newVal !== initVal
+      })
       setReadyToCheck(changed)
 
       return updated
@@ -35,7 +34,11 @@ export function useBlockData({ schema, data, block_id, slug, site_name, setData,
   }
 
   const hasDataChanged = () => {
-    return schema.some((field) => data?.[field.key] !== initialData[field.key])
+    return schema.some((field) => {
+      const current = data?.[field.key] !== undefined ? data[field.key] : ''
+      const initVal = initialData[field.key] !== undefined ? initialData[field.key] : ''
+      return current !== initVal
+    })
   }
 
   const handleSaveData = async (updatedData = data) => {
@@ -104,10 +107,11 @@ export function useBlockData({ schema, data, block_id, slug, site_name, setData,
   }
 
   useEffect(() => {
-    console.log('🟡 Сравниваем data и initialData:', data, initialData)
-    const changed = schema.some(
-      (field) => data?.[field.key] !== initialData[field.key]
-    )
+    const changed = schema.some((field) => {
+      const current = data?.[field.key] !== undefined ? data[field.key] : ''
+      const initVal = initialData[field.key] !== undefined ? initialData[field.key] : ''
+      return current !== initVal
+    })
     setReadyToCheck(changed)
   }, [data])
 
