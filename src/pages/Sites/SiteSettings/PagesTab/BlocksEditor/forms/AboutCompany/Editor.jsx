@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
-import { textSchema } from './textSchema'
+import { aboutSchema } from './aboutSchema'
 import { fieldTypes } from '@/components/fields/fieldTypes'
 import TextItemsEditor from './ItemsEditor'
 import TextAppearance from './Appearance'
@@ -19,7 +19,7 @@ export default function TextEditor({ block, data, onChange, slug }) {
     showSaveButton,
     uiDefaults,
   } = useBlockAppearance({
-    schema: textSchema,
+    schema: aboutSchema,
     data,
     block_id,
     slug,
@@ -54,7 +54,7 @@ export default function TextEditor({ block, data, onChange, slug }) {
       />
 
       <TextAppearance
-        schema={textSchema}
+        schema={aboutSchema}
         settings={data}
         onChange={handleFieldChange}
         fieldTypes={fieldTypes}
