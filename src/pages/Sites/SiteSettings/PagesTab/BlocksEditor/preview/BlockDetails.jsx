@@ -15,7 +15,7 @@ import TabsEditor from '@blocks/forms/MenuTabs'
 import ProductGridEditor from '@blocks/forms/ProductGrid'
 import ReviewsEditor from '@blocks/forms/Reviews'
 import DeliveryEditor from '@blocks/forms/Delivery'
-import TextEditor from '@blocks/forms/Text'
+import AboutCompanyEditor from '@blocks/forms/AboutCompany'
 import FooterEditor from '@blocks/forms/Footer'
 
 export default function BlockDetails({ block, data, onSave }) {
@@ -117,7 +117,7 @@ export default function BlockDetails({ block, data, onSave }) {
       case 'delivery':
         return <DeliveryEditor {...sharedProps} />
       case 'text':
-        return <TextEditor {...sharedProps} />
+        return <AboutCompanyEditor {...sharedProps} />
       case 'footer':
         return <FooterEditor {...sharedProps} />
       default:

@@ -2,7 +2,7 @@
 git fetch origin
 
 ### Подтяни коммит с помощью cherry-pick
-git cherry-pick 15f264a8e70beafb466dd19d92c861989dad3d6f
+git cherry-pick 135964f566bf71e007700481f1f6280c1451a397
 
 
 ### Жесткий сброс (удалит все локальные изменения навсегда)
