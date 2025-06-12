@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
 import { footerSchema } from './footerSchema'
-import { footerDataSchema } from './footerDataSchema'
+import { createFooterDataSchema } from './footerDataSchema'
 import { fieldTypes } from '@/components/fields/fieldTypes'
 import FooterItemsEditor from './ItemsEditor'
 import FooterAppearance from './Appearance'
@@ -51,7 +51,7 @@ export default function FooterEditor({ block, data, onChange, slug }) {
     resetButton: resetData,
     showSaveButton: showDataButton,
   } = useBlockData({
-    schema: footerDataSchema,
+    schema: createFooterDataSchema(settingsState?.show_social_icons),
     data: dataState,
     block_id,
     slug,
@@ -79,7 +79,7 @@ export default function FooterEditor({ block, data, onChange, slug }) {
       </div>
 
       <FooterItemsEditor
-        schema={footerDataSchema}
+        schema={createFooterDataSchema(settingsState?.show_social_icons)}
         data={dataState}
         onTextChange={handleDataChange}
         onSaveData={() => handleSaveData(dataState)}

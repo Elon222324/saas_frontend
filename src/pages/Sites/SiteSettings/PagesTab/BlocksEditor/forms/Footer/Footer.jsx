@@ -72,6 +72,14 @@ export const Footer = ({ settings = {}, commonSettings = {}, data = {} }) => {
     { key: 'twitter', Icon: Twitter, href: data.twitter_link || '#' },
   ]
 
+  const aboutText =
+    data.about_text ||
+    'Мы доставляем горячую пиццу с любовью. Работаем с 10:00 до 23:00 каждый день.'
+  const phoneNumber = data.phone_number || '+84 123 456 789'
+  const emailAddress = data.email_address || 'support@pizzadelivery.vn'
+  const copyrightText =
+    data.copyright_text || 'PizzaDelivery. Все права защищены.'
+
   return (
     <footer
       className="w-full"
@@ -90,9 +98,7 @@ export const Footer = ({ settings = {}, commonSettings = {}, data = {} }) => {
           {show_sections.about && (
             <div>
               <h4 className="text-base font-semibold mb-2">О компании</h4>
-              <p style={{ opacity: 0.8 }}>
-                Мы доставляем горячую пиццу с любовью. Работаем с 10:00 до 23:00 каждый день.
-              </p>
+              <p style={{ opacity: 0.8 }}>{aboutText}</p>
             </div>
           )}
 
@@ -101,10 +107,10 @@ export const Footer = ({ settings = {}, commonSettings = {}, data = {} }) => {
               <h4 className="text-base font-semibold mb-2">Контакты</h4>
               <ul style={{ opacity: 0.8 }} className="space-y-1">
                 <li className="flex items-center justify-center md:justify-start gap-2">
-                  <Phone className="w-4 h-4" style={{ color: icon_color }} /> +84 123 456 789
+                  <Phone className="w-4 h-4" style={{ color: icon_color }} /> {phoneNumber}
                 </li>
                 <li className="flex items-center justify-center md:justify-start gap-2">
-                  <Mail className="w-4 h-4" style={{ color: icon_color }} /> support@pizzadelivery.vn
+                  <Mail className="w-4 h-4" style={{ color: icon_color }} /> {emailAddress}
                 </li>
               </ul>
             </div>
@@ -143,7 +149,7 @@ export const Footer = ({ settings = {}, commonSettings = {}, data = {} }) => {
           borderStyle: 'solid',
         }}
       >
-        © {new Date().getFullYear()} PizzaDelivery. Все права защищены.
+        © {new Date().getFullYear()} {copyrightText}
       </div>
     </footer>
   )
