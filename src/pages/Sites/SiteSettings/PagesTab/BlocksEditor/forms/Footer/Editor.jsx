@@ -8,7 +8,14 @@ import FooterAppearance from './Appearance'
 import { useBlockAppearance } from '@blocks/forms/hooks/useBlockAppearance'
 import { useBlockData } from '@blocks/forms/hooks/useBlockData'
 
-export default function FooterEditor({ block, data, onChange, slug }) {
+export default function FooterEditor({
+  block,
+  data,
+  onChange,
+  slug,
+  onFloatingChange,
+  onSaveHandlers,
+}) {
   const { data: siteData, site_name, setData } = useSiteSettings()
   const block_id = block?.real_id
 
@@ -65,6 +72,17 @@ export default function FooterEditor({ block, data, onChange, slug }) {
       }))
     },
   })
+
+  useEffect(() => {
+    onFloatingChange?.(showSaveButton || showDataButton)
+  }, [onFloatingChange, showSaveButton, showDataButton])
+
+  useEffect(() => {
+    onSaveHandlers?.({
+      handleSaveData: () => handleSaveData(dataState),
+      handleSaveAppearance: () => handleSaveAppearance(settingsState),
+    })
+  }, [onSaveHandlers, handleSaveData, handleSaveAppearance, dataState, settingsState])
 
   return (
     <div className="space-y-6 relative">

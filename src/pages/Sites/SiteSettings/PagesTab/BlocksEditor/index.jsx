@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
 
@@ -12,10 +12,12 @@ export default function PageEditor() {
   const [blocks, setBlocks] = useState([])
   const [blockDataMap, setBlockDataMap] = useState({})
   const [selectedId, setSelectedId] = useState(null)
-  const showFloating = true
+  const [showFloating, setShowFloating] = useState(false)
+  const saveHandlers = useRef({ handleSaveData: null, handleSaveAppearance: null })
 
   const handleSaveAll = async () => {
-    // TODO: integrate actual save handlers
+    await saveHandlers.current.handleSaveData?.()
+    await saveHandlers.current.handleSaveAppearance?.()
   }
   const API_URL = import.meta.env.VITE_API_URL
 
@@ -33,6 +35,11 @@ export default function PageEditor() {
     }
     setBlockDataMap(map)
   }, [data, slug])
+
+  useEffect(() => {
+    setShowFloating(false)
+    saveHandlers.current = { handleSaveData: null, handleSaveAppearance: null }
+  }, [selectedId])
 
 
   const handleReorder = async (newBlocks) => {
@@ -73,6 +80,10 @@ export default function PageEditor() {
         <BlockEditorPanel
           selectedBlock={selectedBlock}
           selectedData={selectedData}
+          onFloatingChange={setShowFloating}
+          onSaveHandlers={(h) => {
+            saveHandlers.current = h
+          }}
         />
       </div>
       {showFloating && (

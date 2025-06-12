@@ -11,7 +11,13 @@ import QuickInfoAppearance from './Appearance'
 import { useBlockAppearance } from '@blocks/forms/hooks/useBlockAppearance'
 import { useBlockData } from '@blocks/forms/hooks/useBlockData'
 
-export default function QuickInfoEditor({ block, slug, onChange }) {
+export default function QuickInfoEditor({
+  block,
+  slug,
+  onChange,
+  onFloatingChange,
+  onSaveHandlers,
+}) {
   const { data: siteData, site_name, setData } = useSiteSettings()
   const block_id = block?.real_id
   const [dataState, setDataState] = useState(block?.data || {})
@@ -77,6 +83,17 @@ export default function QuickInfoEditor({ block, slug, onChange }) {
       })
     },
   })
+
+  useEffect(() => {
+    onFloatingChange?.(showAppearanceButton || showDataButton)
+  }, [onFloatingChange, showAppearanceButton, showDataButton])
+
+  useEffect(() => {
+    onSaveHandlers?.({
+      handleSaveData: () => handleSaveData(dataState),
+      handleSaveAppearance: () => handleSaveAppearance(settingsState),
+    })
+  }, [onSaveHandlers, handleSaveData, handleSaveAppearance, dataState, settingsState])
 
   return (
     <div className="space-y-6 relative">

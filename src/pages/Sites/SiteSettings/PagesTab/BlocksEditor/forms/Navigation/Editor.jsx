@@ -6,7 +6,14 @@ import NavigationItemsEditor from './ItemsEditor'
 import NavigationAppearance from './Appearance'
 import { useBlockAppearance } from '@blocks/forms/hooks/useBlockAppearance'
 
-export default function NavigationEditor({ block, data, onChange, slug }) {
+export default function NavigationEditor({
+  block,
+  data,
+  onChange,
+  slug,
+  onFloatingChange,
+  onSaveHandlers,
+}) {
   const { data: siteData, site_name, setData } = useSiteSettings()
   const block_id = block?.real_id
   const [items, setItems] = useState([])
@@ -40,6 +47,17 @@ export default function NavigationEditor({ block, data, onChange, slug }) {
     setData,
     onChange,
   })
+
+  useEffect(() => {
+    onFloatingChange?.(showSaveButton)
+  }, [onFloatingChange, showSaveButton])
+
+  useEffect(() => {
+    onSaveHandlers?.({
+      handleSaveData: null,
+      handleSaveAppearance: () => handleSaveAppearance(data),
+    })
+  }, [onSaveHandlers, handleSaveAppearance, data])
 
   return (
     <div className="space-y-6 relative">

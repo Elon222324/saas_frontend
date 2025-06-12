@@ -18,7 +18,13 @@ import DeliveryEditor from '@blocks/forms/Delivery'
 import AboutCompanyEditor from '@blocks/forms/AboutCompany'
 import FooterEditor from '@blocks/forms/Footer'
 
-export default function BlockDetails({ block, data, onSave }) {
+export default function BlockDetails({
+  block,
+  data,
+  onSave,
+  onFloatingChange,
+  onSaveHandlers,
+}) {
   const [form, setForm] = useState({})
   const [showPreview, setShowPreview] = useState(true)
   const { slug } = useParams()
@@ -92,6 +98,8 @@ export default function BlockDetails({ block, data, onSave }) {
     onChange: setForm,
     slug,
     site_name,
+    onFloatingChange,
+    onSaveHandlers,
   }
 
   const renderEditor = () => {
