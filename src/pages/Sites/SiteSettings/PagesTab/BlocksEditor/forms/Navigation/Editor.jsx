@@ -4,12 +4,14 @@ import { navigationSchema } from './navigationSchema'
 import { fieldTypes } from '@/components/fields/fieldTypes'
 import NavigationItemsEditor from './ItemsEditor'
 import NavigationAppearance from './Appearance'
+import { Tabs, Tab } from '@/components/ui/tabs'
 import { useBlockAppearance } from '@blocks/forms/hooks/useBlockAppearance'
 
 export default function NavigationEditor({ block, data, onChange, slug }) {
   const { data: siteData, site_name, setData } = useSiteSettings()
   const block_id = block?.real_id
   const [items, setItems] = useState([])
+  const [activeTab, setActiveTab] = useState('data')
   const [showToast, setShowToast] = useState(false)
 
   useEffect(() => {
@@ -51,28 +53,38 @@ export default function NavigationEditor({ block, data, onChange, slug }) {
         <div className="text-green-600 text-sm font-medium">✅ Внешний вид сохранён</div>
       )}
 
-      <div className="text-sm text-gray-500 italic pl-1">
-        📁 Навигация: редактирование пунктов и внешнего вида блока
-      </div>
+      <Tabs value={activeTab} onChange={setActiveTab} className="mb-4">
+        <Tab value="data">Данные</Tab>
+        <Tab value="appearance">Дизайн</Tab>
+      </Tabs>
 
-      <NavigationItemsEditor
-        items={items}
-        siteName={site_name}
-        siteData={siteData}
-        setData={setData}
-        setItems={setItems}
-        onChange={onChange}
-        setShowToast={setShowToast}
-      />
+      {activeTab === 'data' && (
+        <NavigationItemsEditor
+          items={items}
+          siteName={site_name}
+          siteData={siteData}
+          setData={setData}
+          setItems={setItems}
+          onChange={onChange}
+          setShowToast={setShowToast}
+        />
+      )}
 
-      <NavigationAppearance
-        schema={navigationSchema}
-        settings={data}
-        onChange={handleFieldChange}
-        fieldTypes={fieldTypes}
-        onSaveAppearance={handleSaveAppearance}
-        uiDefaults={uiDefaults}
-      />
+      {activeTab === 'appearance' && (
+        <>
+          <div className="text-sm text-gray-500 italic pl-1">
+            📁 Навигация: редактирование пунктов и внешнего вида блока
+          </div>
+          <NavigationAppearance
+            schema={navigationSchema}
+            settings={data}
+            onChange={handleFieldChange}
+            fieldTypes={fieldTypes}
+            onSaveAppearance={handleSaveAppearance}
+            uiDefaults={uiDefaults}
+          />
+        </>
+      )}
 
       {showSaveButton && (
         <button

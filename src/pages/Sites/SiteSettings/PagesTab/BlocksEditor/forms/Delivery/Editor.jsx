@@ -5,13 +5,14 @@ import { deliveryDataSchema } from './deliveryDataSchema'
 import { fieldTypes } from '@/components/fields/fieldTypes'
 import DeliveryItemsEditor from './ItemsEditor'
 import DeliveryAppearance from './Appearance'
+import { Tabs, Tab } from '@/components/ui/tabs'
 import { useBlockAppearance } from '@blocks/forms/hooks/useBlockAppearance'
 import { useBlockData } from '@blocks/forms/hooks/useBlockData'
 
 export default function DeliveryEditor({ block, slug, onChange }) {
   const { data: siteData, site_name, setData } = useSiteSettings()
   const block_id = block?.real_id
-
+  const [activeTab, setActiveTab] = useState('data')
   const [dataState, setDataState] = useState(block?.data || {})
   const [settingsState, setSettingsState] = useState(block?.settings || {})
 
@@ -72,26 +73,36 @@ export default function DeliveryEditor({ block, slug, onChange }) {
         </div>
       )}
 
-      <DeliveryItemsEditor
-        schema={deliveryDataSchema}
-        data={dataState}
-        onTextChange={handleTextFieldChange}
-        onSaveData={() => handleSaveData(dataState)}
-        uiDefaults={uiDefaults}
-      />
+      <Tabs value={activeTab} onChange={setActiveTab} className="mb-4">
+        <Tab value="data">Данные</Tab>
+        <Tab value="appearance">Дизайн</Tab>
+      </Tabs>
 
-      <div className="text-sm text-gray-500 italic pl-1">
-        ⚙️ Настройка блока доставки: фон, карточки, тени, цвета текста
-      </div>
+      {activeTab === 'data' && (
+        <DeliveryItemsEditor
+          schema={deliveryDataSchema}
+          data={dataState}
+          onTextChange={handleTextFieldChange}
+          onSaveData={() => handleSaveData(dataState)}
+          uiDefaults={uiDefaults}
+        />
+      )}
 
-      <DeliveryAppearance
-        schema={deliverySchema}
-        settings={settingsState}
-        onChange={handleFieldChange}
-        fieldTypes={fieldTypes}
-        onSaveAppearance={() => handleSaveAppearance(settingsState)}
-        uiDefaults={uiDefaults}
-      />
+      {activeTab === 'appearance' && (
+        <>
+          <div className="text-sm text-gray-500 italic pl-1">
+            ⚙️ Настройка блока доставки: фон, карточки, тени, цвета текста
+          </div>
+          <DeliveryAppearance
+            schema={deliverySchema}
+            settings={settingsState}
+            onChange={handleFieldChange}
+            fieldTypes={fieldTypes}
+            onSaveAppearance={() => handleSaveAppearance(settingsState)}
+            uiDefaults={uiDefaults}
+          />
+        </>
+      )}
 
       {(showDataButton || showAppearanceButton) && (
         <button

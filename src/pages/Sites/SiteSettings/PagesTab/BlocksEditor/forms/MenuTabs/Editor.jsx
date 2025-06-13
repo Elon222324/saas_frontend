@@ -4,11 +4,13 @@ import { tabsSchema } from './tabsSchema'
 import { fieldTypes } from '@/components/fields/fieldTypes'
 import TabsItemsEditor from './ItemsEditor'
 import TabsAppearance from './Appearance'
+import { Tabs, Tab } from '@/components/ui/tabs'
 import { useBlockAppearance } from '@blocks/forms/hooks/useBlockAppearance'
 
 export default function TabsEditor({ block, data, onChange, slug }) {
   const { data: siteData, site_name, setData } = useSiteSettings()
   const block_id = block?.real_id
+  const [activeTab, setActiveTab] = useState('data')
   const [showToast, setShowToast] = useState(false)
 
   const {
@@ -39,27 +41,37 @@ export default function TabsEditor({ block, data, onChange, slug }) {
         <div className="text-green-600 text-sm font-medium">✅ Внешний вид сохранён</div>
       )}
 
-      <div className="text-sm text-gray-500 italic pl-1">
-        ⚙️ Настройка фона и цвета кнопок вкладок
-      </div>
+      <Tabs value={activeTab} onChange={setActiveTab} className="mb-4">
+        <Tab value="data">Данные</Tab>
+        <Tab value="appearance">Дизайн</Tab>
+      </Tabs>
 
-      <TabsItemsEditor
-        settings={data}
-        siteName={site_name}
-        siteData={siteData}
-        setData={setData}
-        onChange={onChange}
-        setShowToast={setShowToast}
-      />
+      {activeTab === 'data' && (
+        <TabsItemsEditor
+          settings={data}
+          siteName={site_name}
+          siteData={siteData}
+          setData={setData}
+          onChange={onChange}
+          setShowToast={setShowToast}
+        />
+      )}
 
-      <TabsAppearance
-        schema={tabsSchema}
-        settings={data}
-        onChange={handleFieldChange}
-        fieldTypes={fieldTypes}
-        onSaveAppearance={handleSaveAppearance}
-        uiDefaults={uiDefaults}
-      />
+      {activeTab === 'appearance' && (
+        <>
+          <div className="text-sm text-gray-500 italic pl-1">
+            ⚙️ Настройка фона и цвета кнопок вкладок
+          </div>
+          <TabsAppearance
+            schema={tabsSchema}
+            settings={data}
+            onChange={handleFieldChange}
+            fieldTypes={fieldTypes}
+            onSaveAppearance={handleSaveAppearance}
+            uiDefaults={uiDefaults}
+          />
+        </>
+      )}
 
       {showSaveButton && (
         <button
