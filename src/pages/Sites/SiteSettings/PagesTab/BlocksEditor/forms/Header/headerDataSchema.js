@@ -5,6 +5,7 @@ export const headerDataSchema = [
     type: 'image',
     default: '/images/logo.webp',
     editable: true,
+    group: 'left',
   },
   {
     key: 'subtitle',
@@ -12,6 +13,7 @@ export const headerDataSchema = [
     type: 'text',
     default: 'Ваша сеть / описание',
     editable: true,
+    group: 'left',
   },
   {
     key: 'label_before_city',
@@ -19,6 +21,7 @@ export const headerDataSchema = [
     type: 'text',
     default: 'Доставка',
     editable: true,
+    group: 'center',
   },
   {
     key: 'city',
@@ -26,6 +29,7 @@ export const headerDataSchema = [
     type: 'text',
     default: 'Ваш Город',
     editable: true,
+    group: 'center',
   },
   {
     key: 'delivery_time',
@@ -33,6 +37,7 @@ export const headerDataSchema = [
     type: 'text',
     default: '33 мин',
     editable: true,
+    group: 'right',
   },
   {
     key: 'rating_value',
@@ -40,5 +45,6 @@ export const headerDataSchema = [
     type: 'text',
     default: '4.82',
     editable: true,
+    group: 'right',
   }
 ]

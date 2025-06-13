@@ -7,6 +7,7 @@ import { fieldTypes } from '@/components/fields/fieldTypes'
 import HeaderItemsEditor from './ItemsEditor'
 import HeaderAppearance from './Appearance'
 
+import { Tabs, Tab } from '@/components/ui/tabs'
 import { useBlockAppearance } from '@blocks/forms/hooks/useBlockAppearance'
 import { useBlockData } from '@blocks/forms/hooks/useBlockData'
 
@@ -14,6 +15,7 @@ export default function HeaderEditor({ block, slug, onChange }) {
   const { data: siteData, site_name, setData } = useSiteSettings()
   const block_id = block?.real_id
 
+  const [activeTab, setActiveTab] = useState('data')
   const [dataState, setDataState] = useState(block?.data || {})
   const [settingsState, setSettingsState] = useState(block?.settings || {})
 
@@ -80,8 +82,6 @@ export default function HeaderEditor({ block, slug, onChange }) {
     },
   })
 
-  const navigation = siteData?.navigation?.filter(n => n.block_id === block_id && n.visible) || []
-
   return (
     <div className="space-y-6 relative">
       {(savedAppearance || savedData) && (
@@ -90,28 +90,33 @@ export default function HeaderEditor({ block, slug, onChange }) {
         </div>
       )}
 
-      <HeaderItemsEditor
-        schema={headerDataSchema}
-        data={dataState}
-        settings={settingsState}
-        onTextChange={handleTextFieldChange}
-        onColorChange={handleFieldChange}
-        fieldTypes={fieldTypes}
-        onSaveData={() => handleSaveData(dataState)}
-      />
+      <Tabs value={activeTab} onChange={setActiveTab} className="mb-4">
+        <Tab value="data">Данные</Tab>
+        <Tab value="appearance">Дизайн</Tab>
+      </Tabs>
 
-      <div className="text-sm text-gray-500 italic pl-1 pt-4 border-t">
-        🎨 Редактирование внешнего вида блока
-      </div>
+      {activeTab === 'data' && (
+        <HeaderItemsEditor
+          schema={headerDataSchema}
+          data={dataState}
+          settings={settingsState}
+          onTextChange={handleTextFieldChange}
+          onColorChange={handleFieldChange}
+          fieldTypes={fieldTypes}
+          onSaveData={() => handleSaveData(dataState)}
+        />
+      )}
 
-      <HeaderAppearance
-        schema={headerSchema}
-        settings={settingsState}
-        onChange={handleFieldChange}
-        fieldTypes={fieldTypes}
-        onSaveAppearance={() => handleSaveAppearance(settingsState)}
-        uiDefaults={uiDefaults}
-      />
+      {activeTab === 'appearance' && (
+        <HeaderAppearance
+          schema={headerSchema}
+          settings={settingsState}
+          onChange={handleFieldChange}
+          fieldTypes={fieldTypes}
+          onSaveAppearance={() => handleSaveAppearance(settingsState)}
+          uiDefaults={uiDefaults}
+        />
+      )}
 
       {(showDataButton || showAppearanceButton) && (
         <button
@@ -124,7 +129,6 @@ export default function HeaderEditor({ block, slug, onChange }) {
           💾 Сохранить
         </button>
       )}
-
     </div>
   )
 }
