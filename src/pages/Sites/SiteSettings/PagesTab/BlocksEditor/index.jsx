@@ -12,6 +12,7 @@ export default function PageEditor() {
   const [blocks, setBlocks] = useState([])
   const [blockDataMap, setBlockDataMap] = useState({})
   const [selectedId, setSelectedId] = useState(null)
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const API_URL = import.meta.env.VITE_API_URL
 
   useEffect(() => {
@@ -48,6 +49,7 @@ export default function PageEditor() {
       )
       return { ...prev, blocks: { ...prev.blocks, [slug]: updatedBlocks } }
     })
+    setHasUnsavedChanges(false)
     alert('Сохранено!')
   }
 
@@ -69,6 +71,18 @@ export default function PageEditor() {
     alert('Добавление нового блока')
   }
 
+  const handleSelectBlock = (id) => {
+    if (id === selectedId) return
+    if (hasUnsavedChanges) {
+      const confirmSwitch = window.confirm(
+        'Есть несохранённые изменения. Переключиться без сохранения?'
+      )
+      if (!confirmSwitch) return
+      setHasUnsavedChanges(false)
+    }
+    setSelectedId(id)
+  }
+
   if (loadingContext || !blocks.length || !data?.pages) return <div className="p-6">Загрузка...</div>
 
   const selectedBlock = blocks.find(b => b.id === selectedId)
@@ -81,7 +95,7 @@ export default function PageEditor() {
         <BlockListSidebar
           blocks={blocks}
           selectedId={selectedId}
-          setSelectedId={setSelectedId}
+          setSelectedId={handleSelectBlock}
           setBlocks={setBlocks}
           handleReorder={handleReorder}
           handleAddBlock={handleAddBlock}
@@ -90,6 +104,7 @@ export default function PageEditor() {
           selectedBlock={selectedBlock}
           selectedData={selectedData}
           onSave={handleSave}
+          setHasUnsavedChanges={setHasUnsavedChanges}
         />
       </div>
     </div>
