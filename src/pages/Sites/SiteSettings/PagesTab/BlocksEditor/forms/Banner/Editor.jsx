@@ -83,7 +83,6 @@ export default function BannerEditor({ block, slug, onChange }) {
 
   console.log('🧪 showDataButton:', showDataButton)
   console.log('🧪 showAppearanceButton:', showAppearanceButton)
-  console.log('🧪 settingsState.custom_appearance:', settingsState?.custom_appearance)
   console.log('🧪 dataState:', dataState)
 
   return (

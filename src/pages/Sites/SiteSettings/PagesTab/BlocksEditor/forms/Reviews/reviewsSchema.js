@@ -1,18 +1,11 @@
 export const reviewsSchema = [
-  {
-    key: 'custom_appearance',
-    label: 'Изменить внешний вид блока (фон, карточки, цвета)',
-    type: 'boolean',
-    default: false,
-    editable: true
-  },
-  {
+    {
     key: 'section_bg_color',
     label: 'Фон всей секции',
     type: 'color',
     default: '#F9FAFB',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'text_color',
@@ -20,7 +13,7 @@ export const reviewsSchema = [
     type: 'color',
     default: '#212121',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'subtle_text_color',
@@ -28,7 +21,7 @@ export const reviewsSchema = [
     type: 'color',
     default: '#6B7280',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'card_bg_color',
@@ -36,7 +29,7 @@ export const reviewsSchema = [
     type: 'color',
     default: '#FFFFFF',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'card_border_color',
@@ -44,7 +37,7 @@ export const reviewsSchema = [
     type: 'color',
     default: '#E5E7EB',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'rating_color',
@@ -52,7 +45,7 @@ export const reviewsSchema = [
     type: 'color',
     default: '#FACC15',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'primary_color',
@@ -60,7 +53,7 @@ export const reviewsSchema = [
     type: 'color',
     default: '#1976D2',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'show_modal_button',
@@ -68,7 +61,7 @@ export const reviewsSchema = [
     type: 'boolean',
     default: true,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'slider_enabled',
@@ -76,7 +69,7 @@ export const reviewsSchema = [
     type: 'boolean',
     default: true,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'avatar_size',
@@ -85,7 +78,7 @@ export const reviewsSchema = [
     options: ['small', 'medium', 'large'],
     default: 'medium',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'card_shadow',
@@ -94,7 +87,7 @@ export const reviewsSchema = [
     options: ['none', 'low', 'medium', 'high'],
     default: 'low',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'transition_effect',
@@ -103,7 +96,7 @@ export const reviewsSchema = [
     options: ['fade', 'slide', 'scale'],
     default: 'slide',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'reviews_count',
@@ -111,6 +104,6 @@ export const reviewsSchema = [
     type: 'number',
     default: 4,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   }
 ]

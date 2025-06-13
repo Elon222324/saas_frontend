@@ -7,26 +7,14 @@ export const Header = ({ settings = {}, data = {}, commonSettings = {}, navigati
   const [mobileOpen, setMobileOpen] = useState(false)
   const visibleItems = navigation?.filter(item => item.visible) || []
 
-  const isCustom = settings?.custom_appearance === true
-  const source = isCustom ? settings : {
-    text_color: commonSettings.text?.primary,
-    primary_color: commonSettings.text?.accent,
-    secondary_color: commonSettings.text?.secondary,
-    rating_color: commonSettings.icon?.rating,
-    button_bg_color: commonSettings.button?.bg,
-    button_text_color: commonSettings.button?.text,
-    button_hover_color: commonSettings.button?.hover_bg,
-    background_color: commonSettings.background?.base,
-  }
-
-  const textColor = source?.text_color || '#212121'
-  const primaryColor = source?.primary_color || '#1976D2'
-  const secondaryColor = source?.secondary_color || '#90CAF9'
-  const ratingColor = source?.rating_color || '#FACC15'
-  const buttonBg = source?.button_bg_color || '#1976D2'
-  const buttonText = source?.button_text_color || '#FFFFFF'
-  const buttonHover = source?.button_hover_color || '#1565C0'
-  const bgColor = source?.background_color || '#FFFFFF'
+  const textColor = settings.text_color ?? commonSettings.text?.primary ?? '#212121'
+  const primaryColor = settings.primary_color ?? commonSettings.text?.accent ?? '#1976D2'
+  const secondaryColor = settings.secondary_color ?? commonSettings.text?.secondary ?? '#90CAF9'
+  const ratingColor = settings.rating_color ?? commonSettings.icon?.rating ?? '#FACC15'
+  const buttonBg = settings.button_bg_color ?? commonSettings.button?.bg ?? '#1976D2'
+  const buttonText = settings.button_text_color ?? commonSettings.button?.text ?? '#FFFFFF'
+  const buttonHover = settings.button_hover_color ?? commonSettings.button?.hover_bg ?? '#1565C0'
+  const bgColor = settings.background_color ?? commonSettings.background?.base ?? '#FFFFFF'
 
   const rawLogoPath = data.logo_url || '/images/logo.webp'
   const baseUrl = import.meta.env.VITE_LIBRARY_ASSETS_URL || ''

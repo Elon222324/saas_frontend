@@ -11,27 +11,20 @@ export default function DeliveryPreview({ settings = {}, data = {}, commonSettin
   useEffect(() => {
     if (!globalSiteData?.ui_schema) return
 
-    if (settings?.custom_appearance) {
-      const vars = {}
-      Object.entries(settings).forEach(([key, val]) => {
-        if (
-          key.includes('color') ||
-          key.includes('shadow') ||
-          key.includes('font') ||
-          key.includes('spacing') ||
-          key.includes('radius')
-        ) {
-          vars[`--${key.replace(/_/g, '-')}`] = val
-        }
-      })
-
-      const varsJson = JSON.stringify(vars)
-      const styleVarsJson = JSON.stringify(styleVars)
-      if (varsJson !== styleVarsJson) setStyleVars(vars)
-    } else {
-      applyCssVariablesFromUiSchema(globalSiteData.ui_schema)
-      if (Object.keys(styleVars).length > 0) setStyleVars({})
-    }
+    applyCssVariablesFromUiSchema(globalSiteData.ui_schema)
+    const vars = {}
+    Object.entries(settings).forEach(([key, val]) => {
+      if (
+        key.includes('color') ||
+        key.includes('shadow') ||
+        key.includes('font') ||
+        key.includes('spacing') ||
+        key.includes('radius')
+      ) {
+        vars[`--${key.replace(/_/g, '-')}`] = val
+      }
+    })
+    setStyleVars(vars)
   }, [settings, globalSiteData?.ui_schema])
 
   return (

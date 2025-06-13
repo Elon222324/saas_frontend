@@ -1,18 +1,11 @@
 export const productGridSchema = [
-  {
-    key: 'custom_appearance',
-    label: 'Изменить внешний вид карточек (фон, текст, кнопка)',
-    type: 'boolean',
-    default: false,
-    editable: true
-  },
-  {
+    {
     key: 'bg_color',
     label: 'Фон карточки',
     type: 'color',
     default: '#FFFFFF',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'text_color',
@@ -20,7 +13,7 @@ export const productGridSchema = [
     type: 'color',
     default: '#212121',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'price_bg_color',
@@ -28,7 +21,7 @@ export const productGridSchema = [
     type: 'color',
     default: 'rgba(0,0,0,0.05)',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'price_color',
@@ -36,7 +29,7 @@ export const productGridSchema = [
     type: 'color',
     default: '#212121',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'button_bg_color',
@@ -44,7 +37,7 @@ export const productGridSchema = [
     type: 'color',
     default: '#1976D2',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'button_text_color',
@@ -52,7 +45,7 @@ export const productGridSchema = [
     type: 'color',
     default: '#FFFFFF',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'button_hover_color',
@@ -60,7 +53,7 @@ export const productGridSchema = [
     type: 'color',
     default: '#1565C0',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'card_border_radius',
@@ -68,7 +61,7 @@ export const productGridSchema = [
     type: 'number',
     default: 16,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'card_shadow',
@@ -77,7 +70,7 @@ export const productGridSchema = [
     options: ['none', 'low', 'medium', 'high'],
     default: 'medium',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'font_size_name',
@@ -85,7 +78,7 @@ export const productGridSchema = [
     type: 'fontsize',
     default: 16,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'font_size_price',
@@ -93,7 +86,7 @@ export const productGridSchema = [
     type: 'fontsize',
     default: 14,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'font_size_desc',
@@ -101,7 +94,7 @@ export const productGridSchema = [
     type: 'fontsize',
     default: 14,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'columns_desktop',
@@ -109,7 +102,7 @@ export const productGridSchema = [
     type: 'number',
     default: 4,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'columns_tablet',
@@ -117,7 +110,7 @@ export const productGridSchema = [
     type: 'number',
     default: 3,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'columns_mobile',
@@ -125,6 +118,6 @@ export const productGridSchema = [
     type: 'number',
     default: 2,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   }
 ]

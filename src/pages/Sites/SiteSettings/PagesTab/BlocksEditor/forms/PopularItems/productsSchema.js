@@ -1,18 +1,11 @@
 export const productsSchema = [
-  {
-    key: 'custom_appearance',
-    label: 'Изменить внешний вид блока (фон, рамка, текст)',
-    type: 'boolean',
-    default: false,
-    editable: true
-  },
-  {
+    {
     key: 'bg_color',
     label: 'Фон карточки',
     type: 'color',
     default: '#FFFFFF',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'border_color',
@@ -20,7 +13,7 @@ export const productsSchema = [
     type: 'color',
     default: '#212121',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'title_color',
@@ -28,7 +21,7 @@ export const productsSchema = [
     type: 'color',
     default: '#212121',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'price_color',
@@ -36,7 +29,7 @@ export const productsSchema = [
     type: 'color',
     default: '#212121',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'card_shadow',
@@ -45,7 +38,7 @@ export const productsSchema = [
     options: ['none', 'low', 'medium', 'high'],
     default: 'low',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'card_radius',
@@ -53,7 +46,7 @@ export const productsSchema = [
     type: 'number',
     default: 12,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'font_size_title',
@@ -61,7 +54,7 @@ export const productsSchema = [
     type: 'fontsize',
     default: 16,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'font_size_price',
@@ -69,7 +62,7 @@ export const productsSchema = [
     type: 'fontsize',
     default: 14,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'spacing_x',
@@ -77,7 +70,7 @@ export const productsSchema = [
     type: 'number',
     default: 16,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'image_size',
@@ -85,7 +78,7 @@ export const productsSchema = [
     type: 'number',
     default: 96,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'padding_top',
@@ -93,7 +86,7 @@ export const productsSchema = [
     type: 'number',
     default: 32,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'padding_bottom',
@@ -101,7 +94,7 @@ export const productsSchema = [
     type: 'number',
     default: 40,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'cards_count',
@@ -109,6 +102,6 @@ export const productsSchema = [
     type: 'number',
     default: 3,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   }
 ]

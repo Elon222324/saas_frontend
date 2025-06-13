@@ -1,18 +1,11 @@
 export const promoSchema = [
-  {
-    key: 'custom_appearance',
-    label: 'Изменить внешний вид блока (фон, текст, рамка)',
-    type: 'boolean',
-    default: false,
-    editable: true
-  },
-  {
+    {
     key: 'bg_color',
     label: 'Фон карточек',
     type: 'color',
     default: '#FFFFFF',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'border_color',
@@ -20,7 +13,7 @@ export const promoSchema = [
     type: 'color',
     default: '#212121',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'title_color',
@@ -28,7 +21,7 @@ export const promoSchema = [
     type: 'color',
     default: '#212121',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'desc_color',
@@ -36,7 +29,7 @@ export const promoSchema = [
     type: 'color',
     default: '#212121',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'title_size',
@@ -44,7 +37,7 @@ export const promoSchema = [
     type: 'fontsize',
     default: 14,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'desc_size',
@@ -52,7 +45,7 @@ export const promoSchema = [
     type: 'fontsize',
     default: 12,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'border_radius',
@@ -60,7 +53,7 @@ export const promoSchema = [
     type: 'number',
     default: 16,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'gap',
@@ -68,7 +61,7 @@ export const promoSchema = [
     type: 'number',
     default: 16,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'card_width',
@@ -76,7 +69,7 @@ export const promoSchema = [
     type: 'number',
     default: 192,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'card_padding',
@@ -84,7 +77,7 @@ export const promoSchema = [
     type: 'number',
     default: 6,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'card_style',
@@ -93,7 +86,7 @@ export const promoSchema = [
     options: ['flat', 'glass', 'elevated'],
     default: 'flat',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'hover_effect',
@@ -102,7 +95,7 @@ export const promoSchema = [
     options: ['none', 'scale', 'glow', 'border'],
     default: 'scale',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'hover_shadow',
@@ -111,7 +104,7 @@ export const promoSchema = [
     options: ['none', 'low', 'medium', 'high'],
     default: 'medium',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'cards_count',
@@ -119,6 +112,6 @@ export const promoSchema = [
     type: 'number',
     default: 6,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   }
 ]

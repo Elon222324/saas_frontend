@@ -1,18 +1,11 @@
 export const footerSchema = [
-  {
-    key: 'custom_appearance',
-    label: 'Изменить внешний вид блока (фон и цвета)',
-    type: 'checkbox',
-    default: false,
-    editable: true
-  },
-  {
+    {
     key: 'background_color',
     label: 'Фон подвала',
     type: 'color',
     default: '#FFFFFF',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'text_color',
@@ -20,7 +13,7 @@ export const footerSchema = [
     type: 'color',
     default: '#212121',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'border_color',
@@ -28,7 +21,7 @@ export const footerSchema = [
     type: 'color',
     default: '#E5E7EB',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'font_size_base',
@@ -36,7 +29,7 @@ export const footerSchema = [
     type: 'fontsize',
     default: 14,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'icon_color',
@@ -44,7 +37,7 @@ export const footerSchema = [
     type: 'color',
     default: '#6B7280',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'icon_color_hover',
@@ -52,7 +45,7 @@ export const footerSchema = [
     type: 'color',
     default: '#212121',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'section_spacing_top',
@@ -60,7 +53,7 @@ export const footerSchema = [
     type: 'number',
     default: 48,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'section_spacing_bottom',
@@ -68,7 +61,7 @@ export const footerSchema = [
     type: 'number',
     default: 48,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'alignment',
@@ -77,7 +70,7 @@ export const footerSchema = [
     options: ['left', 'center', 'spread'],
     default: 'spread',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'show_sections',
@@ -94,7 +87,7 @@ export const footerSchema = [
       socials: true
     },
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'show_social_icons',
@@ -117,7 +110,7 @@ export const footerSchema = [
       twitter: true,
     },
     editable: true,
-    visible_if: { custom_appearance: true },
+    visible: true,
   },
   {
     key: 'show_payment_icons',
@@ -125,6 +118,6 @@ export const footerSchema = [
     type: 'boolean',
     default: true,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   }
 ]

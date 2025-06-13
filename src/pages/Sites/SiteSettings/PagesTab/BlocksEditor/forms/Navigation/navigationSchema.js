@@ -1,18 +1,11 @@
 export const navigationSchema = [
-  {
-    key: 'custom_appearance',
-    label: 'Изменить внешний вид блока (цвета, граница, фон)',
-    type: 'boolean',
-    default: false,
-    editable: true
-  },
-  {
+    {
     key: 'bg_color',
     label: 'Фон навигации',
     type: 'color',
     default: '#FFFFFF',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'text_color',
@@ -20,7 +13,7 @@ export const navigationSchema = [
     type: 'color',
     default: '#212121',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'hover_color',
@@ -28,7 +21,7 @@ export const navigationSchema = [
     type: 'color',
     default: '#1976D2',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'hover_bg_color',
@@ -36,7 +29,7 @@ export const navigationSchema = [
     type: 'color',
     default: 'transparent',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'active_bg_color',
@@ -44,7 +37,7 @@ export const navigationSchema = [
     type: 'color',
     default: 'transparent',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'active_text_color',
@@ -52,7 +45,7 @@ export const navigationSchema = [
     type: 'color',
     default: '#1976D2',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'border_color',
@@ -60,7 +53,7 @@ export const navigationSchema = [
     type: 'color',
     default: '#E5E7EB',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'show_border',
@@ -68,7 +61,7 @@ export const navigationSchema = [
     type: 'boolean',
     default: true,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'tab_spacing',
@@ -76,7 +69,7 @@ export const navigationSchema = [
     type: 'number',
     default: 24,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'font_size',
@@ -84,7 +77,7 @@ export const navigationSchema = [
     type: 'number',
     default: 16,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'padding_x',
@@ -92,7 +85,7 @@ export const navigationSchema = [
     type: 'number',
     default: 24,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'padding_y',
@@ -100,6 +93,6 @@ export const navigationSchema = [
     type: 'number',
     default: 12,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   }
 ]

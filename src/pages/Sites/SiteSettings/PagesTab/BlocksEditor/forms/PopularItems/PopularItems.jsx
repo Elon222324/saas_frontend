@@ -1,29 +1,10 @@
 import pizzaImg from '/images/8.webp'
 
 export const PopularItems = ({ settings = {}, data = {}, commonSettings = {} }) => {
-  const isCustom = settings?.custom_appearance === true
-
-  const source = isCustom
-    ? settings
-    : {
-        bg_color: commonSettings.background?.card,
-        border_color: commonSettings.text?.primary,
-        title_color: commonSettings.text?.primary,
-        price_color: commonSettings.text?.secondary,
-        card_shadow: 'low',
-        card_radius: 12,
-        font_size_title: 16,
-        font_size_price: 14,
-        spacing_x: 16,
-        image_size: 'medium',
-        padding_top: 32,
-        padding_bottom: 100,
-      }
-
-  const backgroundColor = source?.bg_color || '#FFFFFF'
-  const borderColor = source?.border_color || '#212121'
-  const titleColor = source?.title_color || '#212121'
-  const priceColor = source?.price_color || '#666666'
+  const backgroundColor = settings.bg_color ?? commonSettings.background?.card ?? '#FFFFFF'
+  const borderColor = settings.border_color ?? commonSettings.text?.primary ?? '#212121'
+  const titleColor = settings.title_color ?? commonSettings.text?.primary ?? '#212121'
+  const priceColor = settings.price_color ?? commonSettings.text?.secondary ?? '#666666'
 
   const shadowMap = {
     none: 'shadow-none',
@@ -31,21 +12,21 @@ export const PopularItems = ({ settings = {}, data = {}, commonSettings = {} }) 
     medium: 'shadow',
     high: 'shadow-lg',
   }
-  const cardShadow = shadowMap[source?.card_shadow] || 'shadow-sm'
+  const cardShadow = shadowMap[settings.card_shadow ?? 'low'] || 'shadow-sm'
 
-  const radius = source?.card_radius || 12
-  const spacingX = source?.spacing_x || 16
-  const fontSizeTitle = source?.font_size_title || 16
-  const fontSizePrice = source?.font_size_price || 14
-  const paddingTop = source?.padding_top ?? 32
-  const paddingBottom = source?.padding_bottom ?? 40
+  const radius = settings.card_radius ?? 12
+  const spacingX = settings.spacing_x ?? 16
+  const fontSizeTitle = settings.font_size_title ?? 16
+  const fontSizePrice = settings.font_size_price ?? 14
+  const paddingTop = settings.padding_top ?? 32
+  const paddingBottom = settings.padding_bottom ?? 40
 
   const imageSizeMap = {
     small: 'w-16 h-16',
     medium: 'w-24 h-24',
     large: 'w-32 h-32',
   }
-  const imageSize = imageSizeMap[source?.image_size] || 'w-24 h-24'
+  const imageSize = imageSizeMap[settings.image_size ?? 'medium'] || 'w-24 h-24'
 
   const defaultItems = [
     { id: 1, name: 'Пепперони фреш', price: 'от 409 ₽', img_url: pizzaImg },

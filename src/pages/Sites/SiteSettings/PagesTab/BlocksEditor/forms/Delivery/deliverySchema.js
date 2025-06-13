@@ -1,18 +1,11 @@
 export const deliverySchema = [
-  {
-    key: 'custom_appearance',
-    label: 'Изменить внешний вид блока (фон, карточки, иконки)',
-    type: 'boolean',
-    default: false,
-    editable: true
-  },
-  {
+    {
     key: 'background_color',
     label: 'Фон секции',
     type: 'color',
     default: '#FFFFFF',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'card_bg_color',
@@ -20,7 +13,7 @@ export const deliverySchema = [
     type: 'color',
     default: '#FFFFFF',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'card_shadow',
@@ -29,7 +22,7 @@ export const deliverySchema = [
     options: ['none', 'low', 'medium', 'high'],
     default: 'medium',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'text_color',
@@ -37,7 +30,7 @@ export const deliverySchema = [
     type: 'color',
     default: '#212121',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'desc_color',
@@ -45,7 +38,7 @@ export const deliverySchema = [
     type: 'color',
     default: '#6B7280',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'icon_color',
@@ -53,7 +46,7 @@ export const deliverySchema = [
     type: 'color',
     default: '#F97316',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'map_border_radius',
@@ -61,7 +54,7 @@ export const deliverySchema = [
     type: 'number',
     default: 16,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'map_shadow',
@@ -70,7 +63,7 @@ export const deliverySchema = [
     options: ['none', 'low', 'medium', 'high'],
     default: 'medium',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'section_spacing_top',
@@ -78,7 +71,7 @@ export const deliverySchema = [
     type: 'number',
     default: 48,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'section_spacing_bottom',
@@ -86,7 +79,7 @@ export const deliverySchema = [
     type: 'number',
     default: 48,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'font_size_title',
@@ -94,7 +87,7 @@ export const deliverySchema = [
     type: 'fontsize',
     default: 24,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'font_size_desc',
@@ -102,6 +95,6 @@ export const deliverySchema = [
     type: 'fontsize',
     default: 14,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   }
 ]

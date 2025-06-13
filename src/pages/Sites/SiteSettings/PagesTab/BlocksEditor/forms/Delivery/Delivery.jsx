@@ -1,34 +1,18 @@
 import mapImage from '/images/7.webp'
 
 export const Delivery = ({ settings = {}, data = {}, commonSettings = {} }) => {
-  const isCustom = settings?.custom_appearance === true
-  const source = isCustom
-    ? settings
-    : {
-        background_color: commonSettings.background?.base,
-        text_color: commonSettings.text?.primary,
-        desc_color: commonSettings.text?.secondary,
-        icon_color: commonSettings.icon?.default,
-        card_bg_color: commonSettings.background?.card,
-        card_shadow: commonSettings.shadow?.default || 'medium',
-        map_border_radius: 16,
-        map_shadow: 'medium',
-        section_spacing_top: 48,
-        section_spacing_bottom: 48,
-        font_size_title: 20,
-        font_size_desc: 14,
-      }
-
-  const bg = source?.background_color || '#FFFFFF'
-  const titleColor = source?.text_color || '#212121'
-  const descColor = source?.desc_color || '#666666'
-  const accentColor = source?.icon_color || '#1976D2'
-  const cardBg = source?.card_bg_color || '#FFFFFF'
-  const mapBorderRadius = source?.map_border_radius || 16
-  const sectionPaddingTop = source?.section_spacing_top || 48
-  const sectionPaddingBottom = source?.section_spacing_bottom || 48
-  const fontSizeTitle = source?.font_size_title || 20
-  const fontSizeDesc = source?.font_size_desc || 14
+  const bg = settings.background_color ?? commonSettings.background?.base ?? '#FFFFFF'
+  const titleColor = settings.text_color ?? commonSettings.text?.primary ?? '#212121'
+  const descColor = settings.desc_color ?? commonSettings.text?.secondary ?? '#666666'
+  const accentColor = settings.icon_color ?? commonSettings.icon?.default ?? '#1976D2'
+  const cardBg = settings.card_bg_color ?? commonSettings.background?.card ?? '#FFFFFF'
+  const mapBorderRadius = settings.map_border_radius ?? 16
+  const sectionPaddingTop = settings.section_spacing_top ?? 48
+  const sectionPaddingBottom = settings.section_spacing_bottom ?? 48
+  const fontSizeTitle = settings.font_size_title ?? 20
+  const fontSizeDesc = settings.font_size_desc ?? 14
+  const cardShadow = settings.card_shadow ?? commonSettings.shadow?.default ?? 'medium'
+  const mapShadow = settings.map_shadow ?? 'medium'
 
   const shadowMap = {
     none: 'shadow-none',
@@ -36,8 +20,8 @@ export const Delivery = ({ settings = {}, data = {}, commonSettings = {} }) => {
     medium: 'shadow',
     high: 'shadow-lg',
   }
-  const cardShadowClass = shadowMap[source?.card_shadow] || 'shadow'
-  const mapShadowClass = shadowMap[source?.map_shadow] || 'shadow'
+  const cardShadowClass = shadowMap[cardShadow] || 'shadow'
+  const mapShadowClass = shadowMap[mapShadow] || 'shadow'
 
   const sectionTitle = data.section_title || 'Доставка и оплата в Анапе'
   const bannerTitle = data.banner_title || '60 МИНУТ ИЛИ ПИЦЦА БЕСПЛАТНО'
