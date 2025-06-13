@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 
-export function useBlockData({ schema, data, block_id, slug, site_name, setData, onChange }) {
+export function useBlockData({ schema, data, block_id, slug, site_name, setData, onChange, onChangeBlock }) {
   // Helper to normalize values (undefined -> '', useful for consistent comparisons)
   const normalize = useCallback((val) => (val !== undefined && val !== null ? val : ''), []);
 
@@ -64,13 +64,16 @@ export function useBlockData({ schema, data, block_id, slug, site_name, setData,
   // This `showSaveButton` flag now directly reflects `hasDataChanged()`
   const showSaveButton = hasDataChanged();
 
-  const handleFieldChange = useCallback((key, value) => {
-    onChange((prev) => {
-      const updated = { ...prev, [key]: value };
-      // `setReadyToCheck` is no longer needed here; `showSaveButton` will re-evaluate.
-      return updated;
-    });
-  }, [onChange]); // Add onChange to dependencies
+  const handleFieldChange = useCallback(
+    (key, value) => {
+      onChange(prev => {
+        const updated = { ...prev, [key]: value }
+        onChangeBlock?.(block_id, { data: updated })
+        return updated
+      })
+    },
+    [onChange, onChangeBlock, block_id]
+  )
 
   const handleSaveData = async (updatedData = data) => {
     try {

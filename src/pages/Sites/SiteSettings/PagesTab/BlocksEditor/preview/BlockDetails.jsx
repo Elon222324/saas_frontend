@@ -18,7 +18,7 @@ import DeliveryEditor from '@blocks/forms/Delivery'
 import AboutCompanyEditor from '@blocks/forms/AboutCompany'
 import FooterEditor from '@blocks/forms/Footer'
 
-export default function BlockDetails({ block, data, onSave }) {
+export default function BlockDetails({ block, data, onBlockChange }) {
   const [form, setForm] = useState({})
   const [showPreview, setShowPreview] = useState(true)
   const { slug } = useParams()
@@ -86,10 +86,20 @@ export default function BlockDetails({ block, data, onSave }) {
 
   const mergedBlock = { ...block, settings: form.settings, data: form.data }
 
+  const handleFormChange = updater => {
+    setForm(prev => {
+      const updated = typeof updater === 'function' ? updater(prev) : updater
+      if (onBlockChange && block?.real_id) {
+        onBlockChange(block.real_id, updated)
+      }
+      return updated
+    })
+  }
+
   const sharedProps = {
     block: mergedBlock,
     data: form,
-    onChange: setForm,
+    onChange: handleFormChange,
     slug,
     site_name,
   }

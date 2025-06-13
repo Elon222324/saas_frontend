@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { initBlockAppearanceFromCommon } from '@blocks/forms/utils/initBlockAppearanceFromCommon'
 
-export function useBlockAppearance({ schema, data, block_id, slug, siteData, site_name, setData, onChange }) {
+export function useBlockAppearance({ schema, data, block_id, slug, siteData, site_name, setData, onChange, onChangeBlock }) {
   const [initialAppearance, setInitialAppearance] = useState({})
   const [readyToCheck, setReadyToCheck] = useState(false)
   const [showSavedToast, setShowSavedToast] = useState(false)
@@ -44,6 +44,7 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
   const handleFieldChange = (key, value) => {
     onChange(prev => {
       const updated = { ...prev, [key]: value }
+      onChangeBlock?.(block_id, { settings: updated })
       const changed = schema.some(field => {
         if (field.visible === false) return false
         return updated[field.key] !== initialAppearance[field.key]

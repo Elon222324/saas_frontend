@@ -12,7 +12,7 @@ import { Tabs, Tab } from '@/components/ui/tabs'
 import { useBlockAppearance } from '@blocks/forms/hooks/useBlockAppearance'
 import { useBlockData } from '@blocks/forms/hooks/useBlockData'
 
-export default function BannerEditor({ block, slug, onChange }) {
+export default function BannerEditor({ block, slug, onChange, onChangeBlock }) {
   const { data: siteData, site_name, setData } = useSiteSettings()
   const block_id = block?.real_id
   const [activeTab, setActiveTab] = useState('data')
@@ -39,6 +39,7 @@ export default function BannerEditor({ block, slug, onChange }) {
     siteData,
     site_name,
     setData,
+    onChangeBlock,
     onChange: (update) => {
       setSettingsState(update)
       onChange(prev => {
@@ -64,6 +65,7 @@ export default function BannerEditor({ block, slug, onChange }) {
     slug,
     site_name,
     setData,
+    onChangeBlock,
     onChange: (update) => {
       setDataState(update)
       onChange(prev => {
@@ -124,17 +126,6 @@ export default function BannerEditor({ block, slug, onChange }) {
         </>
       )}
 
-      {canShow && (
-        <button
-          onClick={() => {
-            if (showDataButton) handleSaveData(dataState)
-            if (showAppearanceButton) handleSaveAppearance(settingsState)
-          }}
-          className="fixed bottom-4 right-4 z-50 bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition text-sm"
-        >
-          💾 Сохранить
-        </button>
-      )}
     </div>
   )
 }
