@@ -46,7 +46,7 @@ export default function ProductsEditor({ block, slug, onChange }) {
   })
 
   const {
-    handleFieldChange: handleDataChange,
+    handleFieldChange: handleTextFieldChange,
     handleSaveData,
     showSavedToast: savedData,
     showSaveButton: showDataButton,
@@ -84,7 +84,7 @@ export default function ProductsEditor({ block, slug, onChange }) {
           schema={createProductsDataSchema(settingsState?.cards_count || 3)}
           data={dataState}
           settings={settingsState}
-          onTextChange={handleDataChange}
+          onTextChange={handleTextFieldChange}
           onSaveData={() => handleSaveData(dataState)}
           uiDefaults={uiDefaults}
         />

@@ -24,8 +24,8 @@ export default function TextEditor({ block, slug, onChange }) {
   const {
     handleFieldChange,
     handleSaveAppearance,
-    showSavedToast,
-    showSaveButton,
+    showSavedToast: savedAppearance,
+    showSaveButton: showAppearanceButton,
     uiDefaults,
   } = useBlockAppearance({
     schema: aboutSchema,
@@ -46,7 +46,7 @@ export default function TextEditor({ block, slug, onChange }) {
   })
 
   const {
-    handleFieldChange: handleDataChange,
+    handleFieldChange: handleTextFieldChange,
     handleSaveData,
     showSavedToast: savedData,
     showSaveButton: showDataButton,
@@ -68,9 +68,9 @@ export default function TextEditor({ block, slug, onChange }) {
 
   return (
     <div className="space-y-6 relative">
-      {(showSavedToast || savedData) && (
+      {(savedAppearance || savedData) && (
         <div className="text-green-600 text-sm font-medium">
-          ✅ {showSavedToast ? 'Внешний вид' : 'Содержимое'} сохранено
+          ✅ {savedAppearance ? 'Внешний вид' : 'Содержимое'} сохранено
         </div>
       )}
 
@@ -83,7 +83,7 @@ export default function TextEditor({ block, slug, onChange }) {
         <TextItemsEditor
           schema={aboutDataSchema}
           data={dataState}
-          onTextChange={handleDataChange}
+          onTextChange={handleTextFieldChange}
           onSaveData={() => handleSaveData(dataState)}
           uiDefaults={uiDefaults}
         />
@@ -105,11 +105,11 @@ export default function TextEditor({ block, slug, onChange }) {
         </>
       )}
 
-      {(showDataButton || showSaveButton) && (
+      {(showDataButton || showAppearanceButton) && (
         <button
           onClick={() => {
             if (showDataButton) handleSaveData(dataState)
-            if (showSaveButton) handleSaveAppearance(settingsState)
+            if (showAppearanceButton) handleSaveAppearance(settingsState)
           }}
           className="fixed bottom-4 right-4 z-50 bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition text-sm"
         >
