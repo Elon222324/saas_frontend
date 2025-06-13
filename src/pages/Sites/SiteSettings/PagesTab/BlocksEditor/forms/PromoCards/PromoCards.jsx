@@ -2,44 +2,21 @@ import pizzaImg from '/images/9.webp'
 import { useRef } from 'react'
 
 export const PromoCards = ({ settings = {}, data = {}, commonSettings = {} }) => {
-  const isCustom = settings?.custom_appearance === true
-
-  const source = isCustom
-    ? settings
-    : {
-        bg_color: commonSettings.background?.card,
-        border_color: commonSettings.text?.primary,
-        title_color: commonSettings.text?.primary,
-        desc_color: commonSettings.text?.secondary,
-        title_size: 14,
-        desc_size: 12,
-        border_radius: 16,
-        gap: 16,
-        card_style: 'flat',
-        hover_effect: 'scale',
-        hover_shadow: 'medium',
-        block_padding_y: 24,
-        card_width: 192,
-        card_padding: 6,
-      }
-
-  const {
-    bg_color = '#FFFFFF',
-    border_color = '#212121',
-    title_color = '#212121',
-    desc_color = '#666666',
-    title_size = 14,
-    desc_size = 12,
-    border_radius = 16,
-    gap = 16,
-    card_style = 'flat',
-    hover_effect = 'scale',
-    hover_shadow = 'medium',
-    block_padding_y = 24,
-    card_width = 192,
-    card_padding = 6,
-    cards_count = 6,
-  } = source
+  const bg_color = settings.bg_color ?? commonSettings.background?.card ?? '#FFFFFF'
+  const border_color = settings.border_color ?? commonSettings.text?.primary ?? '#212121'
+  const title_color = settings.title_color ?? commonSettings.text?.primary ?? '#212121'
+  const desc_color = settings.desc_color ?? commonSettings.text?.secondary ?? '#666666'
+  const title_size = settings.title_size ?? 14
+  const desc_size = settings.desc_size ?? 12
+  const border_radius = settings.border_radius ?? 16
+  const gap = settings.gap ?? 16
+  const card_style = settings.card_style ?? 'flat'
+  const hover_effect = settings.hover_effect ?? 'scale'
+  const hover_shadow = settings.hover_shadow ?? 'medium'
+  const block_padding_y = settings.block_padding_y ?? 24
+  const card_width = settings.card_width ?? 192
+  const card_padding = settings.card_padding ?? 6
+  const cards_count = settings.cards_count ?? 6
 
   const defaultCards = [
     { id: 1, title: 'Горячая пицца', desc: 'Доставка за 30 минут', img_url: pizzaImg },

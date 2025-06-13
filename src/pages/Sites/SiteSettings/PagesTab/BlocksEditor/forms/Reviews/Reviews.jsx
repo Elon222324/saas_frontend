@@ -3,41 +3,21 @@ import pizzaImg from '/images/6.webp'
 import { defaultReviews } from './reviewsDataSchema'
 
 export const Reviews = ({ settings = {}, data = {}, commonSettings = {} }) => {
-  const isCustom = settings?.custom_appearance === true
+  const sectionBg = settings.section_bg_color ?? commonSettings.background?.muted ?? '#F9FAFB'
+  const textColor = settings.text_color ?? commonSettings.text?.primary ?? '#212121'
+  const subtleTextColor = settings.subtle_text_color ?? commonSettings.text?.secondary ?? '#6B7280'
+  const cardBg = settings.card_bg_color ?? commonSettings.background?.card ?? '#FFFFFF'
+  const cardBorder = settings.card_border_color ?? commonSettings.layout?.border_color ?? '#E5E7EB'
+  const ratingColor = settings.rating_color ?? commonSettings.icon?.rating ?? '#FACC15'
+  const primaryColor = settings.primary_color ?? commonSettings.text?.accent ?? '#1976D2'
 
-  const source = isCustom
-    ? settings
-    : {
-        section_bg_color: commonSettings.background?.muted,
-        text_color: commonSettings.text?.primary,
-        subtle_text_color: commonSettings.text?.secondary,
-        card_bg_color: commonSettings.background?.card,
-        card_border_color: commonSettings.layout?.border_color || '#E5E7EB',
-        rating_color: commonSettings.icon?.rating,
-        primary_color: commonSettings.text?.accent,
-        show_modal_button: true,
-        slider_enabled: true,
-        avatar_size: 'medium',
-        card_shadow: 'low',
-        transition_effect: 'slide',
-        reviews_count: defaultReviews.length,
-      }
-
-  const sectionBg = source?.section_bg_color || '#F9FAFB'
-  const textColor = source?.text_color || '#212121'
-  const subtleTextColor = source?.subtle_text_color || '#6B7280'
-  const cardBg = source?.card_bg_color || '#FFFFFF'
-  const cardBorder = source?.card_border_color || '#E5E7EB'
-  const ratingColor = source?.rating_color || '#FACC15'
-  const primaryColor = source?.primary_color || '#1976D2'
-
-  const avatarSize = source?.avatar_size === 'small' ? 32 : source?.avatar_size === 'large' ? 56 : 40
+  const avatarSize = settings.avatar_size === 'small' ? 32 : settings.avatar_size === 'large' ? 56 : 40
   const boxShadow =
-    source?.card_shadow === 'high'
+    settings.card_shadow === 'high'
       ? '0 8px 20px rgba(0,0,0,0.2)'
-      : source?.card_shadow === 'medium'
+      : settings.card_shadow === 'medium'
       ? '0 4px 12px rgba(0,0,0,0.1)'
-      : source?.card_shadow === 'low'
+      : settings.card_shadow === 'low'
       ? '0 2px 6px rgba(0,0,0,0.05)'
       : 'none'
 
@@ -51,7 +31,7 @@ export const Reviews = ({ settings = {}, data = {}, commonSettings = {} }) => {
         img_url: data[`review${idx + 1}_img`] ?? rev.img_url,
       }))
 
-  const reviews_count = source?.reviews_count || rawReviews.length
+  const reviews_count = settings.reviews_count ?? rawReviews.length
   const reviews = rawReviews.slice(0, reviews_count)
   const assetsBase = import.meta.env.VITE_ASSETS_URL || ''
 
@@ -77,7 +57,7 @@ export const Reviews = ({ settings = {}, data = {}, commonSettings = {} }) => {
   }, [reviews])
 
   useEffect(() => {
-    if (!source?.slider_enabled) return
+    if (settings.slider_enabled === false) return
     const slider = scrollRef.current
     if (!slider) return
 
@@ -113,7 +93,7 @@ export const Reviews = ({ settings = {}, data = {}, commonSettings = {} }) => {
       slider.removeEventListener('mouseup', handle)
       slider.removeEventListener('mouseleave', handle)
     }
-  }, [source?.slider_enabled])
+  }, [settings.slider_enabled])
 
   const ReviewModal = ({ onClose }) => (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -158,7 +138,7 @@ export const Reviews = ({ settings = {}, data = {}, commonSettings = {} }) => {
               ⭐ Нас рекомендуют
             </span>
           </div>
-          {source.show_modal_button && (
+          {settings.show_modal_button !== false && (
             <button
               className="text-sm font-medium transition hover:underline"
               style={{ color: primaryColor }}
@@ -171,7 +151,7 @@ export const Reviews = ({ settings = {}, data = {}, commonSettings = {} }) => {
 
         <div
           ref={scrollRef}
-          className={`flex gap-4 py-4 ${source.slider_enabled ? 'overflow-x-auto overflow-y-visible cursor-grab scrollbar-hide' : 'flex-wrap'}`}
+          className={`flex gap-4 py-4 ${settings.slider_enabled === false ? 'flex-wrap' : 'overflow-x-auto overflow-y-visible cursor-grab scrollbar-hide'}`}
         >
           {reviews.map((review, index) => (
             <div

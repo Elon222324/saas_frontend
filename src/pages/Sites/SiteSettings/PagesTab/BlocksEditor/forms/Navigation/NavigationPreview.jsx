@@ -32,30 +32,21 @@ export default function NavigationPreview({ settings }) {
   useEffect(() => {
     if (!data?.ui_schema) return
 
-    const useCustom = settings?.custom_appearance === true
+    applyCssVariablesFromUiSchema(data.ui_schema)
     const css = {}
-
-    if (useCustom) {
-      Object.keys(blockSettings).forEach((key) => {
-        if (key.includes('color') || key.startsWith('bg_')) {
-          css[`--${key.replace(/_/g, '-')}`] = blockSettings[key]
-        }
-        if (key === 'hover_color') {
-          css['--link-hover-color'] = blockSettings[key]
-        }
-      })
-
-      console.log('[🧩 custom theme] styleVars:', css)
-      setStyleVars(css)
-    } else {
-      console.log('[🌐 global theme] fallback to ui_schema')
-      applyCssVariablesFromUiSchema(data.ui_schema)
-      setStyleVars({})
-    }
+    Object.keys(blockSettings).forEach((key) => {
+      if (key.includes('color') || key.startsWith('bg_')) {
+        css[`--${key.replace(/_/g, '-')}`] = blockSettings[key]
+      }
+      if (key === 'hover_color') {
+        css['--link-hover-color'] = blockSettings[key]
+      }
+    })
+    setStyleVars(css)
 
     console.log('[📦 blockSettings]:', blockSettings)
     console.log('[⚙️ settings]:', settings)
-  }, [data?.ui_schema, settings?.custom_appearance, settings])
+  }, [data?.ui_schema, settings])
 
   if (!nav?.length) {
     // Этот div можно оставить с p-4, так как он служит сообщением об отсутствии контента

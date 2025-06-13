@@ -2,42 +2,18 @@ import React from 'react'
 import { defaultQuickInfoItems } from './quickInfoDataSchema'
 
 export const QuickInfo = ({ settings = {}, data = {}, commonSettings = {} }) => {
-  const isCustom = settings?.custom_appearance === true
-
-  const defaultQuickInfoSettings = {
-    gap: 24,
-    grid_cols: 4,
-    border_radius: 12,
-    font_size_title: 14,
-    font_size_desc: 16,
-    card_bg_color: '#FFFFFF',
-    card_border_color: '#E5E7EB',
-    card_variant: 'flat',
-    show_cards: true,
-  }
-
-  const source = isCustom
-    ? settings
-    : {
-        ...defaultQuickInfoSettings,
-        bg_color: commonSettings.background?.surface,
-        title_color: commonSettings.text?.secondary,
-        desc_color: commonSettings.text?.accent,
-        text_color: commonSettings.text?.primary,
-      }
-
-  const bgColor = source?.bg_color || '#F3F4F6'
-  const titleColor = source?.title_color || '#6B7280'
-  const descColor = source?.desc_color || '#1976D2'
-  const gap = source?.gap || 24
-  const cols = source?.grid_cols || 4
-  const borderRadius = source?.border_radius || 12
-  const fontSizeTitle = source?.font_size_title || 14
-  const fontSizeDesc = source?.font_size_desc || 16
-  const cardBg = source?.card_bg_color || '#FFFFFF'
-  const cardBorder = source?.card_border_color || '#E5E7EB'
-  const variant = source?.card_variant || 'flat'
-  const showCards = source?.show_cards !== false
+  const bgColor = settings.bg_color ?? commonSettings.background?.surface ?? '#F3F4F6'
+  const titleColor = settings.title_color ?? commonSettings.text?.secondary ?? '#6B7280'
+  const descColor = settings.desc_color ?? commonSettings.text?.accent ?? '#1976D2'
+  const gap = settings.gap ?? 24
+  const cols = settings.grid_cols ?? 4
+  const borderRadius = settings.border_radius ?? 12
+  const fontSizeTitle = settings.font_size_title ?? 14
+  const fontSizeDesc = settings.font_size_desc ?? 16
+  const cardBg = settings.card_bg_color ?? '#FFFFFF'
+  const cardBorder = settings.card_border_color ?? '#E5E7EB'
+  const variant = settings.card_variant ?? 'flat'
+  const showCards = settings.show_cards ?? true
 
   const defaultItems = defaultQuickInfoItems
 

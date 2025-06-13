@@ -11,10 +11,7 @@ export default function BlockAppearance({
 
 
   const renderField = (field) => {
-    if (field.visible_if) {
-      const [[depKey, depVal]] = Object.entries(field.visible_if)
-      if (settings?.[depKey] !== depVal) return null
-    }
+    if (field.visible === false) return null
 
     const FieldComponent = fieldTypes[field.type] || fieldTypes.text
     const value =

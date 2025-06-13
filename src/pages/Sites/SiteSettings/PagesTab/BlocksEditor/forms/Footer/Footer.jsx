@@ -2,60 +2,27 @@ import { Facebook, Instagram, Youtube, Twitter, Phone, Mail } from 'lucide-react
 import { SiVk, SiTelegram } from 'react-icons/si'
 
 export const Footer = ({ settings = {}, commonSettings = {}, data = {} }) => {
-  const isCustom = settings?.custom_appearance === true
-
-  const source = isCustom
-    ? settings
-    : {
-        background_color: commonSettings.background?.muted,
-        text_color: commonSettings.text?.primary,
-        border_color: commonSettings.background?.surface,
-        font_family: commonSettings.typography?.font_family,
-        font_size_base: 14,
-        transition_duration: `${commonSettings.transition?.duration || 0.3}s`,
-        icon_color: commonSettings.icon?.default,
-        icon_color_hover: commonSettings.icon?.hover,
-        alignment: 'spread',
-        section_spacing_top: 48,
-        section_spacing_bottom: 24,
-        show_sections: {
-          about: true,
-          contacts: true,
-          socials: true,
-        },
-        show_social_icons: {
-          facebook: true,
-          instagram: true,
-          vk: true,
-          youtube: true,
-          telegram: true,
-          twitter: true,
-        },
-        show_payment_icons: false,
-      }
-
-  const {
-    background_color = '#FFFFFF',
-    text_color = '#212121',
-    border_color = 'rgba(0,0,0,0.1)',
-    font_family = 'inherit',
-    font_size_base = 14,
-    transition_duration = '0.3s',
-    icon_color = '#6B7280',
-    icon_color_hover = '#374151',
-    alignment = 'spread',
-    section_spacing_top = 48,
-    section_spacing_bottom = 24,
-    show_sections = { about: true, contacts: true, socials: true },
-    show_social_icons = {
-      facebook: true,
-      instagram: true,
-      vk: true,
-      youtube: true,
-      telegram: true,
-      twitter: true,
-    },
-  } = source
+  const background_color = settings.background_color ?? commonSettings.background?.muted ?? '#FFFFFF'
+  const text_color = settings.text_color ?? commonSettings.text?.primary ?? '#212121'
+  const border_color = settings.border_color ?? commonSettings.background?.surface ?? 'rgba(0,0,0,0.1)'
+  const font_family = settings.font_family ?? commonSettings.typography?.font_family ?? 'inherit'
+  const font_size_base = settings.font_size_base ?? 14
+  const transition_duration = settings.transition_duration ?? `${commonSettings.transition?.duration || 0.3}s`
+  const icon_color = settings.icon_color ?? commonSettings.icon?.default ?? '#6B7280'
+  const icon_color_hover = settings.icon_color_hover ?? commonSettings.icon?.hover ?? '#374151'
+  const alignment = settings.alignment ?? 'spread'
+  const section_spacing_top = settings.section_spacing_top ?? 48
+  const section_spacing_bottom = settings.section_spacing_bottom ?? 24
+  const show_sections = settings.show_sections ?? { about: true, contacts: true, socials: true }
+  const show_social_icons = settings.show_social_icons ?? {
+    facebook: true,
+    instagram: true,
+    vk: true,
+    youtube: true,
+    telegram: true,
+    twitter: true,
+  }
+  const show_payment_icons = settings.show_payment_icons ?? false
 
   const alignmentClass = {
     left: 'items-start text-left',

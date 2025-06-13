@@ -1,18 +1,11 @@
 export const tabsSchema = [
-  {
-    key: 'custom_appearance',
-    label: 'Изменить внешний вид блока (фон, кнопки, текст)',
-    type: 'boolean',
-    default: false,
-    editable: true
-  },
-  {
+    {
     key: 'bg_color',
     label: 'Фон панели вкладок',
     type: 'color',
     default: '#FFFFFF',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'active_bg_color',
@@ -20,7 +13,7 @@ export const tabsSchema = [
     type: 'color',
     default: '#1976D2',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'active_text_color',
@@ -28,7 +21,7 @@ export const tabsSchema = [
     type: 'color',
     default: '#FFFFFF',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'text_color',
@@ -36,7 +29,7 @@ export const tabsSchema = [
     type: 'color',
     default: '#212121',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'border_color',
@@ -44,7 +37,7 @@ export const tabsSchema = [
     type: 'color',
     default: 'rgba(0,0,0,0.1)',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'hover_bg_color',
@@ -52,7 +45,7 @@ export const tabsSchema = [
     type: 'color',
     default: 'transparent',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'hover_text_color',
@@ -60,7 +53,7 @@ export const tabsSchema = [
     type: 'color',
     default: '#212121',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'tab_spacing',
@@ -68,7 +61,7 @@ export const tabsSchema = [
     type: 'number',
     default: 12,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'font_size_tab',
@@ -76,7 +69,7 @@ export const tabsSchema = [
     type: 'fontsize',
     default: 14,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'show_cart_button',
@@ -84,7 +77,7 @@ export const tabsSchema = [
     type: 'boolean',
     default: true,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'cart_bg_color',
@@ -92,7 +85,7 @@ export const tabsSchema = [
     type: 'color',
     default: '#1976D2',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'cart_text_color',
@@ -100,7 +93,7 @@ export const tabsSchema = [
     type: 'color',
     default: '#FFFFFF',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'cart_hover_bg_color',
@@ -108,7 +101,7 @@ export const tabsSchema = [
     type: 'color',
     default: '#1565C0',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'cart_hover_text_color',
@@ -116,7 +109,7 @@ export const tabsSchema = [
     type: 'color',
     default: '#FFFFFF',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'cart_badge_bg_color',
@@ -124,7 +117,7 @@ export const tabsSchema = [
     type: 'color',
     default: '#EF4444',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'cart_badge_text_color',
@@ -132,7 +125,7 @@ export const tabsSchema = [
     type: 'color',
     default: '#FFFFFF',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'cart_badge_hover_bg_color',
@@ -140,7 +133,7 @@ export const tabsSchema = [
     type: 'color',
     default: '#DC2626',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'cart_badge_hover_text_color',
@@ -148,6 +141,6 @@ export const tabsSchema = [
     type: 'color',
     default: '#FFFFFF',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   }
 ]

@@ -7,6 +7,7 @@ import { fieldTypes } from '@/components/fields/fieldTypes'
 import BannerItemsEditor from './ItemsEditor'
 import BannerAppearance from './Appearance'
 import BannerPreview from './BannerPreview'
+import { Tabs, Tab } from '@/components/ui/tabs'
 
 import { useBlockAppearance } from '@blocks/forms/hooks/useBlockAppearance'
 import { useBlockData } from '@blocks/forms/hooks/useBlockData'
@@ -14,7 +15,7 @@ import { useBlockData } from '@blocks/forms/hooks/useBlockData'
 export default function BannerEditor({ block, slug, onChange }) {
   const { data: siteData, site_name, setData } = useSiteSettings()
   const block_id = block?.real_id
-
+  const [activeTab, setActiveTab] = useState('data')
   const [dataState, setDataState] = useState(block?.data || {})
   const [settingsState, setSettingsState] = useState(block?.settings || {})
   const [canShow, setCanShow] = useState(false)
@@ -83,7 +84,6 @@ export default function BannerEditor({ block, slug, onChange }) {
 
   console.log('🧪 showDataButton:', showDataButton)
   console.log('🧪 showAppearanceButton:', showAppearanceButton)
-  console.log('🧪 settingsState.custom_appearance:', settingsState?.custom_appearance)
   console.log('🧪 dataState:', dataState)
 
   return (
@@ -94,25 +94,35 @@ export default function BannerEditor({ block, slug, onChange }) {
         </div>
       )}
 
-      <BannerItemsEditor
-        schema={bannerDataSchema}
-        data={dataState}
-        onTextChange={handleTextFieldChange}
-        onSaveData={() => handleSaveData(dataState)}
-      />
+      <Tabs value={activeTab} onChange={setActiveTab} className="mb-4">
+        <Tab value="data">Данные</Tab>
+        <Tab value="appearance">Дизайн</Tab>
+      </Tabs>
 
-      <div className="text-sm text-gray-500 italic pl-1 pt-4 border-t">
-        🎨 Редактирование внешнего вида блока
-      </div>
+      {activeTab === 'data' && (
+        <BannerItemsEditor
+          schema={bannerDataSchema}
+          data={dataState}
+          onTextChange={handleTextFieldChange}
+          onSaveData={() => handleSaveData(dataState)}
+        />
+      )}
 
-      <BannerAppearance
-        schema={bannerSchema}
-        settings={settingsState}
-        onChange={handleFieldChange}
-        fieldTypes={fieldTypes}
-        onSaveAppearance={() => handleSaveAppearance(settingsState)}
-        uiDefaults={uiDefaults}
-      />
+      {activeTab === 'appearance' && (
+        <>
+          <div className="text-sm text-gray-500 italic pl-1 pt-4 border-t">
+            🎨 Редактирование внешнего вида блока
+          </div>
+          <BannerAppearance
+            schema={bannerSchema}
+            settings={settingsState}
+            onChange={handleFieldChange}
+            fieldTypes={fieldTypes}
+            onSaveAppearance={() => handleSaveAppearance(settingsState)}
+            uiDefaults={uiDefaults}
+          />
+        </>
+      )}
 
       {canShow && (
         <button

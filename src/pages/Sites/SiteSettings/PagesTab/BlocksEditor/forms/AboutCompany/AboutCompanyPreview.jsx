@@ -11,26 +11,14 @@ export default function AboutCompanyPreview({ settings = {}, data = {}, commonSe
   useEffect(() => {
     if (!globalSiteData?.ui_schema) return
 
-    if (settings?.custom_appearance) {
-      const vars = {}
-      Object.entries(settings).forEach(([key, val]) => {
-        if (key.includes('color') || key.startsWith('bg_')) {
-          vars[`--${key.replace(/_/g, '-')}`] = val
-        }
-      })
-
-      const varsJson = JSON.stringify(vars)
-      const styleVarsJson = JSON.stringify(styleVars)
-
-      if (varsJson !== styleVarsJson) {
-        setStyleVars(vars)
+    applyCssVariablesFromUiSchema(globalSiteData.ui_schema)
+    const vars = {}
+    Object.entries(settings).forEach(([key, val]) => {
+      if (key.includes('color') || key.startsWith('bg_')) {
+        vars[`--${key.replace(/_/g, '-')}`] = val
       }
-    } else {
-      applyCssVariablesFromUiSchema(globalSiteData.ui_schema)
-      if (Object.keys(styleVars).length > 0) {
-        setStyleVars({})
-      }
-    }
+    })
+    setStyleVars(vars)
   }, [settings, globalSiteData?.ui_schema])
 
   return (

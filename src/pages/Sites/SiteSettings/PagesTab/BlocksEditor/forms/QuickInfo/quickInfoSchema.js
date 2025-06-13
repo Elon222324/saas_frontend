@@ -1,18 +1,11 @@
 export const quickInfoSchema = [
-  {
-    key: 'custom_appearance',
-    label: 'Изменить внешний вид блока (фон и цвета текста)',
-    type: 'boolean',
-    default: false,
-    editable: true
-  },
-  {
+    {
     key: 'bg_color',
     label: 'Фон блока',
     type: 'color',
     default: '#E3F2FD',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'title_color',
@@ -20,7 +13,7 @@ export const quickInfoSchema = [
     type: 'color',
     default: '#6B7280',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'desc_color',
@@ -28,7 +21,7 @@ export const quickInfoSchema = [
     type: 'color',
     default: '#1976D2',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
 
   // 🔧 Новые параметры
@@ -38,7 +31,7 @@ export const quickInfoSchema = [
     type: 'number',
     default: 24,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'grid_cols',
@@ -46,7 +39,7 @@ export const quickInfoSchema = [
     type: 'number',
     default: 4,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'border_radius',
@@ -54,7 +47,7 @@ export const quickInfoSchema = [
     type: 'number',
     default: 12,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'font_size_title',
@@ -62,7 +55,7 @@ export const quickInfoSchema = [
     type: 'number',
     default: 14,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'font_size_desc',
@@ -70,7 +63,7 @@ export const quickInfoSchema = [
     type: 'number',
     default: 16,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'card_bg_color',
@@ -78,7 +71,7 @@ export const quickInfoSchema = [
     type: 'color',
     default: '#FFFFFF',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'card_border_color',
@@ -86,7 +79,7 @@ export const quickInfoSchema = [
     type: 'color',
     default: '#E5E7EB',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'card_variant',
@@ -95,7 +88,7 @@ export const quickInfoSchema = [
     options: ['flat', 'border', 'hover-shadow'],
     default: 'flat',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'show_cards',
@@ -103,6 +96,6 @@ export const quickInfoSchema = [
     type: 'boolean',
     default: true,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   }
 ]

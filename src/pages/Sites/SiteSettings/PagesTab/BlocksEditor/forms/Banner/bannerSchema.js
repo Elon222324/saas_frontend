@@ -1,18 +1,11 @@
 export const bannerSchema = [
-  {
-    key: 'custom_appearance',
-    label: 'Изменить внешний вид блока (фон, кнопка, текст)',
-    type: 'boolean',
-    default: false,
-    editable: true
-  },
-  {
+    {
     key: 'bg_gradient_from',
     label: 'Цвет градиента (начало)',
     type: 'color',
     default: '#1976D2',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'bg_gradient_to',
@@ -20,7 +13,7 @@ export const bannerSchema = [
     type: 'color',
     default: '#90CAF9',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'text_color',
@@ -28,7 +21,7 @@ export const bannerSchema = [
     type: 'color',
     default: '#FFFFFF',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'button_bg_color',
@@ -36,7 +29,7 @@ export const bannerSchema = [
     type: 'color',
     default: '#FFFFFF',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'button_text_color',
@@ -44,7 +37,7 @@ export const bannerSchema = [
     type: 'color',
     default: '#1976D2',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'button_hover_color',
@@ -52,7 +45,7 @@ export const bannerSchema = [
     type: 'color',
     default: '#F3F4F6',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
 
   // 🔽 Новые переменные
@@ -63,7 +56,7 @@ export const bannerSchema = [
     options: ['left', 'center', 'right'],
     default: 'left',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'img_style',
@@ -72,7 +65,7 @@ export const bannerSchema = [
     options: ['default', 'float', 'glow'],
     default: 'default',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'hover_effect',
@@ -80,7 +73,7 @@ export const bannerSchema = [
     type: 'boolean',
     default: true,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'layout_variant',
@@ -89,7 +82,7 @@ export const bannerSchema = [
     options: ['wide', 'narrow'],
     default: 'wide',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'reverse_layout',
@@ -97,6 +90,6 @@ export const bannerSchema = [
     type: 'boolean',
     default: false,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   }
 ]

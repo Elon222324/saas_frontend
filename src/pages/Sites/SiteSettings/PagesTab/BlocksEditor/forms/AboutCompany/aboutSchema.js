@@ -1,18 +1,11 @@
 export const aboutSchema = [
-  {
-    key: 'custom_appearance',
-    label: 'Изменить внешний вид блока (фон и цвета)',
-    type: 'boolean',
-    default: false,
-    editable: true
-  },
-  {
+    {
     key: 'background_color',
     label: 'Фон блока',
     type: 'color',
     default: '#FFFFFF',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'text_color',
@@ -20,7 +13,7 @@ export const aboutSchema = [
     type: 'color',
     default: '#212121',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'subtle_text_color',
@@ -28,7 +21,7 @@ export const aboutSchema = [
     type: 'color',
     default: '#6B7280',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'padding_top',
@@ -36,7 +29,7 @@ export const aboutSchema = [
     type: 'number',
     default: 48,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'padding_bottom',
@@ -44,7 +37,7 @@ export const aboutSchema = [
     type: 'number',
     default: 48,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'title_font_size',
@@ -52,7 +45,7 @@ export const aboutSchema = [
     type: 'fontsize',
     default: 24,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'desc_font_size',
@@ -60,7 +53,7 @@ export const aboutSchema = [
     type: 'fontsize',
     default: 16,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'max_width',
@@ -68,7 +61,7 @@ export const aboutSchema = [
     type: 'number',
     default: 768,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: 'text_align',
@@ -77,6 +70,6 @@ export const aboutSchema = [
     options: ['left', 'center', 'right'],
     default: 'center',
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   }
 ]

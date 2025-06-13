@@ -5,12 +5,14 @@ import { aboutDataSchema } from './aboutDataSchema'
 import { fieldTypes } from '@/components/fields/fieldTypes'
 import TextItemsEditor from './ItemsEditor'
 import TextAppearance from './Appearance'
+import { Tabs, Tab } from '@/components/ui/tabs'
 import { useBlockAppearance } from '@blocks/forms/hooks/useBlockAppearance'
 import { useBlockData } from '@blocks/forms/hooks/useBlockData'
 
 export default function TextEditor({ block, slug, onChange }) {
   const { data: siteData, site_name, setData } = useSiteSettings()
   const block_id = block?.real_id
+  const [activeTab, setActiveTab] = useState('data')
   const [dataState, setDataState] = useState(block?.data || {})
   const [settingsState, setSettingsState] = useState(block?.settings || {})
 
@@ -72,26 +74,36 @@ export default function TextEditor({ block, slug, onChange }) {
         </div>
       )}
 
-      <div className="text-sm text-gray-500 italic pl-1">
-        ⚙️ Настройка текстового блока: фон, цвета заголовка и описания
-      </div>
+      <Tabs value={activeTab} onChange={setActiveTab} className="mb-4">
+        <Tab value="data">Данные</Tab>
+        <Tab value="appearance">Дизайн</Tab>
+      </Tabs>
 
-      <TextItemsEditor
-        schema={aboutDataSchema}
-        data={dataState}
-        onTextChange={handleDataChange}
-        onSaveData={() => handleSaveData(dataState)}
-        uiDefaults={uiDefaults}
-      />
+      {activeTab === 'data' && (
+        <TextItemsEditor
+          schema={aboutDataSchema}
+          data={dataState}
+          onTextChange={handleDataChange}
+          onSaveData={() => handleSaveData(dataState)}
+          uiDefaults={uiDefaults}
+        />
+      )}
 
-      <TextAppearance
-        schema={aboutSchema}
-        settings={settingsState}
-        onChange={handleFieldChange}
-        fieldTypes={fieldTypes}
-        onSaveAppearance={() => handleSaveAppearance(settingsState)}
-        uiDefaults={uiDefaults}
-      />
+      {activeTab === 'appearance' && (
+        <>
+          <div className="text-sm text-gray-500 italic pl-1">
+            ⚙️ Настройка текстового блока: фон, цвета заголовка и описания
+          </div>
+          <TextAppearance
+            schema={aboutSchema}
+            settings={settingsState}
+            onChange={handleFieldChange}
+            fieldTypes={fieldTypes}
+            onSaveAppearance={() => handleSaveAppearance(settingsState)}
+            uiDefaults={uiDefaults}
+          />
+        </>
+      )}
 
       {(showDataButton || showSaveButton) && (
         <button

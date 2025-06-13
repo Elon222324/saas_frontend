@@ -5,13 +5,14 @@ import { createFooterDataSchema } from './footerDataSchema'
 import { fieldTypes } from '@/components/fields/fieldTypes'
 import FooterItemsEditor from './ItemsEditor'
 import FooterAppearance from './Appearance'
+import { Tabs, Tab } from '@/components/ui/tabs'
 import { useBlockAppearance } from '@blocks/forms/hooks/useBlockAppearance'
 import { useBlockData } from '@blocks/forms/hooks/useBlockData'
 
 export default function FooterEditor({ block, data, onChange, slug }) {
   const { data: siteData, site_name, setData } = useSiteSettings()
   const block_id = block?.real_id
-
+  const [activeTab, setActiveTab] = useState('data')
   const [dataState, setDataState] = useState(block?.data || {})
   const [settingsState, setSettingsState] = useState(block?.settings || {})
 
@@ -72,26 +73,36 @@ export default function FooterEditor({ block, data, onChange, slug }) {
         </div>
       )}
 
-      <div className="text-sm text-gray-500 italic pl-1">
-        ⚙️ Настройка подвала: цвета фона, текста и линии
-      </div>
+      <Tabs value={activeTab} onChange={setActiveTab} className="mb-4">
+        <Tab value="data">Данные</Tab>
+        <Tab value="appearance">Дизайн</Tab>
+      </Tabs>
 
-      <FooterItemsEditor
-        schema={createFooterDataSchema(settingsState?.show_social_icons)}
-        data={dataState}
-        onTextChange={handleDataChange}
-        onSaveData={() => handleSaveData(dataState)}
-        uiDefaults={uiDefaults}
-      />
+      {activeTab === 'data' && (
+        <FooterItemsEditor
+          schema={createFooterDataSchema(settingsState?.show_social_icons)}
+          data={dataState}
+          onTextChange={handleDataChange}
+          onSaveData={() => handleSaveData(dataState)}
+          uiDefaults={uiDefaults}
+        />
+      )}
 
-      <FooterAppearance
-        schema={footerSchema}
-        settings={settingsState}
-        onChange={handleFieldChange}
-        fieldTypes={fieldTypes}
-        onSaveAppearance={() => handleSaveAppearance(settingsState)}
-        uiDefaults={uiDefaults}
-      />
+      {activeTab === 'appearance' && (
+        <>
+          <div className="text-sm text-gray-500 italic pl-1">
+            ⚙️ Настройка подвала: цвета фона, текста и линии
+          </div>
+          <FooterAppearance
+            schema={footerSchema}
+            settings={settingsState}
+            onChange={handleFieldChange}
+            fieldTypes={fieldTypes}
+            onSaveAppearance={() => handleSaveAppearance(settingsState)}
+            uiDefaults={uiDefaults}
+          />
+        </>
+      )}
 
       {(showDataButton || showSaveButton) && (
         <button

@@ -1,12 +1,5 @@
 export const headerSchema = [
-  {
-    key: "custom_appearance",
-    label: "Изменить внешний вид блока (цвета, кнопки и фон)",
-    type: "boolean",
-    default: false,
-    editable: true
-  },
-
+  
   // 🎨 Цвета
   {
     key: "background_color",
@@ -14,7 +7,7 @@ export const headerSchema = [
     type: "color",
     default: "#FFFFFF",
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: "text_color",
@@ -22,7 +15,7 @@ export const headerSchema = [
     type: "color",
     default: "#212121",
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: "secondary_color",
@@ -30,7 +23,7 @@ export const headerSchema = [
     type: "color",
     default: "#6B7280",
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: "primary_color",
@@ -38,7 +31,7 @@ export const headerSchema = [
     type: "color",
     default: "#1976D2",
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: "button_bg_color",
@@ -46,7 +39,7 @@ export const headerSchema = [
     type: "color",
     default: "#F3F4F6",
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: "button_text_color",
@@ -54,7 +47,7 @@ export const headerSchema = [
     type: "color",
     default: "#000000",
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: "button_hover_color",
@@ -62,7 +55,7 @@ export const headerSchema = [
     type: "color",
     default: "#E5E7EB",
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: "rating_color",
@@ -70,7 +63,7 @@ export const headerSchema = [
     type: "color",
     default: "#FACC15",
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
 
   // 👁️ Видимость блоков
@@ -80,7 +73,7 @@ export const headerSchema = [
     type: "boolean",
     default: true,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: "show_bonus_button",
@@ -88,7 +81,7 @@ export const headerSchema = [
     type: "boolean",
     default: true,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: "show_rating",
@@ -96,7 +89,7 @@ export const headerSchema = [
     type: "boolean",
     default: true,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
 
   // 🎯 Выравнивание
@@ -107,7 +100,7 @@ export const headerSchema = [
     options: ["left", "center"],
     default: "left",
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
 
   // 📐 Отступы
@@ -117,7 +110,7 @@ export const headerSchema = [
     type: "number",
     default: 16,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   },
   {
     key: "padding_y",
@@ -125,6 +118,6 @@ export const headerSchema = [
     type: "number",
     default: 12,
     editable: true,
-    visible_if: { custom_appearance: true }
+    visible: true
   }
 ]
