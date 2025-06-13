@@ -24,29 +24,6 @@ export const Footer = ({ settings = {}, commonSettings = {}, data = {} }) => {
   }
   const show_payment_icons = settings.show_payment_icons ?? false
 
-  const {
-    background_color = '#FFFFFF',
-    text_color = '#212121',
-    border_color = 'rgba(0,0,0,0.1)',
-    font_family = 'inherit',
-    font_size_base = 14,
-    transition_duration = '0.3s',
-    icon_color = '#6B7280',
-    icon_color_hover = '#374151',
-    alignment = 'spread',
-    section_spacing_top = 48,
-    section_spacing_bottom = 24,
-    show_sections = { about: true, contacts: true, socials: true },
-    show_social_icons = {
-      facebook: true,
-      instagram: true,
-      vk: true,
-      youtube: true,
-      telegram: true,
-      twitter: true,
-    },
-
-
   const alignmentClass = {
     left: 'items-start text-left',
     center: 'items-center text-center',
