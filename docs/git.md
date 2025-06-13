@@ -10,3 +10,6 @@ git reset --hard HEAD
 
 ### Сброс до нужного коммита
 git reset --hard ffb5dc71ddcb92bab9c6f0b12160a55039c73b6b
+
+### Подтянуть обновления с гит хаба
+git pull

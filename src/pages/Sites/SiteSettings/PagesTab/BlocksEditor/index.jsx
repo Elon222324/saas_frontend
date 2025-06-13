@@ -6,7 +6,7 @@ import PageSelectHeader from './parts/PageSelectHeader'
 import BlockListSidebar from './parts/BlockListSidebar'
 import BlockEditorPanel from './parts/BlockEditorPanel'
 
-export default function PageEditor() {
+export default function BlocksEditor() {
   const { slug } = useParams()
   const { data, loading: loadingContext, site_name, setData } = useSiteSettings()
   const [blocks, setBlocks] = useState([])
