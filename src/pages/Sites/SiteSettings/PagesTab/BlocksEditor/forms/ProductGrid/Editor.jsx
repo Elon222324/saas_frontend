@@ -7,7 +7,7 @@ import ProductGridAppearance from './Appearance'
 import { Tabs, Tab } from '@/components/ui/tabs'
 import { useBlockAppearance } from '@blocks/forms/hooks/useBlockAppearance'
 
-export default function ProductGridEditor({ block, data, onChange, slug }) {
+export default function ProductGridEditor({ block, data, onChange, slug, onChangeBlock }) {
   const { data: siteData, site_name, setData } = useSiteSettings()
   const block_id = block?.real_id
   const [activeTab, setActiveTab] = useState('data')
@@ -28,6 +28,7 @@ export default function ProductGridEditor({ block, data, onChange, slug }) {
     site_name,
     setData,
     onChange,
+    onChangeBlock,
   })
 
   return (
@@ -73,7 +74,6 @@ export default function ProductGridEditor({ block, data, onChange, slug }) {
         </>
       )}
 
-      {showSaveButton && null}
     </div>
   )
 }

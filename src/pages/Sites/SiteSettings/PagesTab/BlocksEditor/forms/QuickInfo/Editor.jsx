@@ -12,7 +12,7 @@ import { Tabs, Tab } from '@/components/ui/tabs'
 import { useBlockAppearance } from '@blocks/forms/hooks/useBlockAppearance'
 import { useBlockData } from '@blocks/forms/hooks/useBlockData'
 
-export default function QuickInfoEditor({ block, slug, onChange }) {
+export default function QuickInfoEditor({ block, slug, onChange, onChangeBlock }) {
   const { data: siteData, site_name, setData } = useSiteSettings()
   const block_id = block?.real_id
   const [activeTab, setActiveTab] = useState('data')
@@ -38,6 +38,7 @@ export default function QuickInfoEditor({ block, slug, onChange }) {
     siteData,
     site_name,
     setData,
+    onChangeBlock,
     onChange: (update) => {
       setSettingsState(update)
       onChange(prev => {
@@ -64,6 +65,7 @@ export default function QuickInfoEditor({ block, slug, onChange }) {
     slug,
     site_name,
     setData,
+    onChangeBlock,
     onChange: (update) => {
       setDataState(update)
       onChange(prev => {

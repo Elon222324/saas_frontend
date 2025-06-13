@@ -11,7 +11,7 @@ import { Tabs, Tab } from '@/components/ui/tabs'
 import { useBlockAppearance } from '@blocks/forms/hooks/useBlockAppearance'
 import { useBlockData } from '@blocks/forms/hooks/useBlockData'
 
-export default function HeaderEditor({ block, slug, onChange }) {
+export default function HeaderEditor({ block, slug, onChange, onChangeBlock }) {
   const { data: siteData, site_name, setData } = useSiteSettings()
   const block_id = block?.real_id
 
@@ -38,6 +38,7 @@ export default function HeaderEditor({ block, slug, onChange }) {
     siteData,
     site_name,
     setData,
+    onChangeBlock,
     onChange: (update) => {
       setSettingsState(update)
       onChange(prevBlockState => {
@@ -66,6 +67,7 @@ export default function HeaderEditor({ block, slug, onChange }) {
     slug,
     site_name,
     setData,
+    onChangeBlock,
     onChange: (update) => {
       setDataState(update)
       onChange(prevBlockState => {
@@ -118,7 +120,6 @@ export default function HeaderEditor({ block, slug, onChange }) {
         />
       )}
 
-      {(showDataButton || showAppearanceButton) && null}
     </div>
   )
 }
