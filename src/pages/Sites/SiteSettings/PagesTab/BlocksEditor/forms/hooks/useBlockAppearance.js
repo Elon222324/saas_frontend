@@ -23,23 +23,30 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
     uiDefaults.background_color = uiDefaults.bg_color
   }
 
+  // Initialize appearance defaults when switching blocks
   useEffect(() => {
     const values = {}
     for (const field of schema) {
       if (field.visible === false) continue
-      values[field.key] = data[field.key] !== undefined ? data[field.key] : uiDefaults[field.key]
+      values[field.key] =
+        data[field.key] !== undefined ? data[field.key] : uiDefaults[field.key]
     }
 
     setInitialAppearance(values)
-
-    requestAnimationFrame(() => {
-      const isChanged = schema.some(field => {
-        if (field.visible === false) return false
-        return data[field.key] !== values[field.key]
-      })
-      setReadyToCheck(isChanged)
-    })
+    // disable change detection until data updates after initialization
+    setReadyToCheck(false)
   }, [block_id])
+
+  // Enable change tracking once the form data differs from the initial state
+  useEffect(() => {
+    if (!Object.keys(initialAppearance).length) return
+    const changed = schema.some(field => {
+      if (field.visible === false) return false
+      if (data[field.key] === undefined) return false
+      return data[field.key] !== initialAppearance[field.key]
+    })
+    setReadyToCheck(changed)
+  }, [data, initialAppearance, schema])
 
   const handleFieldChange = (key, value) => {
     onChange(prev => {
