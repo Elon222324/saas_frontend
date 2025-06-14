@@ -36,12 +36,16 @@ export default function PageEditor() {
     setUnsavedBlocks({})
   }, [data, slug])
 
+  const isDeepEqual = (a, b) => JSON.stringify(a) === JSON.stringify(b)
+
   const handleBlockChange = (id, update) => {
-    // игнорировать пустые обновления
-    if (
-      (!update.settings || Object.keys(update.settings).length === 0) &&
-      (!update.data || Object.keys(update.data).length === 0)
-    ) {
+    const prevSettings = blockDataMap[id]?.settings || {}
+    const prevData = blockDataMap[id]?.data || {}
+
+    const sameSettings = !update.settings || isDeepEqual(update.settings, prevSettings)
+    const sameData = !update.data || isDeepEqual(update.data, prevData)
+
+    if (sameSettings && sameData) {
       return
     }
 

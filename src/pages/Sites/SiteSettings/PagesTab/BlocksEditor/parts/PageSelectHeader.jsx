@@ -28,7 +28,7 @@ export default function PageSelectHeader({ slug, data, hasUnsaved, onSave }) {
           onClick={onSave}
           className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition text-sm"
         >
-          💾 Сохранить
+          💾 Сохранить2222
         </button>
       )}
     </div>
