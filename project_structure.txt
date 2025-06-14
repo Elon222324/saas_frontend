@@ -61,7 +61,9 @@
 │   │       ├── button.jsx
 │   │       ├── input.jsx
 │   │       ├── label.jsx
-│   │       └── switch.jsx
+│   │       ├── SaveButton.jsx
+│   │       ├── switch.jsx
+│   │       └── tabs.jsx
 │   ├── context
 │   │   ├── README.md
 │   │   └── SiteSettingsContext.jsx
@@ -91,6 +93,9 @@
 │   │   │       │   ├── BlocksEditor
 │   │   │       │   │   ├── forms
 │   │   │       │   │   │   ├── AboutCompany
+│   │   │       │   │   │   │   ├── AboutCompany.jsx
+│   │   │       │   │   │   │   ├── AboutCompanyPreview.jsx
+│   │   │       │   │   │   │   ├── aboutDataSchema.js
 │   │   │       │   │   │   │   ├── aboutSchema.js
 │   │   │       │   │   │   │   ├── Appearance.jsx
 │   │   │       │   │   │   │   ├── Editor.jsx
@@ -221,4 +226,4 @@
 ├── tailwind.config.js
 └── vite.config.js
 
-43 directories, 179 files
+43 directories, 184 files

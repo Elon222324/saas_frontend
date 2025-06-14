@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { initBlockAppearanceFromCommon } from '@blocks/forms/utils/initBlockAppearanceFromCommon'
 
-export function useBlockAppearance({ schema, data, block_id, slug, siteData, site_name, setData, onChange }) {
+export function useBlockAppearance({ schema, data, block_id, slug, siteData, site_name, setData, onChange, onChangeBlock }) {
   const [initialAppearance, setInitialAppearance] = useState({})
   const [readyToCheck, setReadyToCheck] = useState(false)
   const [showSavedToast, setShowSavedToast] = useState(false)
@@ -30,25 +30,55 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
       values[field.key] = data[field.key] !== undefined ? data[field.key] : uiDefaults[field.key]
     }
 
-    setInitialAppearance(values)
+    console.log('[🎯 useBlockAppearance] initialAppearance set:', values)
+    console.log('[🎯 useBlockAppearance] current data at init:', data)
 
-    requestAnimationFrame(() => {
-      const isChanged = schema.some(field => {
-        if (field.visible === false) return false
-        return data[field.key] !== values[field.key]
-      })
-      setReadyToCheck(isChanged)
-    })
+    setInitialAppearance(values)
+    setReadyToCheck(false)
   }, [block_id])
+
+  useEffect(() => {
+    if (!Object.keys(initialAppearance).length) return
+    const changed = schema.some(field => {
+      if (field.visible === false) return false
+      if (data[field.key] === undefined) return false
+      return data[field.key] !== initialAppearance[field.key]
+    })
+
+    console.log('[🟨 useBlockAppearance] comparison result =', changed)
+    console.log('→ current data:', data)
+    console.log('→ initialAppearance:', initialAppearance)
+
+    setReadyToCheck(changed)
+  }, [data, initialAppearance, schema])
 
   const handleFieldChange = (key, value) => {
     onChange(prev => {
       const updated = { ...prev, [key]: value }
+
+      // Только если есть реальные отличия — шлём наружу
+      if (onChangeBlock && block_id && initialAppearance) {
+        const diff = {}
+        for (const field of schema) {
+          if (field.visible === false) continue
+          const k = field.key
+          const val = updated[k]
+          if (val !== initialAppearance[k]) {
+            diff[k] = val
+          }
+        }
+
+        if (Object.keys(diff).length > 0) {
+          onChangeBlock(block_id, { settings: updated })
+        }
+      }
+
       const changed = schema.some(field => {
         if (field.visible === false) return false
         return updated[field.key] !== initialAppearance[field.key]
       })
       requestAnimationFrame(() => setReadyToCheck(changed))
+
       return updated
     })
   }
@@ -109,6 +139,10 @@ export function useBlockAppearance({ schema, data, block_id, slug, siteData, sit
   }
 
   const showSaveButton = readyToCheck && hasAppearanceChanged()
+  console.log('[🔘 showSaveButton]', { readyToCheck, hasChanged: hasAppearanceChanged() })
+  if (showSaveButton) {
+    console.log('🚨 showSaveButton = TRUE')
+  }
 
   return {
     handleFieldChange,
