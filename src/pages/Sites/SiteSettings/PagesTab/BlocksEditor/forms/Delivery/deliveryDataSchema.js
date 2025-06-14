@@ -73,6 +73,7 @@ export const deliveryDataSchema = [
     key: 'map_image',
     label: 'Изображение карты',
     type: 'image',
+    category: 'Зона доставки',
     default: '/images/7.webp',
     editable: true,
   },

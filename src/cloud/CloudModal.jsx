@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Dialog } from '@headlessui/react'
 import CloudSidebar from './CloudSidebar'
 import CloudGrid from './CloudGrid'
@@ -28,10 +28,23 @@ export default function CloudModal({ isOpen, category, onSelect }) {
     isUploading,
   } = useCloudStorage()
 
-  const {
+  const { 
     groups: galleryGroups,
     files: galleryFiles,
   } = useTemplateGallery()
+
+  useEffect(() => {
+    if (!isOpen || !category || !userGroups.length) return
+    const lower = category.toLowerCase()
+    for (const group of userGroups) {
+      for (const child of group.children || []) {
+        if ((child.title || '').toLowerCase() === lower) {
+          setActiveCategory(child.id)
+          return
+        }
+      }
+    }
+  }, [category, userGroups, isOpen])
 
   const currentGroups =
     activeTab === 'site' ? userGroups : galleryGroups

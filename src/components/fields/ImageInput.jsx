@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import CloudModal from '@/cloud/CloudModal'
 
-export default function ImageInput({ label, value, onChange, category = 'logo' }) {
+export default function ImageInput({ label, value, onChange, category = 'Логотипы' }) {
   const [isOpen, setIsOpen] = useState(false)
 
   // Подставляем полный URL для превью, если передан относительный путь
