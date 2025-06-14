@@ -37,6 +37,14 @@ export default function PageEditor() {
   }, [data, slug])
 
   const handleBlockChange = (id, update) => {
+    // игнорировать пустые обновления
+    if (
+      (!update.settings || Object.keys(update.settings).length === 0) &&
+      (!update.data || Object.keys(update.data).length === 0)
+    ) {
+      return
+    }
+
     setUnsavedBlocks(prev => ({
       ...prev,
       [id]: { ...(prev[id] || {}), ...update },
