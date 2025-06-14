@@ -1,5 +1,4 @@
-// src/pages/Sites/SiteSettings/PagesTab/BlocksEditor/preview/BlockDetails.jsx
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
 import { previewBlocks } from './blockMap'
@@ -23,6 +22,7 @@ export default function BlockDetails({ block, data, onSave, onBlockChange }) {
   const [showPreview, setShowPreview] = useState(true)
   const { slug } = useParams()
   const { site_name, data: siteData } = useSiteSettings()
+  const initialized = useRef(false)
 
   useEffect(() => {
     if (!block?.real_id) return
@@ -49,6 +49,8 @@ export default function BlockDetails({ block, data, onSave, onBlockChange }) {
       active: block.active,
       label: block.label,
     })
+
+    initialized.current = true
   }, [block, data])
 
   if (!block || !block.real_id) {
@@ -96,12 +98,16 @@ export default function BlockDetails({ block, data, onSave, onBlockChange }) {
     setForm(prev => {
       const resolved =
         typeof update === 'function' ? update(prev) : { ...prev, ...update }
-      if (onBlockChange && block?.real_id) {
-        onBlockChange(block.real_id, {
-          settings: resolved.settings,
-          data: resolved.data,
+
+      if (initialized.current && onBlockChange && block?.real_id) {
+        queueMicrotask(() => {
+          onBlockChange(block.real_id, {
+            settings: resolved.settings,
+            data: resolved.data,
+          })
         })
       }
+
       return resolved
     })
   }
