@@ -10,7 +10,8 @@ export default function PageEditor() {
   const { slug } = useParams()
   const { data, loading: loadingContext, site_name, setData } = useSiteSettings()
   const [blocks, setBlocks] = useState([])
-  const [blockDataMap, setBlockDataMap] = useState({})
+  const [drafts, setDrafts] = useState({})
+  const [initialDrafts, setInitialDrafts] = useState({})
   const [selectedId, setSelectedId] = useState(null)
   const API_URL = import.meta.env.VITE_API_URL
 
@@ -24,29 +25,60 @@ export default function PageEditor() {
 
     const map = {}
     for (const b of sortedBlocks) {
-      map[b.real_id] = typeof b.settings === 'string' ? JSON.parse(b.settings) : b.settings || {}
+      const settings = typeof b.settings === 'string' ? JSON.parse(b.settings) : b.settings || {}
+      const d = typeof b.data === 'string' ? JSON.parse(b.data) : b.data || {}
+      map[b.real_id] = { settings, data: d }
     }
-    setBlockDataMap(map)
+    setDrafts(map)
+    setInitialDrafts(map)
   }, [data, slug])
 
-  const handleSave = async (blockId, newData) => {
-    const res = await fetch(`${API_URL}/sites/${site_name}/pages/${slug}/blocks/${blockId}`, {
-      method: 'PATCH',
+  const handleBlockChange = (id, update) => {
+    setDrafts(prev => ({ ...prev, [id]: update }))
+  }
+
+  const handleSaveAll = async () => {
+    const payload = []
+    for (const [id, draft] of Object.entries(drafts)) {
+      const initial = initialDrafts[id] || {}
+      const changed = {}
+      if (JSON.stringify(draft.settings) !== JSON.stringify(initial.settings)) {
+        changed.settings = draft.settings
+      }
+      if (JSON.stringify(draft.data) !== JSON.stringify(initial.data)) {
+        changed.data = draft.data
+      }
+      if (Object.keys(changed).length) {
+        payload.push({ block_id: Number(id), ...changed })
+      }
+    }
+    if (!payload.length) return alert('Нет изменений для сохранения')
+
+    const res = await fetch(`${API_URL}/blocks/update-all/${site_name}/${slug}`, {
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         'Content-Type': 'application/json',
       },
       credentials: 'include',
-      body: JSON.stringify(newData),
+      body: JSON.stringify(payload),
     })
     if (!res.ok) return alert('Не удалось сохранить данные')
 
-    setBlockDataMap(prev => ({ ...prev, [blockId]: newData }))
+    setInitialDrafts(drafts)
     setData(prev => {
-      const updatedBlocks = prev.blocks?.[slug]?.map(b =>
-        b.real_id === blockId ? { ...b, settings: newData } : b
-      )
-      return { ...prev, blocks: { ...prev.blocks, [slug]: updatedBlocks } }
+      const updated = prev.blocks?.[slug]?.map(b => {
+        const found = payload.find(p => p.block_id === b.real_id)
+        if (found) {
+          return {
+            ...b,
+            settings: found.settings ?? b.settings,
+            data: found.data ?? b.data,
+          }
+        }
+        return b
+      })
+      return { ...prev, blocks: { ...prev.blocks, [slug]: updated } }
     })
     alert('Сохранено!')
   }
@@ -72,11 +104,29 @@ export default function PageEditor() {
   if (loadingContext || !blocks.length || !data?.pages) return <div className="p-6">Загрузка...</div>
 
   const selectedBlock = blocks.find(b => b.id === selectedId)
-  const selectedData = selectedBlock ? blockDataMap[selectedBlock.real_id] || {} : {}
+  const selectedData = selectedBlock ? drafts[selectedBlock.real_id] || {} : {}
+
+  const hasUnsaved = Object.keys(drafts).some(id => {
+    const d = drafts[id] || {}
+    const i = initialDrafts[id] || {}
+    return (
+      JSON.stringify(d.settings) !== JSON.stringify(i.settings) ||
+      JSON.stringify(d.data) !== JSON.stringify(i.data)
+    )
+  })
 
   return (
     <div className="px-6 pt-0 space-y-4">
-      <PageSelectHeader slug={slug} data={data} />
+      <div className="flex justify-between items-center">
+        <PageSelectHeader slug={slug} data={data} />
+        <button
+          onClick={handleSaveAll}
+          disabled={!hasUnsaved}
+          className="bg-emerald-600 text-white px-4 py-2 rounded disabled:opacity-50"
+        >
+          💾 Сохранить
+        </button>
+      </div>
       <div className="flex gap-6">
         <BlockListSidebar
           blocks={blocks}
@@ -89,7 +139,7 @@ export default function PageEditor() {
         <BlockEditorPanel
           selectedBlock={selectedBlock}
           selectedData={selectedData}
-          onSave={handleSave}
+          onChange={handleBlockChange}
         />
       </div>
     </div>
