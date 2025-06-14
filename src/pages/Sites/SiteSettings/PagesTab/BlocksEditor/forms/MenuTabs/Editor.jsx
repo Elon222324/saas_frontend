@@ -13,6 +13,8 @@ export default function TabsEditor({ block, data, onChange, slug }) {
   const [activeTab, setActiveTab] = useState('data')
   const [showToast, setShowToast] = useState(false)
 
+  if (!block_id || !slug) return null
+
   const {
     handleFieldChange,
     handleSaveAppearance,
@@ -21,13 +23,16 @@ export default function TabsEditor({ block, data, onChange, slug }) {
     uiDefaults,
   } = useBlockAppearance({
     schema: tabsSchema,
-    data,
+    data: data?.settings || {},
     block_id,
     slug,
     siteData,
     site_name,
     setData,
-    onChange,
+    onChange: (updater) => {
+      const updated = typeof updater === 'function' ? updater(data?.settings || {}) : updater
+      onChange(prev => ({ ...prev, settings: updated }))
+    },
   })
 
   return (
@@ -64,7 +69,7 @@ export default function TabsEditor({ block, data, onChange, slug }) {
           </div>
           <TabsAppearance
             schema={tabsSchema}
-            settings={data}
+            settings={data?.settings || {}}
             onChange={handleFieldChange}
             fieldTypes={fieldTypes}
             onSaveAppearance={handleSaveAppearance}
@@ -72,8 +77,6 @@ export default function TabsEditor({ block, data, onChange, slug }) {
           />
         </>
       )}
-
-      {/* Global save button now handles persistence */}
     </div>
   )
 }

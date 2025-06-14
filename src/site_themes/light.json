@@ -16,7 +16,7 @@
     "header": {
       "block_id": 2,
       "settings": {
-        "custom_appearance": true,
+
         "background_color": "#FFFFFF",
         "text_color": "#0F172A",
         "secondary_color": "#6B7280",
@@ -36,7 +36,7 @@
     "navigation": {
       "block_id": 1,
       "settings": {
-        "custom_appearance": true,
+
         "bg_color": "#FFFFFF",
         "text_color": "#0F172A",
         "hover_color": "#1976D2",
@@ -48,7 +48,7 @@
     "banner": {
       "block_id": 3,
       "settings": {
-        "custom_appearance": true,
+
         "bg_gradient_from": "#FFFFFF",
         "bg_gradient_to": "#F3F4F6",
         "text_color": "#0F172A",
@@ -65,7 +65,7 @@
     "quickinfo": {
       "block_id": 4,
       "settings": {
-        "custom_appearance": true,
+
         "bg_color": "#F9FAFB",
         "title_color": "#0F172A",
         "desc_color": "#1976D2",
@@ -83,7 +83,7 @@
     "promocards": {
       "block_id": 5,
       "settings": {
-        "custom_appearance": true,
+
         "bg_color": "#FFFFFF",
         "border_color": "#1976D2",
         "title_color": "#0F172A",
@@ -102,7 +102,7 @@
     "popularitems": {
       "block_id": 6,
       "settings": {
-        "custom_appearance": true,
+
         "bg_color": "#FFFFFF",
         "border_color": "#E5E7EB",
         "title_color": "#0F172A",
@@ -120,7 +120,7 @@
     "menutabs": {
       "block_id": 7,
       "settings": {
-        "custom_appearance": true,
+
         "bg_color": "#F3F4F6",
         "active_bg_color": "#1976D2",
         "active_text_color": "#FFFFFF",
@@ -144,7 +144,7 @@
     "productgrid": {
       "block_id": 8,
       "settings": {
-        "custom_appearance": true,
+
         "bg_color": "#FFFFFF",
         "text_color": "#0F172A",
         "price_bg_color": "#EFF6FF",
@@ -165,7 +165,7 @@
     "reviewspreview": {
       "block_id": 9,
       "settings": {
-        "custom_appearance": true,
+
         "section_bg_color": "#FFFFFF",
         "text_color": "#0F172A",
         "subtle_text_color": "#6B7280",
@@ -183,7 +183,7 @@
     "deliveryinfo": {
       "block_id": 10,
       "settings": {
-        "custom_appearance": true,
+
         "background_color": "#F3F4F6",
         "card_bg_color": "#FFFFFF",
         "card_shadow": "medium",
@@ -201,7 +201,7 @@
     "aboutcompany": {
       "block_id": 11,
       "settings": {
-        "custom_appearance": true,
+
         "background_color": "#F9FAFB",
         "text_color": "#0F172A",
         "subtle_text_color": "#6B7280",
@@ -216,7 +216,7 @@
     "footer": {
       "block_id": 12,
       "settings": {
-        "custom_appearance": true,
+
         "background_color": "#F3F4F6",
         "text_color": "#0F172A",
         "border_color": "#E5E7EB",

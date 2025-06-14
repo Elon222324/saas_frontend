@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
 import { navigationSchema } from './navigationSchema'
 import { fieldTypes } from '@/components/fields/fieldTypes'
@@ -6,51 +6,85 @@ import NavigationItemsEditor from './ItemsEditor'
 import NavigationAppearance from './Appearance'
 import { Tabs, Tab } from '@/components/ui/tabs'
 import { useBlockAppearance } from '@blocks/forms/hooks/useBlockAppearance'
+import { useBlockData } from '@blocks/forms/hooks/useBlockData'
 
-export default function NavigationEditor({ block, data, onChange, slug }) {
+export default function NavigationEditor({ block, slug, onChange }) {
   const { data: siteData, site_name, setData } = useSiteSettings()
   const block_id = block?.real_id
-  const [items, setItems] = useState([])
+
   const [activeTab, setActiveTab] = useState('data')
-  const [showToast, setShowToast] = useState(false)
+  const [dataState, setDataState] = useState(block?.data || {})
+  const [settingsState, setSettingsState] = useState(block?.settings || {})
+  const [items, setItems] = useState([])
 
   useEffect(() => {
-    if (!block?.real_id) return
-    const navItems = siteData?.navigation?.filter(item => item.block_id === block.real_id) || []
+    setDataState(block?.data || {})
+    setSettingsState(block?.settings || {})
+  }, [block])
+
+  useEffect(() => {
+    if (!block_id) return
+    const navItems = siteData?.navigation?.filter(item => item.block_id === block_id) || []
     const sorted = [...navItems].sort((a, b) => a.order - b.order)
     setItems(sorted)
-    const isDifferent = JSON.stringify(data.items || []) !== JSON.stringify(sorted)
+    const isDifferent = JSON.stringify(dataState.items || []) !== JSON.stringify(sorted)
     if (isDifferent && sorted.length > 0) {
-      onChange(prev => ({ ...prev, items: sorted }))
+      const newData = { ...dataState, items: sorted }
+      setDataState(newData)
+      onChange(prev => ({ ...prev, data: newData }))
     }
-  }, [block?.real_id, siteData?.navigation])
+  }, [block_id, siteData?.navigation])
 
   const {
     handleFieldChange,
     handleSaveAppearance,
-    showSavedToast,
-    showSaveButton,
+    showSavedToast: savedAppearance,
+    showSaveButton: showAppearanceButton,
     uiDefaults,
   } = useBlockAppearance({
     schema: navigationSchema,
-    data,
+    data: settingsState,
     block_id,
     slug,
     siteData,
     site_name,
     setData,
-    onChange,
+    onChange: (update) => {
+      setSettingsState(update)
+      onChange(prev => {
+        const resolved = typeof update === 'function' ? update(prev.settings || {}) : update
+        return { ...prev, settings: resolved }
+      })
+    },
+  })
+
+  const {
+    handleFieldChange: handleTextFieldChange,
+    handleSaveData,
+    showSavedToast: savedData,
+    showSaveButton: showDataButton,
+  } = useBlockData({
+    schema: [],
+    data: dataState,
+    block_id,
+    slug,
+    site_name,
+    setData,
+    onChange: (update) => {
+      setDataState(update)
+      onChange(prev => {
+        const resolved = typeof update === 'function' ? update(prev.data || {}) : update
+        return { ...prev, data: resolved }
+      })
+    },
   })
 
   return (
     <div className="space-y-6 relative">
-      {showToast && (
-        <div className="absolute top-0 right-0 bg-green-100 text-green-800 px-3 py-1 rounded shadow text-sm transition-opacity duration-300">
-          ✅ Порядок сохранён
+      {(savedAppearance || savedData) && (
+        <div className="text-green-600 text-sm font-medium">
+          ✅ {savedAppearance ? 'Внешний вид' : 'Содержимое'} сохранено
         </div>
-      )}
-      {showSavedToast && (
-        <div className="text-green-600 text-sm font-medium">✅ Внешний вид сохранён</div>
       )}
 
       <Tabs value={activeTab} onChange={setActiveTab} className="mb-4">
@@ -59,34 +93,32 @@ export default function NavigationEditor({ block, data, onChange, slug }) {
       </Tabs>
 
       {activeTab === 'data' && (
-        <NavigationItemsEditor
-          items={items}
-          siteName={site_name}
-          siteData={siteData}
-          setData={setData}
-          setItems={setItems}
-          onChange={onChange}
-          setShowToast={setShowToast}
-        />
-      )}
-
-      {activeTab === 'appearance' && (
         <>
           <div className="text-sm text-gray-500 italic pl-1">
             📁 Навигация: редактирование пунктов и внешнего вида блока
           </div>
-          <NavigationAppearance
-            schema={navigationSchema}
-            settings={data}
-            onChange={handleFieldChange}
-            fieldTypes={fieldTypes}
-            onSaveAppearance={handleSaveAppearance}
-            uiDefaults={uiDefaults}
+          <NavigationItemsEditor
+            items={items}
+            siteName={site_name}
+            siteData={siteData}
+            setData={setData}
+            setItems={setItems}
+            onChange={handleTextFieldChange}
+            setShowToast={() => {}}
           />
         </>
       )}
 
-      {/* Global save button now handles persistence */}
+      {activeTab === 'appearance' && (
+        <NavigationAppearance
+          schema={navigationSchema}
+          settings={settingsState}
+          onChange={handleFieldChange}
+          fieldTypes={fieldTypes}
+          onSaveAppearance={() => handleSaveAppearance(settingsState)}
+          uiDefaults={uiDefaults}
+        />
+      )}
     </div>
   )
 }
