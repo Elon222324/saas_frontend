@@ -26,7 +26,6 @@ export default function ProductsEditor({ block, slug, onChange }) {
     handleFieldChange,
     handleSaveAppearance,
     showSavedToast: savedAppearance,
-    showSaveButton: showAppearanceButton,
     uiDefaults,
   } = useBlockAppearance({
     schema: productsSchema,
@@ -49,7 +48,6 @@ export default function ProductsEditor({ block, slug, onChange }) {
     handleFieldChange: handleDataChange,
     handleSaveData,
     showSavedToast: savedData,
-    showSaveButton: showDataButton,
   } = useBlockData({
     schema: createProductsDataSchema(settingsState?.cards_count || 3),
     data: dataState,
@@ -106,17 +104,7 @@ export default function ProductsEditor({ block, slug, onChange }) {
         </>
       )}
 
-      {(showDataButton || showAppearanceButton) && (
-        <button
-          onClick={() => {
-            if (showDataButton) handleSaveData(dataState)
-            if (showAppearanceButton) handleSaveAppearance(settingsState)
-          }}
-          className="fixed bottom-4 right-4 z-50 bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition text-sm"
-        >
-          💾 Сохранить
-        </button>
-      )}
+      {/* Removed per-block save button */}
 
 
     </div>
