@@ -18,11 +18,21 @@ import DeliveryEditor from '@blocks/forms/Delivery'
 import AboutCompanyEditor from '@blocks/forms/AboutCompany'
 import FooterEditor from '@blocks/forms/Footer'
 
-export default function BlockDetails({ block, data, onSave }) {
+export default function BlockDetails({ block, data, onChangeBlock }) {
   const [form, setForm] = useState({})
   const [showPreview, setShowPreview] = useState(true)
   const { slug } = useParams()
   const { site_name, data: siteData } = useSiteSettings()
+
+  const handleFormChange = (update) => {
+    setForm(prev => {
+      const next = typeof update === 'function' ? update(prev) : update
+      if (onChangeBlock && block?.real_id) {
+        onChangeBlock(block.real_id, { settings: next.settings, data: next.data })
+      }
+      return next
+    })
+  }
 
   useEffect(() => {
     if (!block?.real_id) return
@@ -30,7 +40,7 @@ export default function BlockDetails({ block, data, onSave }) {
     const combinedSettings = { ...(data?.settings || data || {}), ...(block.settings || {}) }
     const combinedData = { ...(data?.data || {}), ...(block.data || {}) }
 
-    setForm({
+    const initial = {
       ...combinedSettings,
       ...combinedData,
       data: { ...combinedData },
@@ -42,7 +52,11 @@ export default function BlockDetails({ block, data, onSave }) {
       order: block.order,
       active: block.active,
       label: block.label,
-    })
+    }
+    setForm(initial)
+    if (onChangeBlock) {
+      onChangeBlock(block.real_id, { settings: initial.settings, data: initial.data })
+    }
   }, [block, data])
 
   if (!block || !block.real_id) {
@@ -89,7 +103,7 @@ export default function BlockDetails({ block, data, onSave }) {
   const sharedProps = {
     block: mergedBlock,
     data: form,
-    onChange: setForm,
+    onChange: handleFormChange,
     slug,
     site_name,
   }
