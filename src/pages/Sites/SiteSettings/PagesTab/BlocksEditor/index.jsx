@@ -33,6 +33,7 @@ export default function PageEditor() {
       }
     }
     setBlockDataMap(map)
+    setUnsavedBlocks({})
   }, [data, slug])
 
   const handleBlockChange = (id, update) => {
