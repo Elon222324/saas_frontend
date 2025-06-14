@@ -31,7 +31,7 @@ export default function NavigationEditor({ block, slug, onChange }) {
     if (isDifferent && sorted.length > 0) {
       const newData = { ...dataState, items: sorted }
       setDataState(newData)
-      onChange(prev => ({ ...prev, data: newData }))
+      
     }
   }, [block_id, siteData?.navigation])
 

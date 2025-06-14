@@ -70,7 +70,7 @@ export default function BlockDetails({ block, data, onSave, onBlockChange }) {
     const previewProps = { settings: form.settings || form }
 
     if (block.type === 'navigation') {
-      previewProps.settings = { ...(form.settings || {}) }
+      previewProps.settings = {  block_id: form.block_id, ...(form.settings || {}) }
     }
 
     if (block.type === 'header') {
