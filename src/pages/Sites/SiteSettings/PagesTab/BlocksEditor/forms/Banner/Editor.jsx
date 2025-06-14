@@ -18,7 +18,6 @@ export default function BannerEditor({ block, slug, onChange }) {
   const [activeTab, setActiveTab] = useState('data')
   const [dataState, setDataState] = useState(block?.data || {})
   const [settingsState, setSettingsState] = useState(block?.settings || {})
-  const [canShow, setCanShow] = useState(false)
 
   useEffect(() => {
     setDataState(block?.data || {})
@@ -29,7 +28,6 @@ export default function BannerEditor({ block, slug, onChange }) {
     handleFieldChange,
     handleSaveAppearance,
     showSavedToast: savedAppearance,
-    showSaveButton: showAppearanceButton,
     uiDefaults,
   } = useBlockAppearance({
     schema: bannerSchema,
@@ -56,7 +54,6 @@ export default function BannerEditor({ block, slug, onChange }) {
     handleFieldChange: handleTextFieldChange,
     handleSaveData,
     showSavedToast: savedData,
-    showSaveButton: showDataButton,
   } = useBlockData({
     schema: bannerDataSchema,
     data: dataState,
@@ -77,14 +74,6 @@ export default function BannerEditor({ block, slug, onChange }) {
     },
   })
 
-  
-  useEffect(() => {
-    setCanShow(showDataButton || showAppearanceButton)
-  }, [showDataButton, showAppearanceButton])
-
-  console.log('🧪 showDataButton:', showDataButton)
-  console.log('🧪 showAppearanceButton:', showAppearanceButton)
-  console.log('🧪 dataState:', dataState)
 
   return (
     <div className="space-y-6 relative">
@@ -124,17 +113,7 @@ export default function BannerEditor({ block, slug, onChange }) {
         </>
       )}
 
-      {canShow && (
-        <button
-          onClick={() => {
-            if (showDataButton) handleSaveData(dataState)
-            if (showAppearanceButton) handleSaveAppearance(settingsState)
-          }}
-          className="fixed bottom-4 right-4 z-50 bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition text-sm"
-        >
-          💾 Сохранить
-        </button>
-      )}
+      {/* Removed per-block save button */}
     </div>
   )
 }

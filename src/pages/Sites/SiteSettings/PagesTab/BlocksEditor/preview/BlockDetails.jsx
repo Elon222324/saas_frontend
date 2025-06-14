@@ -18,7 +18,7 @@ import DeliveryEditor from '@blocks/forms/Delivery'
 import AboutCompanyEditor from '@blocks/forms/AboutCompany'
 import FooterEditor from '@blocks/forms/Footer'
 
-export default function BlockDetails({ block, data, onSave }) {
+export default function BlockDetails({ block, data, onBlockChange }) {
   const [form, setForm] = useState({})
   const [showPreview, setShowPreview] = useState(true)
   const { slug } = useParams()
@@ -44,6 +44,11 @@ export default function BlockDetails({ block, data, onSave }) {
       label: block.label,
     })
   }, [block, data])
+
+  useEffect(() => {
+    if (!block?.real_id || !onBlockChange) return
+    onBlockChange(block.real_id, { settings: form.settings, data: form.data })
+  }, [form, block?.real_id])
 
   if (!block || !block.real_id) {
     return <p className="text-gray-500 text-sm">❗ Выберите блок для редактирования</p>

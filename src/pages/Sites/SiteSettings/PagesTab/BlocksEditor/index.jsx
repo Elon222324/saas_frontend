@@ -10,7 +10,8 @@ export default function PageEditor() {
   const { slug } = useParams()
   const { data, loading: loadingContext, site_name, setData } = useSiteSettings()
   const [blocks, setBlocks] = useState([])
-  const [blockDataMap, setBlockDataMap] = useState({})
+  const [editedBlocks, setEditedBlocks] = useState({})
+  const [originalBlocks, setOriginalBlocks] = useState({})
   const [selectedId, setSelectedId] = useState(null)
   const API_URL = import.meta.env.VITE_API_URL
 
@@ -22,31 +23,73 @@ export default function PageEditor() {
       setSelectedId(sortedBlocks[0]?.id || null)
     }
 
-    const map = {}
+    const edited = {}
+    const original = {}
     for (const b of sortedBlocks) {
-      map[b.real_id] = typeof b.settings === 'string' ? JSON.parse(b.settings) : b.settings || {}
+      edited[b.real_id] = {
+        settings:
+          typeof b.settings === 'string' ? JSON.parse(b.settings) : b.settings || {},
+        data: typeof b.data === 'string' ? JSON.parse(b.data) : b.data || {},
+      }
+      original[b.real_id] = {
+        settings: edited[b.real_id].settings,
+        data: edited[b.real_id].data,
+      }
     }
-    setBlockDataMap(map)
+    setEditedBlocks(edited)
+    setOriginalBlocks(original)
   }, [data, slug])
 
-  const handleSave = async (blockId, newData) => {
-    const res = await fetch(`${API_URL}/sites/${site_name}/pages/${slug}/blocks/${blockId}`, {
-      method: 'PATCH',
+  const handleBlockChange = (blockId, update) => {
+    setEditedBlocks(prev => ({
+      ...prev,
+      [blockId]: {
+        ...(prev[blockId] || {}),
+        ...update,
+      },
+    }))
+  }
+
+  const handleGlobalSave = async () => {
+    const payload = []
+    for (const [id, data] of Object.entries(editedBlocks)) {
+      const orig = originalBlocks[id] || {}
+      const item = { block_id: Number(id) }
+
+      if (JSON.stringify(data.settings) !== JSON.stringify(orig.settings)) {
+        item.settings = data.settings
+      }
+      if (JSON.stringify(data.data) !== JSON.stringify(orig.data)) {
+        item.data = data.data
+      }
+
+      if (item.settings || item.data) payload.push(item)
+    }
+
+    if (!payload.length) {
+      alert('Изменений нет')
+      return
+    }
+
+    const res = await fetch(`${API_URL}/blocks/update-all/${site_name}/${slug}`, {
+      method: 'POST',
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('access_token')}`,
       },
       credentials: 'include',
-      body: JSON.stringify(newData),
+      body: JSON.stringify(payload),
     })
-    if (!res.ok) return alert('Не удалось сохранить данные')
 
-    setBlockDataMap(prev => ({ ...prev, [blockId]: newData }))
+    if (!res.ok) return alert('Не удалось сохранить изменения')
+
+    setOriginalBlocks(JSON.parse(JSON.stringify(editedBlocks)))
     setData(prev => {
-      const updatedBlocks = prev.blocks?.[slug]?.map(b =>
-        b.real_id === blockId ? { ...b, settings: newData } : b
-      )
-      return { ...prev, blocks: { ...prev.blocks, [slug]: updatedBlocks } }
+      const updated = prev.blocks?.[slug]?.map(b => {
+        const upd = editedBlocks[b.real_id]
+        return upd ? { ...b, settings: upd.settings, data: upd.data } : b
+      })
+      return { ...prev, blocks: { ...prev.blocks, [slug]: updated } }
     })
     alert('Сохранено!')
   }
@@ -72,11 +115,19 @@ export default function PageEditor() {
   if (loadingContext || !blocks.length || !data?.pages) return <div className="p-6">Загрузка...</div>
 
   const selectedBlock = blocks.find(b => b.id === selectedId)
-  const selectedData = selectedBlock ? blockDataMap[selectedBlock.real_id] || {} : {}
+  const selectedData = selectedBlock ? editedBlocks[selectedBlock.real_id] || {} : {}
 
   return (
     <div className="px-6 pt-0 space-y-4">
       <PageSelectHeader slug={slug} data={data} />
+      <div className="flex justify-end">
+        <button
+          onClick={handleGlobalSave}
+          className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition text-sm"
+        >
+          💾 Сохранить
+        </button>
+      </div>
       <div className="flex gap-6">
         <BlockListSidebar
           blocks={blocks}
@@ -89,7 +140,7 @@ export default function PageEditor() {
         <BlockEditorPanel
           selectedBlock={selectedBlock}
           selectedData={selectedData}
-          onSave={handleSave}
+          onBlockChange={handleBlockChange}
         />
       </div>
     </div>
