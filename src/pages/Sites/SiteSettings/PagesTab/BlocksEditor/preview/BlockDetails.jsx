@@ -18,7 +18,7 @@ import DeliveryEditor from '@blocks/forms/Delivery'
 import AboutCompanyEditor from '@blocks/forms/AboutCompany'
 import FooterEditor from '@blocks/forms/Footer'
 
-export default function BlockDetails({ block, data, onSave }) {
+export default function BlockDetails({ block, data, onSave, onBlockChange }) {
   const [form, setForm] = useState({})
   const [showPreview, setShowPreview] = useState(true)
   const { slug } = useParams()
@@ -27,8 +27,14 @@ export default function BlockDetails({ block, data, onSave }) {
   useEffect(() => {
     if (!block?.real_id) return
 
-    const combinedSettings = { ...(data?.settings || data || {}), ...(block.settings || {}) }
-    const combinedData = { ...(data?.data || {}), ...(block.data || {}) }
+    const combinedSettings = {
+      ...(typeof block.settings === 'string' ? JSON.parse(block.settings) : block.settings || {}),
+      ...(data?.settings || {}),
+    }
+    const combinedData = {
+      ...(block.data || {}),
+      ...(data?.data || {}),
+    }
 
     setForm({
       ...combinedSettings,
@@ -86,10 +92,24 @@ export default function BlockDetails({ block, data, onSave }) {
 
   const mergedBlock = { ...block, settings: form.settings, data: form.data }
 
+  const handleChange = (update) => {
+    setForm(prev => {
+      const resolved =
+        typeof update === 'function' ? update(prev) : { ...prev, ...update }
+      if (onBlockChange && block?.real_id) {
+        onBlockChange(block.real_id, {
+          settings: resolved.settings,
+          data: resolved.data,
+        })
+      }
+      return resolved
+    })
+  }
+
   const sharedProps = {
     block: mergedBlock,
     data: form,
-    onChange: setForm,
+    onChange: handleChange,
     slug,
     site_name,
   }

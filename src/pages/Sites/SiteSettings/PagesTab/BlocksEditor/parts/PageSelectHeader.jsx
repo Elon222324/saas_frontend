@@ -1,6 +1,6 @@
 import { useParams, useNavigate, Link } from 'react-router-dom'
 
-export default function PageSelectHeader({ slug, data }) {
+export default function PageSelectHeader({ slug, data, hasUnsaved, onSave }) {
   const { domain } = useParams()
   const navigate = useNavigate()
   const pageInfo = data?.pages?.find(p => p.slug === slug)
@@ -23,6 +23,14 @@ export default function PageSelectHeader({ slug, data }) {
         </select>
         {pageId && <span className="text-sm text-gray-500">ID страницы: {pageId}</span>}
       </div>
+      {hasUnsaved && (
+        <button
+          onClick={onSave}
+          className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700 transition text-sm"
+        >
+          💾 Сохранить
+        </button>
+      )}
     </div>
   )
 }

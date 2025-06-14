@@ -44,8 +44,6 @@ export default function NavigationPreview({ settings }) {
     })
     setStyleVars(css)
 
-    console.log('[📦 blockSettings]:', blockSettings)
-    console.log('[⚙️ settings]:', settings)
   }, [data?.ui_schema, settings])
 
   if (!nav?.length) {
