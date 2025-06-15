@@ -37,10 +37,13 @@ export default function CloudModal({ isOpen, category, onSelect }) {
     if (!isOpen || !category) return
     const code = `${category}-${activeTab}`
     const groups = activeTab === 'site' ? userGroups : galleryGroups
+    console.log(`[📂 CloudModal] Проверка категорий для вкладки "${activeTab}", targetCode:`, code)
 
     for (const group of groups) {
       for (const child of group.children || []) {
+        console.log(`[🔍 CloudModal] Проверка →`, child.code, child.id, child.title)
         if (child.code === code) {
+          console.log(`[✅ CloudModal] Найдена категория:`, child)
           setActiveCategory(child.id)
           return
         }
