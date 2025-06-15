@@ -24,6 +24,7 @@ export const bannerDataSchema = [
     key: 'image_url',
     label: 'Изображение',
     type: 'image',
+    category: 'banners',
     default: '/images/1.png',
     editable: true,
   },

@@ -3,6 +3,7 @@ export const headerDataSchema = [
     key: 'logo_url',
     label: 'Логотип',
     type: 'image',
+    category: 'logos',
     default: '/images/logo.webp',
     editable: true,
     group: 'left',

@@ -19,6 +19,7 @@ export default function useTemplateGallery() {
           grouped[parent].push({
             id: group.id,
             title: group.description || group.name,
+            code: `${group.code}-library`, // добавляем код для поиска
           })
         }
 

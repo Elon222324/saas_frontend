@@ -30,8 +30,8 @@ export default function CloudSidebar({
         onChange={(e) => onSearchChange?.(e.target.value)}
       />
 
-      {groups.map((group) => (
-        <div key={group.title} className="space-y-1">
+      {groups.map((group, groupIndex) => (
+        <div key={group.title || groupIndex} className="space-y-1">
           <button
             onClick={() => toggleGroup(group.title)}
             className="flex items-center justify-between w-full text-xs text-gray-500 mt-4 mb-1 uppercase tracking-wide"
@@ -42,9 +42,9 @@ export default function CloudSidebar({
 
           {openGroups[group.title] && group.children && (
             <div className="space-y-1">
-              {group.children.map((sub) => (
+              {group.children.map((sub, index) => (
                 <button
-                  key={sub.id}
+                  key={`${group.title}-${sub.id ?? index}`}
                   onClick={() => onSelectCategory?.(sub.id)}
                   className={`text-left block w-full text-sm px-2 py-1 rounded hover:bg-gray-100 ${
                     active === sub.id ? 'bg-gray-200 font-semibold' : ''

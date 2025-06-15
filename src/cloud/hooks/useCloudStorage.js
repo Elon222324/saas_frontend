@@ -31,7 +31,7 @@ export default function useCloudStorage() {
       for (const cat of data) {
         const parent = cat.is_system ? 'СИСТЕМНЫЕ' : 'ТОВАРЫ'
         if (!grouped[parent]) grouped[parent] = []
-        grouped[parent].push({ id: cat.id, title: cat.description || cat.name })
+        grouped[parent].push({ id: cat.id, title: cat.description || cat.name, code: `${cat.code}-site` })
         if (cat.images) {
           cat.images.forEach((img) => {
             allFiles.push({
