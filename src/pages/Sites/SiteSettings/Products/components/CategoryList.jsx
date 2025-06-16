@@ -148,7 +148,7 @@ export default function CategoryList({ selected, onSelect }) {
   )
 
   function renderItem(cat, depth) {
-    const hasChildren = cat.children?.length
+    const hasChildren = Boolean(cat.children?.length)
     const isCollapsed = collapsed.has(cat.id)
     const isActive =
       (cat.id === 'all' && selected === null) || selected === cat.id
