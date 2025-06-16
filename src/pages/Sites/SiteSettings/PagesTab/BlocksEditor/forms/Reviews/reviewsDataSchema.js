@@ -35,6 +35,7 @@ export const createReviewsDataSchema = (count = 4) => {
         key: `review${i}_img`,
         label: `Аватар ${i}`,
         type: 'image',
+        category: 'reviews_avatars',
         default: '/images/6.webp',
         editable: true,
       },

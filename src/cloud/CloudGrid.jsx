@@ -9,7 +9,7 @@ export default function CloudGrid({ files, selected, onSelect, onDelete, onEdit,
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const timeout = setTimeout(() => setIsLoading(false), 400) // имитация загрузки
+    const timeout = setTimeout(() => setIsLoading(false), 400)
     return () => clearTimeout(timeout)
   }, [files])
 
@@ -38,7 +38,7 @@ export default function CloudGrid({ files, selected, onSelect, onDelete, onEdit,
         )}
         {files.map((file, i) => (
           <div
-            key={file.id}
+            key={`${file.category}-${file.filename}-${i}`}
             className={`relative group transition-opacity duration-500 ${isLoading ? 'opacity-0' : 'opacity-100'} ${
               selected?.id === file.id ? 'ring-2 ring-blue-500 rounded' : ''
             }`}

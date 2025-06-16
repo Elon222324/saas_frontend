@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Dialog } from '@headlessui/react'
 import CloudSidebar from './CloudSidebar'
 import CloudGrid from './CloudGrid'
@@ -8,7 +8,7 @@ import useTemplateGallery from './hooks/useTemplateGallery'
 import { Sparkles, Loader2 } from 'lucide-react'
 
 export default function CloudModal({ isOpen, category, onSelect }) {
-  const [activeTab, setActiveTab] = useState('site') // 'site' | 'library'
+  const [activeTab, setActiveTab] = useState('site')
   const [activeCategory, setActiveCategory] = useState(null)
   const [search, setSearch] = useState('')
 
@@ -33,24 +33,35 @@ export default function CloudModal({ isOpen, category, onSelect }) {
     files: galleryFiles,
   } = useTemplateGallery()
 
-  const currentGroups =
-    activeTab === 'site' ? userGroups : galleryGroups
+  useEffect(() => {
+    if (!isOpen || !category) return
+    const code = `${category}-${activeTab}`
+    const groups = activeTab === 'site' ? userGroups : galleryGroups
+    console.log(`[📂 CloudModal] Проверка категорий для вкладки "${activeTab}", targetCode:`, code)
 
-  const currentFiles =
-    activeTab === 'site' ? userFiles : galleryFiles
+    for (const group of groups) {
+      for (const child of group.children || []) {
+        console.log(`[🔍 CloudModal] Проверка →`, child.code, child.id, child.title)
+        if (child.code === code) {
+          console.log(`[✅ CloudModal] Найдена категория:`, child)
+          setActiveCategory(child.id)
+          return
+        }
+      }
+    }
+  }, [isOpen, category, activeTab, userGroups, galleryGroups])
+
+  const currentGroups = activeTab === 'site' ? userGroups : galleryGroups
+  const currentFiles = activeTab === 'site' ? userFiles : galleryFiles
 
   const filtered = currentFiles.filter((f) => {
     const term = search.trim().toLowerCase()
-
-    // When searching, ignore the selected category and show files from all
-    // groups that match the query. Otherwise filter by the active category.
     if (term) {
       return (
         f.name?.toLowerCase().includes(term) ||
         f.filename?.toLowerCase().includes(term)
       )
     }
-
     return !activeCategory || f.category === activeCategory
   })
 
@@ -58,7 +69,6 @@ export default function CloudModal({ isOpen, category, onSelect }) {
     const relativeUrl = file.url?.startsWith('/')
       ? file.url
       : new URL(file.url, window.location.origin).pathname
-
     onSelect?.(relativeUrl)
   }
 
@@ -84,9 +94,7 @@ export default function CloudModal({ isOpen, category, onSelect }) {
                 <button
                   onClick={() => setActiveTab('site')}
                   className={`pb-2 font-medium ${
-                    activeTab === 'site'
-                      ? 'border-b-2 border-blue-600'
-                      : 'text-gray-500'
+                    activeTab === 'site' ? 'border-b-2 border-blue-600' : 'text-gray-500'
                   }`}
                 >
                   Файлы сайта
@@ -94,9 +102,7 @@ export default function CloudModal({ isOpen, category, onSelect }) {
                 <button
                   onClick={() => setActiveTab('library')}
                   className={`pb-2 font-medium ${
-                    activeTab === 'library'
-                      ? 'border-b-2 border-blue-600'
-                      : 'text-gray-500'
+                    activeTab === 'library' ? 'border-b-2 border-blue-600' : 'text-gray-500'
                   }`}
                 >
                   Библиотека
@@ -106,9 +112,7 @@ export default function CloudModal({ isOpen, category, onSelect }) {
             {activeTab === 'site' && (
               <div className="flex flex-col gap-2 items-end">
                 <button
-                  onClick={() =>
-                    alert('Генератор ИИ-картинок еще в разработке')
-                  }
+                  onClick={() => alert('Генератор ИИ-картинок еще в разработке')}
                   className="text-sm text-gray-600 hover:text-black flex items-center gap-1"
                 >
                   <Sparkles className="w-4 h-4" />
@@ -118,9 +122,7 @@ export default function CloudModal({ isOpen, category, onSelect }) {
                   onClick={() => handleUploadClick(activeCategory)}
                   className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center gap-2"
                 >
-                  {isUploading && (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  )}
+                  {isUploading && <Loader2 className="w-4 h-4 animate-spin" />}
                   Загрузить с компьютера
                 </button>
               </div>
@@ -166,8 +168,6 @@ export default function CloudModal({ isOpen, category, onSelect }) {
           ) : (
             <div />
           )}
-
-
           <div className="flex gap-2">
             <button
               className="px-4 py-2 rounded bg-gray-200"

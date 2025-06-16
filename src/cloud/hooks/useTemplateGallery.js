@@ -11,14 +11,17 @@ export default function useTemplateGallery() {
         const data = await res.json()
         const base = import.meta.env.VITE_LIBRARY_ASSETS_URL || ''
 
+        console.log('[📦 useTemplateGallery] Загружены категории:', data)
+
         const grouped = {}
 
         for (const group of data) {
           const parent = group.category_type === 'products' ? 'ТОВАРЫ' : 'СИСТЕМНЫЕ'
           if (!grouped[parent]) grouped[parent] = []
           grouped[parent].push({
-            id: group.id,
+            id: group.code, // 🧠 важно: используем code как id
             title: group.description || group.name,
+            code: group.code,
           })
         }
 
@@ -26,21 +29,25 @@ export default function useTemplateGallery() {
           title,
           children,
         }))
+
+        console.log('[🧭 useTemplateGallery] Группы:', mergedGroups)
         setGroups(mergedGroups)
 
         const allFiles = data.flatMap((group) =>
           group.images.map((img) => ({
             ...img,
-            category: group.id,
+            category: group.code, // 🛠️ используем group.code как category!
             url: base + (img.medium_url || img.url),
             big_url: base + (img.big_url || img.url),
             medium_url: base + (img.medium_url || img.url),
             small_url: base + (img.small_url || img.url),
           }))
         )
+
+        console.log('[🖼️ useTemplateGallery] Файлы:', allFiles)
         setFiles(allFiles)
       } catch (err) {
-        console.error('Failed to load library', err)
+        console.error('[❌ useTemplateGallery] Ошибка загрузки:', err)
       }
     }
 

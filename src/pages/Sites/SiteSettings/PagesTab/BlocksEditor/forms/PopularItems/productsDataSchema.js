@@ -44,6 +44,7 @@ export const createProductsDataSchema = (count = 3) => {
         key: `item${i}_img`,
         label: `Изображение ${i}-го товара`,
         type: 'image',
+        category: 'popular_products',
         default: base.img,
         editable: true,
       },
