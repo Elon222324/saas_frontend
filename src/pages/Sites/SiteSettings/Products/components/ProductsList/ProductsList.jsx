@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 
 import { useProducts } from '../../hooks/useProducts'
 import { useProductCrud } from '../../hooks/useProductCrud'
+import { useCategories } from '../../hooks/useCategories' // ✅ добавлен импорт
 
 import AddProductModal from '../AddProductModal'
 import EditProductModal from '../EditProductModal'
@@ -18,8 +19,14 @@ export default function ProductsList({ category }) {
 
   const { data: all = [], isFetching, isError, refetch } = useProducts(siteName)
   const { add, update, remove } = useProductCrud(siteName)
+  const { tree = [] } = useCategories(siteName) // ✅ получили дерево категорий
 
-  const list = useProductsList({ products: all, category, removeFn: id => remove.mutateAsync(id) })
+  const list = useProductsList({
+    products: all,
+    category,
+    categories: tree, // ✅ передаём дерево
+    removeFn: remove.mutateAsync,
+  })
 
   const [showAdd, setShowAdd] = useState(false)
   const [edit, setEdit] = useState({ open: false, product: null })

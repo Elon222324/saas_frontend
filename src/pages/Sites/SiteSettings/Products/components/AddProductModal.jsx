@@ -85,7 +85,7 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
       image_url: imageUrl || undefined,
       description: description.trim() || undefined,
       weight: w || undefined,
-      category_id: cId,
+      category_id: String(cId),
       active,
     }
 
