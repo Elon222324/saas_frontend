@@ -1,5 +1,16 @@
 import { useState, useRef, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import { MoreVertical, Edit2, Trash2 } from 'lucide-react'
+
+// преобразуем внутренний/относительный путь в публичный URL
+const toPublicUrl = (raw = '', siteName) => {
+  if (!raw) return null
+  if (/^https?:\/\//i.test(raw) && !raw.includes(`${siteName}:8001`)) return raw
+
+  const base = import.meta.env.VITE_CLOUD_CDN || import.meta.env.VITE_ASSETS_URL || ''
+  if (!base) return raw.startsWith('/') ? raw : `/${raw}`
+  return `${base.replace(/\/$/, '')}/${raw.replace(/^\//, '')}`
+}
 
 export default function ProductRow({
   product,
@@ -8,6 +19,9 @@ export default function ProductRow({
   onEdit,
   onDelete,
 }) {
+  const { domain } = useParams()
+  const siteName = `${domain}_app`
+
   const [open, setOpen] = useState(false)
   const menuRef = useRef(null)
 
@@ -18,6 +32,8 @@ export default function ProductRow({
     document.addEventListener('mousedown', onClick)
     return () => document.removeEventListener('mousedown', onClick)
   }, [])
+
+  const imgSrc = toPublicUrl(product.image_url, siteName)
 
   return (
     <tr className="hover:bg-gray-50 focus-within:bg-gray-50">
@@ -30,13 +46,13 @@ export default function ProductRow({
         />
       </td>
       <td className="px-2 py-1">
-        {product.image_url ? (
-          <img src={product.image_url} alt="" className="h-10 w-10 object-cover rounded" />
+        {imgSrc ? (
+          <img src={imgSrc} alt="" className="h-10 w-10 object-cover rounded" />
         ) : (
-          <div className="h-10 w-10 rounded bg-gray-200" />
+          <div className="h-10 w-10 rounded bg-gray-200 flex items-center justify-center text-xs text-gray-500">—</div>
         )}
       </td>
-      <td className="px-2 py-1 text-sm">{product.title}</td>
+      <td className="px-2 py-1 text-sm max-w-[240px] truncate">{product.title}</td>
       <td className="px-2 py-1 text-sm whitespace-nowrap">{product.price}₽</td>
       <td className="relative px-2 py-1 text-right">
         <button
@@ -64,7 +80,7 @@ export default function ProductRow({
                 setOpen(false)
                 onDelete(product.id)
               }}
-              className="flex w-full items-center gap-1 px-2 py-1 text-sm hover:bg-gray-100 focus:ring-2 focus:ring-blue-500"
+              className="flex w-full items-center gap-1 px-2 py-1 text-sm hover:bg-gray-100 focus:ring-2 focus:ring-red-500"
             >
               <Trash2 size={14} /> Удалить
             </button>
