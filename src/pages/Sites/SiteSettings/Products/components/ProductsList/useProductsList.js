@@ -1,5 +1,17 @@
 import { useEffect, useMemo, useState } from 'react'
 
+function flattenTree(tree = []) {
+  const list = []
+  const walk = (nodes) => {
+    nodes.forEach((n) => {
+      list.push(n)
+      if (n.children?.length) walk(n.children)
+    })
+  }
+  walk(tree)
+  return list
+}
+
 function getAllNestedCategoryIds(rootId, categories = []) {
   const ids = new Set()
   const walk = (id) => {
@@ -18,6 +30,8 @@ export default function useProductsList({ products = [], category, categories = 
   const [selected, setSelected] = useState(new Set())
   const [page, setPage] = useState(1)
 
+  const flatCategories = useMemo(() => flattenTree(categories), [categories])
+
   // ─── Debounce поиска ─────────────────────────────────────────
   useEffect(() => {
     const t = setTimeout(() => setDebounced(search.trim().toLowerCase()), 300)
@@ -28,8 +42,8 @@ export default function useProductsList({ products = [], category, categories = 
   const filtered = useMemo(() => {
     let list = products
 
-    if (category && categories.length) {
-      const allowedIds = getAllNestedCategoryIds(category, categories)
+    if (category && flatCategories.length) {
+      const allowedIds = getAllNestedCategoryIds(category, flatCategories)
       list = list.filter((p) => allowedIds.has(Number(p.category_id)))
     }
 
@@ -38,7 +52,7 @@ export default function useProductsList({ products = [], category, categories = 
     }
 
     return list
-  }, [products, category, debounced, categories])
+  }, [products, category, debounced, flatCategories])
 
   // ─── Пагинация ───────────────────────────────────────────────
   const pageSize = 10

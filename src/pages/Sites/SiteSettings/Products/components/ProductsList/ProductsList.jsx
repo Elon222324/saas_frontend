@@ -19,7 +19,7 @@ export default function ProductsList({ category }) {
 
   const { data: all = [], isFetching, isError, refetch } = useProducts(siteName)
   const { add, update, remove } = useProductCrud(siteName)
-  const { tree = [] } = useCategories(siteName) // ✅ получили дерево категорий
+  const { data: tree = [] } = useCategories(siteName) // ✅ получили дерево категорий
 
   const list = useProductsList({
     products: all,
