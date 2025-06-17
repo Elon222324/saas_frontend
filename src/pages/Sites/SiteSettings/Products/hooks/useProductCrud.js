@@ -2,46 +2,49 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 const API_URL = import.meta.env.VITE_API_URL || ''
 
+/**
+ * Унифицированный разбор ответа: если статус не OK —
+ * бросаем Error с полем `status`, чтобы верхний уровень мог понять 409/403/500.
+ */
+const handleResponse = async (res, failMsg) => {
+  if (res.ok) return res.json()
+  const txt = await res.text().catch(() => '')
+  const err = new Error(txt || failMsg)
+  err.status = res.status
+  throw err
+}
+
 export function useProductCrud(siteName) {
   const qc = useQueryClient()
 
   const add = useMutation({
-    mutationFn: async (payload) => {
-      const res = await fetch(`${API_URL}/products/${siteName}/add`, {
+    mutationFn: (payload) =>
+      fetch(`${API_URL}/products/${siteName}/add`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
-      })
-      if (!res.ok) throw new Error('Ошибка создания товара')
-      return res.json()
-    },
+      }).then((res) => handleResponse(res, 'Ошибка создания товара')),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['products', siteName] }),
   })
 
   const update = useMutation({
-    mutationFn: async ({ id, ...rest }) => {
-      const res = await fetch(`${API_URL}/products/${siteName}/update/${id}`, {
+    mutationFn: ({ id, ...rest }) =>
+      fetch(`${API_URL}/products/${siteName}/update/${id}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(rest),
-      })
-      if (!res.ok) throw new Error('Ошибка обновления товара')
-      return res.json()
-    },
+      }).then((res) => handleResponse(res, 'Ошибка обновления товара')),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['products', siteName] }),
   })
 
   const remove = useMutation({
-    mutationFn: async (id) => {
-      const res = await fetch(`${API_URL}/products/${siteName}/delete/${id}`, {
+    mutationFn: (id) =>
+      fetch(`${API_URL}/products/${siteName}/delete/${id}`, {
         method: 'DELETE',
         credentials: 'include',
-      })
-      if (!res.ok) throw new Error('Ошибка удаления товара')
-      return res.json()
-    },
+      }).then((res) => handleResponse(res, 'Ошибка удаления товара')),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['products', siteName] }),
   })
 
