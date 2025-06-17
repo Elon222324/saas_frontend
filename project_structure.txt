@@ -36,6 +36,7 @@
 │   │   ├── CloudSidebar.jsx
 │   │   ├── CloudStorageInfo.jsx
 │   │   ├── CloudUploadZone.jsx
+│   │   ├── constants
 │   │   ├── hooks
 │   │   │   ├── useCloudStorage.js
 │   │   │   └── useTemplateGallery.js
@@ -212,6 +213,19 @@
 │   │   │       │   │           └── applyCssVariables.js
 │   │   │       │   └── index.jsx
 │   │   │       └── Products
+│   │   │           ├── components
+│   │   │           │   ├── AddCategoryModal.jsx
+│   │   │           │   ├── CategoryList
+│   │   │           │   │   ├── CategoryItem.jsx
+│   │   │           │   │   ├── CategoryList.jsx
+│   │   │           │   │   ├── TreeUtils.js
+│   │   │           │   │   └── useCategoryCrud.js
+│   │   │           │   ├── EditCategoryModal.jsx
+│   │   │           │   └── ProductsList.jsx
+│   │   │           ├── hooks
+│   │   │           │   ├── useCategories.js
+│   │   │           │   ├── useDeleteCategory.js
+│   │   │           │   └── useKeyboardTreeNav.js
 │   │   │           └── index.jsx
 │   │   └── Users
 │   │       └── index.jsx
@@ -226,4 +240,4 @@
 ├── tailwind.config.js
 └── vite.config.js
 
-43 directories, 184 files
+47 directories, 194 files
