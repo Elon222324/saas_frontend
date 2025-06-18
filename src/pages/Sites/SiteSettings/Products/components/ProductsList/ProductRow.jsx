@@ -72,20 +72,16 @@ export default function ProductRow({
         )}
       </td>
       <td className="px-2 py-1 whitespace-nowrap">
-        <div className="flex items-center gap-2">
-          <Switch
-            checked={Boolean(product.active)}
-            onCheckedChange={(val) => onToggleStatus(product.id, { active: val })}
-          />
-          {product.is_available !== undefined && (
-            <Switch
-              checked={Boolean(product.is_available)}
-              onCheckedChange={(val) =>
-                onToggleStatus(product.id, { is_available: val })
-              }
-            />
-          )}
-        </div>
+        <Switch
+          checked={Boolean(product.active)}
+          onCheckedChange={(val) => onToggleStatus(product.id, { active: val })}
+        />
+      </td>
+      <td className="px-2 py-1 whitespace-nowrap">
+        <Switch
+          checked={Boolean(product.is_available)}
+          onCheckedChange={(val) => onToggleStatus(product.id, { is_available: val })}
+        />
       </td>
       <td className="px-2 py-1 whitespace-nowrap text-sm">
         {product.price}₽{' '}
