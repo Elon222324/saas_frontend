@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { useProducts } from '../../hooks/useProducts'
@@ -19,17 +19,49 @@ export default function ProductsList({ category }) {
 
   const { data: all = [], isFetching, isError, refetch } = useProducts(siteName)
   const { add, update, remove } = useProductCrud(siteName)
-  const { data: tree = [] } = useCategories(siteName) // ✅ получили дерево категорий
+  const { data: tree = [] } = useCategories(siteName)
+
+  const [ordered, setOrdered] = useState([])
+  useEffect(() => {
+    setOrdered(all)
+  }, [all])
+
+  const categoryMap = useMemo(() => {
+    const map = {}
+    const walk = (nodes) => {
+      nodes.forEach((n) => {
+        map[n.id] = n.name
+        if (n.children?.length) walk(n.children)
+      })
+    }
+    walk(tree)
+    return map
+  }, [tree])
 
   const list = useProductsList({
-    products: all,
+    products: ordered,
     category,
-    categories: tree, // ✅ передаём дерево
+    categories: tree,
     removeFn: remove.mutateAsync,
   })
 
   const [showAdd, setShowAdd] = useState(false)
   const [edit, setEdit] = useState({ open: false, product: null })
+
+  const handleReorder = (from, to) => {
+    setOrdered(prev => {
+      const start = (list.page - 1) * list.pageSize
+      const arr = Array.from(prev)
+      const [moved] = arr.splice(start + from, 1)
+      arr.splice(start + to, 0, moved)
+      return arr.map((p, idx) => ({ ...p, order: idx + 1 }))
+    })
+  }
+
+  const handleToggleStatus = async (id, changes) => {
+    setOrdered(prev => prev.map(p => (p.id === id ? { ...p, ...changes } : p)))
+    await update.mutateAsync({ id, ...changes })
+  }
 
   if (isError) {
     return (
@@ -63,6 +95,9 @@ export default function ProductsList({ category }) {
         onEdit={prod => setEdit({ open: true, product: prod })}
         onDelete={id => remove.mutateAsync(id)}
         onAdd={() => setShowAdd(true)}
+        categoryMap={categoryMap}
+        onReorder={handleReorder}
+        onToggleStatus={handleToggleStatus}
       />
 
       <Pagination page={list.page} totalPages={list.totalPages} setPage={list.setPage} />
@@ -88,3 +123,4 @@ export default function ProductsList({ category }) {
     </div>
   )
 }
+

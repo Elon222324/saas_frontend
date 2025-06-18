@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { MoreVertical, Edit2, Trash2 } from 'lucide-react'
+import { MoreVertical, Edit2, Trash2, GripVertical } from 'lucide-react'
+import { Switch } from '@/components/ui/switch'
 
 // преобразуем внутренний/относительный путь в публичный URL
 const toPublicUrl = (raw = '', siteName) => {
@@ -18,6 +19,11 @@ export default function ProductRow({
   onCheck,
   onEdit,
   onDelete,
+  categoryName,
+  dragHandleProps,
+  draggableProps,
+  innerRef,
+  onToggleStatus,
 }) {
   const { domain } = useParams()
   const siteName = `${domain}_app`
@@ -36,7 +42,11 @@ export default function ProductRow({
   const imgSrc = toPublicUrl(product.image_url, siteName)
 
   return (
-    <tr className="hover:bg-gray-50 focus-within:bg-gray-50">
+    <tr
+      ref={innerRef}
+      {...draggableProps}
+      className="hover:bg-gray-50 focus-within:bg-gray-50"
+    >
       <td className="px-2 py-1">
         <input
           type="checkbox"
@@ -45,15 +55,58 @@ export default function ProductRow({
           className="focus:ring-blue-500"
         />
       </td>
+      <td className="px-2 py-1 cursor-grab" {...dragHandleProps}>
+        <GripVertical size={16} className="text-gray-400" />
+      </td>
       <td className="px-2 py-1">
         {imgSrc ? (
-          <img src={imgSrc} alt="" className="h-10 w-10 object-cover rounded" />
+          <img src={imgSrc} alt="" className="h-10 w-10 rounded object-cover" />
         ) : (
-          <div className="h-10 w-10 rounded bg-gray-200 flex items-center justify-center text-xs text-gray-500">—</div>
+          <div className="flex h-10 w-10 items-center justify-center rounded bg-gray-200 text-xs text-gray-500">—</div>
         )}
       </td>
-      <td className="px-2 py-1 text-sm max-w-[240px] truncate">{product.title}</td>
-      <td className="px-2 py-1 text-sm whitespace-nowrap">{product.price}₽</td>
+      <td className="max-w-[240px] truncate px-2 py-1 text-sm">
+        {product.title}
+        {product.slug && (
+          <div className="text-xs text-gray-500">{product.slug}</div>
+        )}
+      </td>
+      <td className="px-2 py-1 whitespace-nowrap">
+        <div className="flex items-center gap-2">
+          <Switch
+            checked={Boolean(product.active)}
+            onCheckedChange={(val) => onToggleStatus(product.id, { active: val })}
+          />
+          {product.is_available !== undefined && (
+            <Switch
+              checked={Boolean(product.is_available)}
+              onCheckedChange={(val) =>
+                onToggleStatus(product.id, { is_available: val })
+              }
+            />
+          )}
+        </div>
+      </td>
+      <td className="px-2 py-1 whitespace-nowrap text-sm">
+        {product.price}₽{' '}
+        {product.old_price && (
+          <s className="text-gray-400">{product.old_price}₽</s>
+        )}
+      </td>
+      <td className="px-2 py-1 text-sm">
+        {product.labels?.map((lb) => (
+          <span
+            key={lb}
+            className="mr-1 rounded bg-blue-100 px-1 text-xs text-blue-800"
+          >
+            {lb}
+          </span>
+        ))}
+      </td>
+      <td className="px-2 py-1 text-sm">{categoryName || '—'}</td>
+      <td className="px-2 py-1 text-sm whitespace-nowrap">
+        {product.weight || '—'}
+      </td>
       <td className="relative px-2 py-1 text-right">
         <button
           className="rounded p-1 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500"
