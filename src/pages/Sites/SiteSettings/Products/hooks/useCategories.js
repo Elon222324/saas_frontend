@@ -50,5 +50,18 @@ function buildTree(list) {
     }
   });
 
+  const calcTotal = (node) => {
+    let sum = node.count ?? 0;
+    if (node.children?.length) {
+      node.children.forEach((c) => {
+        sum += calcTotal(c);
+      });
+    }
+    node.count = sum;
+    return sum;
+  };
+
+  root.forEach(calcTotal);
+
   return root;
 }
