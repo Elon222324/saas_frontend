@@ -1,8 +1,9 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Edit2, Trash2, GripVertical } from 'lucide-react'
 import { Switch } from '@/components/ui/switch'
 import slugify from 'slugify'
+import EditableLabelTags from './EditableLabelTags'
 
 const toPublicUrl = (raw = '', siteName) => {
   if (!raw) return null
@@ -39,8 +40,6 @@ export default function ProductRow({
   const [weightVal, setWeightVal] = useState('')
   const [editCategory, setEditCategory] = useState(false)
   const [categoryVal, setCategoryVal] = useState('')
-  const [editLabels, setEditLabels] = useState(false)
-  const [labelsVal, setLabelsVal] = useState([])
 
   const getFullPayload = (changes = {}) => ({
     id: product.id,
@@ -96,14 +95,6 @@ export default function ProductRow({
     setEditCategory(false)
     if (categoryVal && categoryVal !== String(product.category_id)) {
       await onInlineUpdate(product.id, getFullPayload({ category_id: categoryVal }))
-    }
-  }
-
-  const saveLabels = async () => {
-    setEditLabels(false)
-    const original = Array.isArray(product.labels) ? product.labels : []
-    if (JSON.stringify(original) !== JSON.stringify(labelsVal)) {
-      await onInlineUpdate(product.id, getFullPayload({ labels: labelsVal }))
     }
   }
 
@@ -165,7 +156,7 @@ export default function ProductRow({
         <Switch
           className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-gray-200"
           checked={Boolean(product.active)}
-          onCheckedChange={(val) => 
+          onCheckedChange={(val) =>
             onToggleStatus(product.id, getFullPayload({ active: val }))
           }
         />
@@ -174,7 +165,7 @@ export default function ProductRow({
         <Switch
           className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-gray-200"
           checked={Boolean(product.is_available)}
-          onCheckedChange={(val) => 
+          onCheckedChange={(val) =>
             onToggleStatus(product.id, getFullPayload({ is_available: val }))
           }
         />
@@ -208,51 +199,15 @@ export default function ProductRow({
           </>
         )}
       </td>
-      <td
-        className="px-2 py-1 text-sm"
-        onDoubleClick={() => {
-          setLabelsVal(Array.isArray(product.labels) ? product.labels.map(String) : [])
-          setEditLabels(true)
-        }}
-      >
-        {editLabels ? (
-          <select
-            multiple
-            autoFocus
-            value={labelsVal}
-            onChange={(e) =>
-              setLabelsVal(Array.from(e.target.selectedOptions).map((o) => o.value))
-            }
-            onBlur={saveLabels}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') saveLabels()
-              if (e.key === 'Escape') setEditLabels(false)
-            }}
-            className="w-40 rounded border px-1 text-xs focus:ring-2 focus:ring-blue-500"
-            size={Math.min(labelsList.length, 4) || 4}
-          >
-            {labelsList.map((l) => (
-              <option key={l.id} value={l.id}>
-                {l.name}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <div className="flex flex-wrap gap-1 text-xs">
-            {product.labels?.map((lb) => {
-              const l = labelsMap[lb] || {}
-              return (
-                <span
-                  key={lb}
-                  className="rounded px-1"
-                  style={{ backgroundColor: l.bg_color || '#e5e7eb', color: l.text_color || '#111827' }}
-                >
-                  {l.name || lb}
-                </span>
-              )
-            })}
-          </div>
-        )}
+      <td className="px-2 py-1 text-sm">
+        <EditableLabelTags
+          value={Array.isArray(product.labels) ? product.labels.map(String) : []}
+          labelsList={labelsList}
+          labelsMap={labelsMap}
+          onSave={(newLabels) =>
+            onInlineUpdate(product.id, getFullPayload({ labels: newLabels }))
+          }
+        />
       </td>
       <td
         className="px-2 py-1 text-sm"
