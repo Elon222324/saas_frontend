@@ -13,7 +13,7 @@ import ProductTable from './ProductTable'
 import Pagination from './Pagination'
 import useProductsList from './useProductsList'
 
-export default function ProductsList({ category }) {
+export default function ProductsList({ category, labels, noLabel }) {
   const { domain } = useParams()
   const siteName = `${domain}_app`
 
@@ -47,6 +47,8 @@ export default function ProductsList({ category }) {
   const list = useProductsList({
     products: ordered,
     category,
+    labels,
+    noLabel,
     categories: tree,
     removeFn: remove.mutateAsync,
   })

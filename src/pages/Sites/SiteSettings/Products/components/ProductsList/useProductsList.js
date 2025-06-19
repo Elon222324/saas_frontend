@@ -24,7 +24,7 @@ function getAllNestedCategoryIds(rootId, categories = []) {
   return ids
 }
 
-export default function useProductsList({ products = [], category, labels, categories = [], removeFn }) {
+export default function useProductsList({ products = [], category, labels, noLabel = false, categories = [], removeFn }) {
   const [search, setSearch] = useState('')
   const [debounced, setDebounced] = useState('')
   const [selected, setSelected] = useState(new Set())
@@ -47,9 +47,11 @@ export default function useProductsList({ products = [], category, labels, categ
       list = list.filter((p) => allowedIds.has(Number(p.category_id)))
     }
 
-    if (labels?.length) {
-      list = list.filter((p) =>
-        Array.isArray(p.labels) && labels.some((id) => p.labels.includes(id))
+    if (noLabel) {
+      list = list.filter((p) => !Array.isArray(p.labels) || p.labels.length === 0)
+    } else if (Array.isArray(labels) && labels.length) {
+      list = list.filter(
+        (p) => Array.isArray(p.labels) && labels.some((id) => p.labels.includes(id))
       )
     }
 
@@ -58,7 +60,7 @@ export default function useProductsList({ products = [], category, labels, categ
     }
 
     return list
-  }, [products, category, labels, debounced, flatCategories])
+  }, [products, category, labels, noLabel, debounced, flatCategories])
 
   // ─── Пагинация ───────────────────────────────────────────────
   const pageSize = 10

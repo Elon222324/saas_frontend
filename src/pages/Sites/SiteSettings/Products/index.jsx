@@ -10,6 +10,11 @@ export default function Products() {
   const queryClientRef = useRef(new QueryClient())
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [tab, setTab] = useState('categories')
+  const handleTabChange = (value) => {
+    setTab(value)
+    if (value === 'categories') setSelectedCategory(null)
+    if (value === 'labels') setSelectedCategory('no_label')
+  }
   const { domain } = useParams()
   const siteName = `${domain}_app`
 
@@ -23,13 +28,14 @@ export default function Products() {
                 selected={selectedCategory}
                 onSelect={setSelectedCategory}
                 tab={tab}
-                setTab={setTab}
+                setTab={handleTabChange}
               />
             </aside>
             <main className="flex-1 overflow-auto p-4">
               <ProductsList
                 category={tab === 'categories' ? selectedCategory : null}
-                labels={tab === 'labels' ? selectedCategory : null}
+                labels={tab === 'labels' && selectedCategory && selectedCategory !== 'no_label' ? [selectedCategory] : null}
+                noLabel={tab === 'labels' && selectedCategory === 'no_label'}
               />
             </main>
           </div>
