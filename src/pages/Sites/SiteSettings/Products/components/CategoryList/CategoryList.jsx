@@ -89,7 +89,7 @@ export default function CategoryList({ selected, onSelect, tab, setTab }) {
             ))}
           </nav>
         ) : (
-          <LabelsList siteName={siteName} />
+          <LabelsList siteName={siteName} selected={selected} onSelect={onSelect} />
         )}
       </div>
 

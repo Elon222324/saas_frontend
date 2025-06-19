@@ -16,7 +16,7 @@ export default function Products() {
   return (
     <QueryClientProvider client={queryClientRef.current}>
       <div className="h-full p-4">
-        {tab === 'categories' ? (
+        {(tab === 'categories' || tab === 'labels') ? (
           <div className="flex h-full">
             <aside className="w-64 border-r bg-white p-4">
               <CategoryList
@@ -27,19 +27,13 @@ export default function Products() {
               />
             </aside>
             <main className="flex-1 overflow-auto p-4">
-              <ProductsList category={selectedCategory} />
+              <ProductsList
+                category={tab === 'categories' ? selectedCategory : null}
+                labels={tab === 'labels' ? selectedCategory : null}
+              />
             </main>
           </div>
-        ) : (
-          <div className="bg-white rounded shadow p-4 h-full overflow-auto">
-            <CategoryList
-              selected={selectedCategory}
-              onSelect={setSelectedCategory}
-              tab={tab}
-              setTab={setTab}
-            />
-          </div>
-        )}
+        ) : null}
       </div>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

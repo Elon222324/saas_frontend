@@ -24,7 +24,7 @@ function getAllNestedCategoryIds(rootId, categories = []) {
   return ids
 }
 
-export default function useProductsList({ products = [], category, categories = [], removeFn }) {
+export default function useProductsList({ products = [], category, labels, categories = [], removeFn }) {
   const [search, setSearch] = useState('')
   const [debounced, setDebounced] = useState('')
   const [selected, setSelected] = useState(new Set())
@@ -47,12 +47,18 @@ export default function useProductsList({ products = [], category, categories = 
       list = list.filter((p) => allowedIds.has(Number(p.category_id)))
     }
 
+    if (labels?.length) {
+      list = list.filter((p) =>
+        Array.isArray(p.labels) && labels.some((id) => p.labels.includes(id))
+      )
+    }
+
     if (debounced) {
       list = list.filter((p) => p.title.toLowerCase().includes(debounced))
     }
 
     return list
-  }, [products, category, debounced, flatCategories])
+  }, [products, category, labels, debounced, flatCategories])
 
   // ─── Пагинация ───────────────────────────────────────────────
   const pageSize = 10
