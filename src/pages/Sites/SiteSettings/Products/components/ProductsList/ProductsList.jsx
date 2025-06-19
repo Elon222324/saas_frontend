@@ -71,6 +71,23 @@ export default function ProductsList({ category, labels, noLabel }) {
     await update.mutateAsync({ id, ...changes })
   }
 
+  const handleInlineUpdate = async (id, changes) => {
+    setOrdered(prev => prev.map(p => (p.id === id ? { ...p, ...changes } : p)))
+    await update.mutateAsync({ id, ...changes })
+  }
+
+  const handleBulkStatus = async (changes) => {
+    const ids = Array.from(list.selected)
+    setOrdered(prev =>
+      prev.map(p => (ids.includes(p.id) ? { ...p, ...changes } : p)),
+    )
+    for (const id of ids) {
+      // eslint-disable-next-line no-await-in-loop
+      await update.mutateAsync({ id, ...changes })
+    }
+    list.clearSelected()
+  }
+
   if (isError) {
     return (
       <div className="space-y-2">
@@ -88,7 +105,12 @@ export default function ProductsList({ category, labels, noLabel }) {
   return (
     <div className="space-y-4">
       {list.selected.size ? (
-        <BulkActionsBar count={list.selected.size} onDelete={list.deleteSelected} />
+        <BulkActionsBar
+          count={list.selected.size}
+          onDelete={list.deleteSelected}
+          onActivate={() => handleBulkStatus({ active: true })}
+          onDeactivate={() => handleBulkStatus({ active: false })}
+        />
       ) : (
         <Toolbar onAdd={() => setShowAdd(true)} search={list.search} onSearch={list.setSearch} disabledAdd={!Object.keys(categoryMap).length} />
       )}
@@ -106,6 +128,7 @@ export default function ProductsList({ category, labels, noLabel }) {
         categoryMap={categoryMap}
         onReorder={handleReorder}
         onToggleStatus={handleToggleStatus}
+        onInlineUpdate={handleInlineUpdate}
         isFilteringByLabel={!!noLabel || (labels?.length > 0)}
       />
 
