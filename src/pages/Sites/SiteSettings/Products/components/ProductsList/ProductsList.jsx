@@ -56,14 +56,20 @@ export default function ProductsList({ category, labels, noLabel }) {
   const [showAdd, setShowAdd] = useState(false)
   const [edit, setEdit] = useState({ open: false, product: null })
 
-  const handleReorder = (from, to) => {
+  const handleReorder = async (from, to) => {
+    let updated = []
     setOrdered(prev => {
       const start = (list.page - 1) * list.pageSize
       const arr = Array.from(prev)
       const [moved] = arr.splice(start + from, 1)
       arr.splice(start + to, 0, moved)
-      return arr.map((p, idx) => ({ ...p, order: idx + 1 }))
+      updated = arr.map((p, idx) => ({ ...p, order: idx + 1 }))
+      return updated
     })
+    for (const p of updated) {
+      // eslint-disable-next-line no-await-in-loop
+      await update.mutateAsync({ id: p.id, order: p.order })
+    }
   }
 
   const handleToggleStatus = async (id, changes) => {
