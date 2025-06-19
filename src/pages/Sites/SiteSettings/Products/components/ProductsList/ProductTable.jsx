@@ -16,6 +16,9 @@ export default function ProductTable({
   onDelete,
   onAdd,
   categoryMap,
+  categoryOptions,
+  labelsMap,
+  labelsList,
   onReorder,
   onToggleStatus,
   onInlineUpdate,
@@ -104,6 +107,9 @@ export default function ProductTable({
                     onEdit={onEdit}
                     onDelete={onDelete}
                     categoryName={categoryMap[p.category_id]}
+                    categoryOptions={categoryOptions}
+                    labelsMap={labelsMap}
+                    labelsList={labelsList}
                     onToggleStatus={onToggleStatus}
                     onInlineUpdate={onInlineUpdate}
                   />

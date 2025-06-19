@@ -19,6 +19,9 @@ export default function ProductRow({
   onEdit,
   onDelete,
   categoryName,
+  categoryOptions,
+  labelsMap,
+  labelsList,
   dragHandleProps,
   draggableProps,
   innerRef,
@@ -34,6 +37,10 @@ export default function ProductRow({
   const [priceVal, setPriceVal] = useState('')
   const [editWeight, setEditWeight] = useState(false)
   const [weightVal, setWeightVal] = useState('')
+  const [editCategory, setEditCategory] = useState(false)
+  const [categoryVal, setCategoryVal] = useState('')
+  const [editLabels, setEditLabels] = useState(false)
+  const [labelsVal, setLabelsVal] = useState([])
 
   const getFullPayload = (changes = {}) => ({
     id: product.id,
@@ -82,6 +89,21 @@ export default function ProductRow({
     setEditWeight(false)
     if (val !== product.weight) {
       await onInlineUpdate(product.id, getFullPayload({ weight: val }))
+    }
+  }
+
+  const saveCategory = async () => {
+    setEditCategory(false)
+    if (categoryVal && categoryVal !== String(product.category_id)) {
+      await onInlineUpdate(product.id, getFullPayload({ category_id: categoryVal }))
+    }
+  }
+
+  const saveLabels = async () => {
+    setEditLabels(false)
+    const original = Array.isArray(product.labels) ? product.labels : []
+    if (JSON.stringify(original) !== JSON.stringify(labelsVal)) {
+      await onInlineUpdate(product.id, getFullPayload({ labels: labelsVal }))
     }
   }
 
@@ -186,17 +208,81 @@ export default function ProductRow({
           </>
         )}
       </td>
-      <td className="px-2 py-1 text-sm">
-        {product.labels?.map((lb) => (
-          <span
-            key={lb}
-            className="mr-1 rounded bg-blue-100 px-1 text-xs text-blue-800"
+      <td
+        className="px-2 py-1 text-sm"
+        onDoubleClick={() => {
+          setLabelsVal(Array.isArray(product.labels) ? product.labels.map(String) : [])
+          setEditLabels(true)
+        }}
+      >
+        {editLabels ? (
+          <select
+            multiple
+            autoFocus
+            value={labelsVal}
+            onChange={(e) =>
+              setLabelsVal(Array.from(e.target.selectedOptions).map((o) => o.value))
+            }
+            onBlur={saveLabels}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') saveLabels()
+              if (e.key === 'Escape') setEditLabels(false)
+            }}
+            className="w-40 rounded border px-1 text-xs focus:ring-2 focus:ring-blue-500"
+            size={Math.min(labelsList.length, 4) || 4}
           >
-            {lb}
-          </span>
-        ))}
+            {labelsList.map((l) => (
+              <option key={l.id} value={l.id}>
+                {l.name}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <div className="flex flex-wrap gap-1 text-xs">
+            {product.labels?.map((lb) => {
+              const l = labelsMap[lb] || {}
+              return (
+                <span
+                  key={lb}
+                  className="rounded px-1"
+                  style={{ backgroundColor: l.bg_color || '#e5e7eb', color: l.text_color || '#111827' }}
+                >
+                  {l.name || lb}
+                </span>
+              )
+            })}
+          </div>
+        )}
       </td>
-      <td className="px-2 py-1 text-sm">{categoryName || '—'}</td>
+      <td
+        className="px-2 py-1 text-sm"
+        onDoubleClick={() => {
+          setCategoryVal(String(product.category_id || ''))
+          setEditCategory(true)
+        }}
+      >
+        {editCategory ? (
+          <select
+            autoFocus
+            value={categoryVal}
+            onChange={(e) => setCategoryVal(e.target.value)}
+            onBlur={saveCategory}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') saveCategory()
+              if (e.key === 'Escape') setEditCategory(false)
+            }}
+            className="w-40 rounded border px-1 text-sm focus:ring-2 focus:ring-blue-500"
+          >
+            {categoryOptions.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.path}
+              </option>
+            ))}
+          </select>
+        ) : (
+          categoryName || '—'
+        )}
+      </td>
       <td
         className="px-2 py-1 text-sm whitespace-nowrap"
         onDoubleClick={() => {
