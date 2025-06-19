@@ -29,7 +29,8 @@ export default function Products() {
             <main className="flex-1 overflow-auto p-4">
               <ProductsList
                 category={tab === 'categories' ? selectedCategory : null}
-                labels={tab === 'labels' ? selectedCategory : null}
+                labels={tab === 'labels' && selectedCategory && selectedCategory !== 'no_label' ? [selectedCategory] : null}
+                noLabel={tab === 'labels' && selectedCategory === 'no_label'}
               />
             </main>
           </div>
