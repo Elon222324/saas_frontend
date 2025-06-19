@@ -1,4 +1,3 @@
-// FILE: src/pages/Sites/SiteSettings/Products/components/CategoryList/CategoryItem.jsx
 import { ChevronRight, ChevronDown, Pencil, Trash2 } from 'lucide-react'
 
 export default function CategoryItem({
@@ -14,12 +13,11 @@ export default function CategoryItem({
   FolderIcon,
   TagIcon,
 }) {
-  const hasChildren  = Boolean(cat.children?.length)
-  const isCollapsed  = collapsed.has(cat.id)
-  const isActive     =
+  const hasChildren = Boolean(cat.children?.length)
+  const isCollapsed = collapsed.has(cat.id)
+  const isActive =
     (cat.id === 'all' && selected === null) || selected === cat.id
 
-  // готовим HTML-строку с подсветкой или обычный текст
   const labelHtml = highlight ? highlight(cat.name) : cat.name
 
   return (
@@ -31,12 +29,10 @@ export default function CategoryItem({
         data-kb-expand={hasChildren && !isCollapsed}
         tabIndex={0}
         style={{ paddingLeft: depth * 16 + 8 }}
-        className={`group flex items-center justify-between rounded px-2 py-1 text-sm cursor-pointer focus:ring-2 focus:ring-blue-500
+        className={`group flex items-center justify-between rounded px-2 py-1 text-sm cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-blue-400
           ${isActive
-            ? 'bg-blue-600 text-white'
-            : cat.id === 'all'
-            ? 'hover:bg-gray-100/70'
-            : 'hover:bg-gray-100'}`}
+            ? 'bg-blue-100 text-blue-700 font-medium border-l-2 border-blue-600'
+            : 'hover:bg-gray-100 text-gray-700'}`}
         onClick={() => {
           if (hasChildren) toggle(cat.id)
           onSelect(cat.id === 'all' ? null : cat.id)
@@ -54,7 +50,7 @@ export default function CategoryItem({
 
           {hasChildren
             ? <FolderIcon size={14} className="opacity-70" />
-            : <TagIcon    size={14} className="opacity-70" />}
+            : <TagIcon size={14} className="opacity-70" />}
 
           <span dangerouslySetInnerHTML={{ __html: labelHtml }} />
         </div>
@@ -65,7 +61,7 @@ export default function CategoryItem({
             <span
               className={`min-w-[1.5rem] rounded px-1.5 py-0.5 text-center text-xs
                 ${isActive
-                  ? 'bg-white/20'
+                  ? 'bg-blue-100 text-blue-700'
                   : 'bg-gray-200 dark:bg-gray-700 dark:text-gray-100'}`}
             >
               {cat.count}

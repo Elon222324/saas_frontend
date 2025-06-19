@@ -1,40 +1,34 @@
-// FILE: src/pages/Sites/SiteSettings/Products/components/CategoryList/CategoryList.jsx
 import { useState, useMemo, useRef } from 'react'
 import { useParams } from 'react-router-dom'
-import {
-  Plus,
-  Folder,
-  Tag,
-} from 'lucide-react'
+import { Folder, Tag } from 'lucide-react'
 
-import { useCategories }    from '../../hooks/useCategories'
+import { useCategories } from '../../hooks/useCategories'
 import { useKeyboardTreeNav } from '../../hooks/useKeyboardTreeNav'
-import { useCategoryCrud }  from './useCategoryCrud'
+import { useCategoryCrud } from './useCategoryCrud'
 
-import CategoryItem     from './CategoryItem'
-import AddCategoryModal  from '../AddCategoryModal'
+import CategoryItem from './CategoryItem'
+import AddCategoryModal from '../AddCategoryModal'
 import EditCategoryModal from '../EditCategoryModal'
+import LabelsList from '../Labels/LabelsList'
+import CategoryToolbar from './CategoryToolbar'
 
 import { filterTree, highlight } from './TreeUtils'
 
-export default function CategoryList({ selected, onSelect }) {
-  /* ───── API & CRUD ───── */
-  const { domain }   = useParams()
-  const siteName     = `${domain}_app`
+export default function CategoryList({ selected, onSelect, tab, setTab }) {
+  const { domain } = useParams()
+  const siteName = `${domain}_app`
 
   const { data: tree = [], isFetching, refetch } = useCategories(siteName)
   const { add: addCat, update: updateCat, remove: deleteCat } = useCategoryCrud(siteName, refetch)
 
-  /* ───── UI state ───── */
-  const [search,      setSearch]      = useState('')
-  const [collapsed,   setCollapsed]   = useState(new Set())
-  const [showAdd,     setShowAdd]     = useState(false)
-  const [editState,   setEditState]   = useState({ open: false, category: null })
+  const [search, setSearch] = useState('')
+  const [collapsed, setCollapsed] = useState(new Set())
+  const [showAdd, setShowAdd] = useState(false)
+  const [editState, setEditState] = useState({ open: false, category: null })
 
   const containerRef = useRef(null)
-  useKeyboardTreeNav(containerRef, collapsed)          // ♿ стрелки / разворачивание
+  useKeyboardTreeNav(containerRef, collapsed)
 
-  /* ───── derived data ───── */
   const categories = useMemo(() => {
     const total = tree.reduce((s, n) => s + (n.count ?? 0), 0)
     return [{ id: 'all', name: 'Все товары', count: total }, ...tree]
@@ -64,55 +58,41 @@ export default function CategoryList({ selected, onSelect }) {
       return next
     })
 
-  /* ───── render ───── */
   return (
-    <div
-      ref={containerRef}
-      className="relative h-full space-y-3 overflow-y-auto focus:outline-none"
-      tabIndex={0}
-    >
-      {/* header */}
-      <header className="flex items-center justify-between">
-        <h2 className="font-semibold">Категории</h2>
-        <button
-          className="flex items-center gap-1 rounded bg-blue-600 px-2 py-1 text-sm text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500"
-          onClick={() => setShowAdd(true)}
-        >
-          <Plus size={16} />
-          Добавить
-        </button>
-      </header>
-
-      {/* search */}
-      <input
-        type="text"
-        placeholder="Поиск..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="w-full rounded border px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500"
+    <div ref={containerRef} className="relative h-full space-y-4 focus:outline-none" tabIndex={0}>
+      <CategoryToolbar
+        tab={tab}
+        onTabChange={setTab}
+        onAddClick={() => setShowAdd(true)}
+        search={search}
+        setSearch={setSearch}
       />
 
-      {/* tree */}
-      <nav>
-        {filtered.map(c =>
-          <CategoryItem
-            key={c.id}
-            cat={c}
-            depth={0}
-            collapsed={collapsed}
-            toggle={toggle}
-            highlight={txt => highlight(txt, search)}
-            selected={selected}
-            onSelect={onSelect}
-            onEdit={cat => setEditState({ open: true, category: cat })}
-            onDelete={id => deleteCat.mutateAsync(id)}
-            FolderIcon={Folder}
-            TagIcon={Tag}
-          />
+      <div className="overflow-y-auto">
+        {tab === 'categories' ? (
+          <nav className="space-y-1 pt-1">
+            {filtered.map(c => (
+              <CategoryItem
+                key={c.id}
+                cat={c}
+                depth={0}
+                collapsed={collapsed}
+                toggle={toggle}
+                highlight={txt => highlight(txt, search)}
+                selected={selected}
+                onSelect={onSelect}
+                onEdit={cat => setEditState({ open: true, category: cat })}
+                onDelete={id => deleteCat.mutateAsync(id)}
+                FolderIcon={Folder}
+                TagIcon={Tag}
+              />
+            ))}
+          </nav>
+        ) : (
+          <LabelsList siteName={siteName} selected={selected} onSelect={onSelect} />
         )}
-      </nav>
+      </div>
 
-      {/* modals */}
       <AddCategoryModal
         open={showAdd}
         onClose={() => setShowAdd(false)}

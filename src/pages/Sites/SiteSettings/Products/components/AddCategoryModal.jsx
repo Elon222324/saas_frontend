@@ -1,4 +1,3 @@
-// FILE: src/pages/Sites/SiteSettings/Products/components/AddCategoryModal.jsx
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 
@@ -14,20 +13,27 @@ const modalRoot =
 export default function AddCategoryModal({ open, onClose, onSave, parents }) {
   const [name, setName] = useState('')
   const [parent, setParent] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (!open) {
       setName('')
       setParent(null)
+      setLoading(false)
     }
   }, [open])
 
   if (!open) return null
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const val = name.trim()
     if (!val) return
-    onSave({ name: val, parent_id: parent })
+    setLoading(true)
+    try {
+      await onSave({ name: val, parent_id: parent })
+    } finally {
+      setLoading(false)
+    }
   }
 
   return createPortal(
@@ -42,6 +48,7 @@ export default function AddCategoryModal({ open, onClose, onSave, parents }) {
           onChange={(e) => setName(e.target.value)}
           placeholder="Введите название"
           className="mb-4 w-full rounded border px-2 py-1 focus:ring-2 focus:ring-blue-500"
+          disabled={loading}
         />
 
         <label className="mb-1 block text-sm">Родитель</label>
@@ -51,6 +58,7 @@ export default function AddCategoryModal({ open, onClose, onSave, parents }) {
             setParent(e.target.value === '' ? null : Number(e.target.value))
           }
           className="mb-4 w-full rounded border px-2 py-1 focus:ring-2 focus:ring-blue-500"
+          disabled={loading}
         >
           <option value="">Без родителя</option>
           {parents.map((p) => (
@@ -63,16 +71,17 @@ export default function AddCategoryModal({ open, onClose, onSave, parents }) {
         <div className="flex justify-end gap-2">
           <button
             onClick={onClose}
-            className="rounded px-3 py-1 text-sm hover:bg-gray-100 focus:ring-2 focus:ring-blue-500"
+            disabled={loading}
+            className="rounded px-3 py-1 text-sm hover:bg-gray-100 disabled:opacity-50 focus:ring-2 focus:ring-blue-500"
           >
             Отмена
           </button>
           <button
-            disabled={!name.trim()}
+            disabled={!name.trim() || loading}
             onClick={handleSave}
             className="rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700 disabled:opacity-50 focus:ring-2 focus:ring-blue-500"
           >
-            Сохранить
+            {loading ? 'Сохранение…' : 'Сохранить'}
           </button>
         </div>
       </div>
