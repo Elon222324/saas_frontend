@@ -75,6 +75,16 @@ export default function EditProductModal({ open, onClose, onSave, product }) {
       weight: weight.trim() || undefined,
       category_id: category,
       active,
+      old_price: product.old_price,
+      currency: product.currency,
+      full_description: product.full_description,
+      gallery: product.gallery,
+      is_available: product.is_available,
+      labels: product.labels,
+      rating: product.rating,
+      rating_count: product.rating_count,
+      props: product.props,
+      extras: product.extras,
     }
 
     while (attempt < maxAttempts) {

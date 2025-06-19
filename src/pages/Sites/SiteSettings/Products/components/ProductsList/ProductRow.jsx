@@ -1,14 +1,12 @@
 import { useState, useRef, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { MoreVertical, Edit2, Trash2, GripVertical } from 'lucide-react'
+import { Edit2, Trash2, GripVertical } from 'lucide-react'
 import { Switch } from '@/components/ui/switch'
 import slugify from 'slugify'
 
-// преобразуем внутренний/относительный путь в публичный URL
 const toPublicUrl = (raw = '', siteName) => {
   if (!raw) return null
   if (/^https?:\/\//i.test(raw) && !raw.includes(`${siteName}:8001`)) return raw
-
   const base = import.meta.env.VITE_CLOUD_CDN || import.meta.env.VITE_ASSETS_URL || ''
   if (!base) return raw.startsWith('/') ? raw : `/${raw}`
   return `${base.replace(/\/$/, '')}/${raw.replace(/^\//, '')}`
@@ -30,9 +28,6 @@ export default function ProductRow({
   const { domain } = useParams()
   const siteName = `${domain}_app`
 
-  const [open, setOpen] = useState(false)
-  const menuRef = useRef(null)
-
   const [editTitle, setEditTitle] = useState(false)
   const [titleVal, setTitleVal] = useState('')
   const [editPrice, setEditPrice] = useState(false)
@@ -40,22 +35,37 @@ export default function ProductRow({
   const [editWeight, setEditWeight] = useState(false)
   const [weightVal, setWeightVal] = useState('')
 
-  useEffect(() => {
-    const onClick = (e) => {
-      if (!menuRef.current?.contains(e.target)) setOpen(false)
-    }
-    document.addEventListener('mousedown', onClick)
-    return () => document.removeEventListener('mousedown', onClick)
-  }, [])
+  const getFullPayload = (changes = {}) => ({
+    id: product.id,
+    title: product.title,
+    slug: product.slug,
+    price: product.price,
+    old_price: product.old_price,
+    currency: product.currency,
+    description: product.description,
+    full_description: product.full_description,
+    image_url: product.image_url,
+    gallery: product.gallery,
+    is_available: product.is_available,
+    active: product.active,
+    category_id: product.category_id,
+    labels: product.labels,
+    rating: product.rating,
+    rating_count: product.rating_count,
+    weight: product.weight,
+    props: typeof product.props === 'string' ? {} : product.props,
+    extras: Array.isArray(product.extras) ? product.extras : [],
+    ...changes,
+  })
 
   const saveTitle = async () => {
     const val = titleVal.trim()
     setEditTitle(false)
     if (val && val !== product.title) {
-      await onInlineUpdate(product.id, {
+      await onInlineUpdate(product.id, getFullPayload({
         title: val,
         slug: slugify(val, { lower: true, strict: true }),
-      })
+      }))
     }
   }
 
@@ -63,7 +73,7 @@ export default function ProductRow({
     const num = parseFloat(priceVal)
     setEditPrice(false)
     if (!Number.isNaN(num) && num !== product.price) {
-      await onInlineUpdate(product.id, { price: num })
+      await onInlineUpdate(product.id, getFullPayload({ price: num }))
     }
   }
 
@@ -71,7 +81,7 @@ export default function ProductRow({
     const val = weightVal.trim()
     setEditWeight(false)
     if (val !== product.weight) {
-      await onInlineUpdate(product.id, { weight: val })
+      await onInlineUpdate(product.id, getFullPayload({ weight: val }))
     }
   }
 
@@ -133,14 +143,18 @@ export default function ProductRow({
         <Switch
           className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-gray-200"
           checked={Boolean(product.active)}
-          onCheckedChange={(val) => onToggleStatus(product.id, { active: val })}
+          onCheckedChange={(val) => 
+            onToggleStatus(product.id, getFullPayload({ active: val }))
+          }
         />
       </td>
       <td className="px-2 py-1 whitespace-nowrap">
         <Switch
           className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-gray-200"
           checked={Boolean(product.is_available)}
-          onCheckedChange={(val) => onToggleStatus(product.id, { is_available: val })}
+          onCheckedChange={(val) => 
+            onToggleStatus(product.id, getFullPayload({ is_available: val }))
+          }
         />
       </td>
       <td
@@ -206,38 +220,21 @@ export default function ProductRow({
           product.weight || '—'
         )}
       </td>
-      <td className="relative px-2 py-1 text-right">
+      <td className="px-2 py-1 text-right space-x-2">
         <button
+          onClick={() => onEdit(product)}
           className="rounded p-1 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500"
-          onClick={() => setOpen((v) => !v)}
+          title="Редактировать"
         >
-          <MoreVertical size={16} />
+          <Edit2 size={16} />
         </button>
-        {open && (
-          <div
-            ref={menuRef}
-            className="absolute right-0 z-10 mt-1 w-28 rounded border bg-white py-1 shadow-md"
-          >
-            <button
-              onClick={() => {
-                setOpen(false)
-                onEdit(product)
-              }}
-              className="flex w-full items-center gap-1 px-2 py-1 text-sm hover:bg-gray-100 focus:ring-2 focus:ring-blue-500"
-            >
-              <Edit2 size={14} /> Редактировать
-            </button>
-            <button
-              onClick={() => {
-                setOpen(false)
-                onDelete(product.id)
-              }}
-              className="flex w-full items-center gap-1 px-2 py-1 text-sm hover:bg-gray-100 focus:ring-2 focus:ring-red-500"
-            >
-              <Trash2 size={14} /> Удалить
-            </button>
-          </div>
-        )}
+        <button
+          onClick={() => onDelete(product.id)}
+          className="rounded p-1 hover:bg-gray-100 focus:ring-2 focus:ring-red-500"
+          title="Удалить"
+        >
+          <Trash2 size={16} />
+        </button>
       </td>
     </tr>
   )
