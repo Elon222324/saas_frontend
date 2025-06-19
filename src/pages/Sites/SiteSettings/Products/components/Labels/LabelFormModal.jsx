@@ -1,15 +1,31 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
 import { useLabelCrud } from '../../hooks/useLabelCrud'
 
 export default function LabelFormModal({ isOpen, onClose, siteName, label }) {
-  const [name, setName] = useState(label?.name || '')
-  const [bgColor, setBgColor] = useState(label?.bg_color || '#E0E0E0')
-  const [textColor, setTextColor] = useState(label?.text_color || '#000000')
-  const [isActive, setIsActive] = useState(label?.is_active ?? true)
-  const [sortOrder, setSortOrder] = useState(label?.sort_order || 0)
+  const [name, setName] = useState('')
+  const [bgColor, setBgColor] = useState('#E0E0E0')
+  const [textColor, setTextColor] = useState('#000000')
+  const [isActive, setIsActive] = useState(true)
+  const [sortOrder, setSortOrder] = useState(0)
 
   const { add, update } = useLabelCrud(siteName)
+
+  useEffect(() => {
+    if (label) {
+      setName(label.name || '')
+      setBgColor(label.bg_color || '#E0E0E0')
+      setTextColor(label.text_color || '#000000')
+      setIsActive(label.is_active ?? true)
+      setSortOrder(label.sort_order || 0)
+    } else {
+      setName('')
+      setBgColor('#E0E0E0')
+      setTextColor('#000000')
+      setIsActive(true)
+      setSortOrder(0)
+    }
+  }, [label, isOpen])
 
   const handleSubmit = (e) => {
     e.preventDefault()
