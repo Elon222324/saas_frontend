@@ -14,7 +14,7 @@ import CategoryToolbar from './CategoryToolbar'
 
 import { filterTree, highlight } from './TreeUtils'
 
-export default function CategoryList({ selected, onSelect }) {
+export default function CategoryList({ selected, onSelect, tab, setTab }) {
   const { domain } = useParams()
   const siteName = `${domain}_app`
 
@@ -25,7 +25,6 @@ export default function CategoryList({ selected, onSelect }) {
   const [collapsed, setCollapsed] = useState(new Set())
   const [showAdd, setShowAdd] = useState(false)
   const [editState, setEditState] = useState({ open: false, category: null })
-  const [tab, setTab] = useState('categories')
 
   const containerRef = useRef(null)
   useKeyboardTreeNav(containerRef, collapsed)
