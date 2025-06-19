@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import { useProducts } from '../../hooks/useProducts'
 import { useProductCrud } from '../../hooks/useProductCrud'
 import { useCategories } from '../../hooks/useCategories'
+import { useLabels } from '../../hooks/useLabels'
 
 import AddProductModal from '../AddProductModal'
 import EditProductModal from '../EditProductModal'
@@ -20,6 +21,7 @@ export default function ProductsList({ category, labels, noLabel }) {
   const { data: all = [], isFetching, isError, refetch } = useProducts(siteName)
   const { add, update, remove } = useProductCrud(siteName)
   const { data: tree = [] } = useCategories(siteName)
+  const { data: labelsList = [] } = useLabels(siteName)
 
   const [ordered, setOrdered] = useState([])
 
@@ -44,6 +46,27 @@ export default function ProductsList({ category, labels, noLabel }) {
     return map
   }, [tree])
 
+  const categoryOptions = useMemo(() => {
+    const list = []
+    const walk = (nodes, prefix = '') => {
+      nodes.forEach((n) => {
+        const path = prefix ? `${prefix} / ${n.name}` : n.name
+        list.push({ id: n.id, path })
+        if (n.children?.length) walk(n.children, path)
+      })
+    }
+    walk(tree)
+    return list
+  }, [tree])
+
+  const labelsMap = useMemo(() => {
+    const map = {}
+    labelsList.forEach((l) => {
+      map[l.id] = l
+    })
+    return map
+  }, [labelsList])
+
   const list = useProductsList({
     products: ordered,
     category,
@@ -56,19 +79,42 @@ export default function ProductsList({ category, labels, noLabel }) {
   const [showAdd, setShowAdd] = useState(false)
   const [edit, setEdit] = useState({ open: false, product: null })
 
-  const handleReorder = (from, to) => {
+  const handleReorder = async (from, to) => {
+    let updated = []
     setOrdered(prev => {
       const start = (list.page - 1) * list.pageSize
       const arr = Array.from(prev)
       const [moved] = arr.splice(start + from, 1)
       arr.splice(start + to, 0, moved)
-      return arr.map((p, idx) => ({ ...p, order: idx + 1 }))
+      updated = arr.map((p, idx) => ({ ...p, order: idx + 1 }))
+      return updated
     })
+    for (const p of updated) {
+      // eslint-disable-next-line no-await-in-loop
+      await update.mutateAsync({ id: p.id, order: p.order })
+    }
   }
 
   const handleToggleStatus = async (id, changes) => {
     setOrdered(prev => prev.map(p => (p.id === id ? { ...p, ...changes } : p)))
     await update.mutateAsync({ id, ...changes })
+  }
+
+  const handleInlineUpdate = async (id, changes) => {
+    setOrdered(prev => prev.map(p => (p.id === id ? { ...p, ...changes } : p)))
+    await update.mutateAsync({ id, ...changes })
+  }
+
+  const handleBulkStatus = async (changes) => {
+    const ids = Array.from(list.selected)
+    setOrdered(prev =>
+      prev.map(p => (ids.includes(p.id) ? { ...p, ...changes } : p)),
+    )
+    for (const id of ids) {
+      // eslint-disable-next-line no-await-in-loop
+      await update.mutateAsync({ id, ...changes })
+    }
+    list.clearSelected()
   }
 
   if (isError) {
@@ -88,7 +134,12 @@ export default function ProductsList({ category, labels, noLabel }) {
   return (
     <div className="space-y-4">
       {list.selected.size ? (
-        <BulkActionsBar count={list.selected.size} onDelete={list.deleteSelected} />
+        <BulkActionsBar
+          count={list.selected.size}
+          onDelete={list.deleteSelected}
+          onActivate={() => handleBulkStatus({ active: true })}
+          onDeactivate={() => handleBulkStatus({ active: false })}
+        />
       ) : (
         <Toolbar onAdd={() => setShowAdd(true)} search={list.search} onSearch={list.setSearch} disabledAdd={!Object.keys(categoryMap).length} />
       )}
@@ -104,8 +155,12 @@ export default function ProductsList({ category, labels, noLabel }) {
         onDelete={id => remove.mutateAsync(id)}
         onAdd={() => setShowAdd(true)}
         categoryMap={categoryMap}
+        categoryOptions={categoryOptions}
+        labelsMap={labelsMap}
+        labelsList={labelsList}
         onReorder={handleReorder}
         onToggleStatus={handleToggleStatus}
+        onInlineUpdate={handleInlineUpdate}
         isFilteringByLabel={!!noLabel || (labels?.length > 0)}
       />
 

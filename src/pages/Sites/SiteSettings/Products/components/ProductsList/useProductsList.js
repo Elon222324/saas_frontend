@@ -95,6 +95,8 @@ export default function useProductsList({ products = [], category, labels, noLab
     setSelected(new Set())
   }
 
+  const clearSelected = () => setSelected(new Set())
+
   useEffect(() => {
     if (page > totalPages) setPage(totalPages)
   }, [page, totalPages])
@@ -106,6 +108,7 @@ export default function useProductsList({ products = [], category, labels, noLab
     toggleSelect,
     toggleSelectAll,
     deleteSelected,
+    clearSelected,
     page,
     setPage,
     pageItems,

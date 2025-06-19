@@ -16,8 +16,12 @@ export default function ProductTable({
   onDelete,
   onAdd,
   categoryMap,
+  categoryOptions,
+  labelsMap,
+  labelsList,
   onReorder,
   onToggleStatus,
+  onInlineUpdate,
   isFilteringByLabel,
 }) {
   const hasCategories = Object.keys(categoryMap).length > 0
@@ -93,18 +97,22 @@ export default function ProductTable({
               {pageItems.map((p, index) => (
                 <Draggable key={p.id} draggableId={String(p.id)} index={index}>
                   {(prov2) => (
-                    <ProductRow
-                      innerRef={prov2.innerRef}
-                      draggableProps={prov2.draggableProps}
-                      dragHandleProps={prov2.dragHandleProps}
-                      product={p}
-                      checked={selected.has(p.id)}
-                      onCheck={toggleSelect}
-                      onEdit={onEdit}
-                      onDelete={onDelete}
-                      categoryName={categoryMap[p.category_id]}
-                      onToggleStatus={onToggleStatus}
-                    />
+                  <ProductRow
+                    innerRef={prov2.innerRef}
+                    draggableProps={prov2.draggableProps}
+                    dragHandleProps={prov2.dragHandleProps}
+                    product={p}
+                    checked={selected.has(p.id)}
+                    onCheck={toggleSelect}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                    categoryName={categoryMap[p.category_id]}
+                    categoryOptions={categoryOptions}
+                    labelsMap={labelsMap}
+                    labelsList={labelsList}
+                    onToggleStatus={onToggleStatus}
+                    onInlineUpdate={onInlineUpdate}
+                  />
                   )}
                 </Draggable>
               ))}
