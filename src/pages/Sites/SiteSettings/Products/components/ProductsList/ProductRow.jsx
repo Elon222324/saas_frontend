@@ -1,8 +1,9 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Edit2, Trash2, GripVertical } from 'lucide-react'
 import { Switch } from '@/components/ui/switch'
 import slugify from 'slugify'
+import EditableLabelTags from './EditableLabelTags'
 
 const toPublicUrl = (raw = '', siteName) => {
   if (!raw) return null
@@ -19,6 +20,9 @@ export default function ProductRow({
   onEdit,
   onDelete,
   categoryName,
+  categoryOptions,
+  labelsMap,
+  labelsList,
   dragHandleProps,
   draggableProps,
   innerRef,
@@ -34,6 +38,8 @@ export default function ProductRow({
   const [priceVal, setPriceVal] = useState('')
   const [editWeight, setEditWeight] = useState(false)
   const [weightVal, setWeightVal] = useState('')
+  const [editCategory, setEditCategory] = useState(false)
+  const [categoryVal, setCategoryVal] = useState('')
 
   const getFullPayload = (changes = {}) => ({
     id: product.id,
@@ -82,6 +88,13 @@ export default function ProductRow({
     setEditWeight(false)
     if (val !== product.weight) {
       await onInlineUpdate(product.id, getFullPayload({ weight: val }))
+    }
+  }
+
+  const saveCategory = async () => {
+    setEditCategory(false)
+    if (categoryVal && categoryVal !== String(product.category_id)) {
+      await onInlineUpdate(product.id, getFullPayload({ category_id: categoryVal }))
     }
   }
 
@@ -143,7 +156,7 @@ export default function ProductRow({
         <Switch
           className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-gray-200"
           checked={Boolean(product.active)}
-          onCheckedChange={(val) => 
+          onCheckedChange={(val) =>
             onToggleStatus(product.id, getFullPayload({ active: val }))
           }
         />
@@ -152,7 +165,7 @@ export default function ProductRow({
         <Switch
           className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-gray-200"
           checked={Boolean(product.is_available)}
-          onCheckedChange={(val) => 
+          onCheckedChange={(val) =>
             onToggleStatus(product.id, getFullPayload({ is_available: val }))
           }
         />
@@ -187,16 +200,44 @@ export default function ProductRow({
         )}
       </td>
       <td className="px-2 py-1 text-sm">
-        {product.labels?.map((lb) => (
-          <span
-            key={lb}
-            className="mr-1 rounded bg-blue-100 px-1 text-xs text-blue-800"
-          >
-            {lb}
-          </span>
-        ))}
+        <EditableLabelTags
+          value={Array.isArray(product.labels) ? product.labels.map(String) : []}
+          labelsList={labelsList}
+          labelsMap={labelsMap}
+          onSave={(newLabels) =>
+            onInlineUpdate(product.id, getFullPayload({ labels: newLabels }))
+          }
+        />
       </td>
-      <td className="px-2 py-1 text-sm">{categoryName || '—'}</td>
+      <td
+        className="px-2 py-1 text-sm"
+        onDoubleClick={() => {
+          setCategoryVal(String(product.category_id || ''))
+          setEditCategory(true)
+        }}
+      >
+        {editCategory ? (
+          <select
+            autoFocus
+            value={categoryVal}
+            onChange={(e) => setCategoryVal(e.target.value)}
+            onBlur={saveCategory}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') saveCategory()
+              if (e.key === 'Escape') setEditCategory(false)
+            }}
+            className="w-40 rounded border px-1 text-sm focus:ring-2 focus:ring-blue-500"
+          >
+            {categoryOptions.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.path}
+              </option>
+            ))}
+          </select>
+        ) : (
+          categoryName || '—'
+        )}
+      </td>
       <td
         className="px-2 py-1 text-sm whitespace-nowrap"
         onDoubleClick={() => {

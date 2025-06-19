@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import { useProducts } from '../../hooks/useProducts'
 import { useProductCrud } from '../../hooks/useProductCrud'
 import { useCategories } from '../../hooks/useCategories'
+import { useLabels } from '../../hooks/useLabels'
 
 import AddProductModal from '../AddProductModal'
 import EditProductModal from '../EditProductModal'
@@ -20,6 +21,7 @@ export default function ProductsList({ category, labels, noLabel }) {
   const { data: all = [], isFetching, isError, refetch } = useProducts(siteName)
   const { add, update, remove } = useProductCrud(siteName)
   const { data: tree = [] } = useCategories(siteName)
+  const { data: labelsList = [] } = useLabels(siteName)
 
   const [ordered, setOrdered] = useState([])
 
@@ -43,6 +45,27 @@ export default function ProductsList({ category, labels, noLabel }) {
     walk(tree)
     return map
   }, [tree])
+
+  const categoryOptions = useMemo(() => {
+    const list = []
+    const walk = (nodes, prefix = '') => {
+      nodes.forEach((n) => {
+        const path = prefix ? `${prefix} / ${n.name}` : n.name
+        list.push({ id: n.id, path })
+        if (n.children?.length) walk(n.children, path)
+      })
+    }
+    walk(tree)
+    return list
+  }, [tree])
+
+  const labelsMap = useMemo(() => {
+    const map = {}
+    labelsList.forEach((l) => {
+      map[l.id] = l
+    })
+    return map
+  }, [labelsList])
 
   const list = useProductsList({
     products: ordered,
@@ -132,6 +155,9 @@ export default function ProductsList({ category, labels, noLabel }) {
         onDelete={id => remove.mutateAsync(id)}
         onAdd={() => setShowAdd(true)}
         categoryMap={categoryMap}
+        categoryOptions={categoryOptions}
+        labelsMap={labelsMap}
+        labelsList={labelsList}
         onReorder={handleReorder}
         onToggleStatus={handleToggleStatus}
         onInlineUpdate={handleInlineUpdate}
