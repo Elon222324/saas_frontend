@@ -5,11 +5,13 @@ export default function LabelItem({ label, selected, onSelect, onEdit, onDelete 
 
   return (
     <div
-      className={`flex items-center justify-between rounded border px-2 py-2 text-sm cursor-pointer ${isSelected ? 'bg-blue-100 border-blue-600' : ''}`}
+      className={`flex items-center justify-between rounded border px-2 py-2 text-sm cursor-pointer ${
+        isSelected ? 'ring-2 ring-blue-500 ring-offset-1 bg-blue-100' : ''
+      }`}
       style={{
         borderColor: label.bg_color,
         borderLeft: `4px solid ${label.bg_color}`,
-        backgroundColor: label.bg_color + '1A',
+        backgroundColor: isSelected ? undefined : label.bg_color + '1A',
       }}
       onClick={() => onSelect(label.id)}
     >
