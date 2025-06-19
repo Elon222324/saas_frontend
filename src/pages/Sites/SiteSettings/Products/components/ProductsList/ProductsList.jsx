@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 
 import { useProducts } from '../../hooks/useProducts'
 import { useProductCrud } from '../../hooks/useProductCrud'
-import { useCategories } from '../../hooks/useCategories' // ✅ добавлен импорт
+import { useCategories } from '../../hooks/useCategories'
 
 import AddProductModal from '../AddProductModal'
 import EditProductModal from '../EditProductModal'
@@ -22,8 +22,14 @@ export default function ProductsList({ category }) {
   const { data: tree = [] } = useCategories(siteName)
 
   const [ordered, setOrdered] = useState([])
+
   useEffect(() => {
-    setOrdered(all)
+    setOrdered(prev => {
+      if (JSON.stringify(prev) !== JSON.stringify(all)) {
+        return all
+      }
+      return prev
+    })
   }, [all])
 
   const categoryMap = useMemo(() => {
@@ -123,4 +129,3 @@ export default function ProductsList({ category }) {
     </div>
   )
 }
-
