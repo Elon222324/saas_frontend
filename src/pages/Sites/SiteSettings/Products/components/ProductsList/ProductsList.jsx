@@ -88,7 +88,7 @@ export default function ProductsList({ category }) {
       {list.selected.size ? (
         <BulkActionsBar count={list.selected.size} onDelete={list.deleteSelected} />
       ) : (
-        <Toolbar onAdd={() => setShowAdd(true)} search={list.search} onSearch={list.setSearch} />
+        <Toolbar onAdd={() => setShowAdd(true)} search={list.search} onSearch={list.setSearch} disabledAdd={!Object.keys(categoryMap).length} />
       )}
 
       <ProductTable
