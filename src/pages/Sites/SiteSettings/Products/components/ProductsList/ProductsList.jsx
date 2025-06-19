@@ -106,6 +106,7 @@ export default function ProductsList({ category, labels, noLabel }) {
         categoryMap={categoryMap}
         onReorder={handleReorder}
         onToggleStatus={handleToggleStatus}
+        isFilteringByLabel={!!noLabel || (labels?.length > 0)}
       />
 
       <Pagination page={list.page} totalPages={list.totalPages} setPage={list.setPage} />

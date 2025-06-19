@@ -18,6 +18,7 @@ export default function ProductTable({
   categoryMap,
   onReorder,
   onToggleStatus,
+  isFilteringByLabel,
 }) {
   const hasCategories = Object.keys(categoryMap).length > 0
   const { domain } = useParams()
@@ -46,7 +47,9 @@ export default function ProductTable({
         <tbody>
           <tr>
             <td colSpan={11} className="py-6 text-center text-sm text-gray-500">
-              {!hasCategories ? (
+              {isFilteringByLabel ? (
+                'Нет товаров, соответствующих выбранной метке.'
+              ) : !hasCategories ? (
                 <>
                   Сначала создайте категории товаров (например: Пицца, Напитки)
                   <div className="mt-2">
