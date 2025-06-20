@@ -50,8 +50,11 @@ export default function useProductsList({ products = [], category, labels, noLab
     if (noLabel) {
       list = list.filter((p) => !Array.isArray(p.labels) || p.labels.length === 0)
     } else if (Array.isArray(labels) && labels.length) {
+      const labelIds = labels.map((id) => Number(id))
       list = list.filter(
-        (p) => Array.isArray(p.labels) && labels.some((id) => p.labels.includes(id))
+        (p) =>
+          Array.isArray(p.labels) &&
+          p.labels.some((lbl) => labelIds.includes(Number(lbl)))
       )
     }
 

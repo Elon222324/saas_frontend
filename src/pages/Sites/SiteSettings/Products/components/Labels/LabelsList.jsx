@@ -52,7 +52,7 @@ export default function LabelsList({ siteName, selected, onSelect }) {
               key={label.id}
               label={label}
               selected={selected}
-              onSelect={(id) => onSelect(id === 'no_label' ? 'no_label' : id)}
+              onSelect={(id) => onSelect(id === 'no_label' ? 'no_label' : Number(id))}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
