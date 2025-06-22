@@ -20,10 +20,10 @@ export default function Products() {
 
   return (
     <QueryClientProvider client={queryClientRef.current}>
-      <div className="h-full p-4">
+      <div className="h-full px-0 pt-0 pb-4">
         {(tab === 'categories' || tab === 'labels') ? (
           <div className="flex h-full">
-            <aside className="w-64 border-r bg-white p-4">
+            <aside className="w-64 border-r bg-white p-1">
               <CategoryList
                 selected={selectedCategory}
                 onSelect={setSelectedCategory}

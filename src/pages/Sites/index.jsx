@@ -29,7 +29,7 @@ export default function Sites() {
 
   const fetchSites = async () => {
     try {
-      const res = await api.get('/api/sites/get_all/', {
+      const res = await api.get('/sites/get_all/', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
@@ -48,7 +48,7 @@ export default function Sites() {
     try {
       setAdding(true)
       await api.post(
-        '/api/sites/add_new',
+        '/sites/add_new',
         { domain: newDomain.trim() },
         {
           headers: {
@@ -69,7 +69,7 @@ export default function Sites() {
     if (isSiteLoading(domain)) return
     setSiteLoading(domain, true)
     try {
-      await api.post('/api/sites/stop-site', { domain }, {
+      await api.post('/sites/stop-site', { domain }, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
@@ -86,7 +86,7 @@ export default function Sites() {
     if (isSiteLoading(domain)) return
     setSiteLoading(domain, true)
     try {
-      await api.post('/api/sites/start-site', { domain }, {
+      await api.post('/sites/start-site', { domain }, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
@@ -103,7 +103,7 @@ export default function Sites() {
     if (isSiteLoading(domain)) return
     setSiteLoading(domain, true)
     try {
-      await api.post('/api/sites/restart-site', { domain }, {
+      await api.post('/sites/restart-site', { domain }, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
@@ -120,7 +120,7 @@ export default function Sites() {
     if (isSiteLoading(domain)) return
     setSiteLoading(domain, true)
     try {
-      await api.post('/api/sites/delete-site', { domain }, {
+      await api.post('/sites/delete-site', { domain }, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },

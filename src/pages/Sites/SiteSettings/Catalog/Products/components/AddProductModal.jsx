@@ -21,9 +21,6 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
 
   const { data: tree = [] } = useCategories(siteName)
 
-  // ────────────────────────────────────────────────────────────
-  //   Helpers
-  // ────────────────────────────────────────────────────────────
   const categories = useMemo(() => {
     const list = []
     const walk = (nodes, prefix = '') =>
@@ -36,9 +33,6 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
     return list
   }, [tree])
 
-  // ────────────────────────────────────────────────────────────
-  //   Local state
-  // ────────────────────────────────────────────────────────────
   const [title, setTitle] = useState('')
   const [price, setPrice] = useState('')
   const [imageUrl, setImageUrl] = useState('')
@@ -48,7 +42,6 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
   const [active, setActive] = useState(true)
   const [msg, setMsg] = useState(null)
 
-  // reset on modal toggle
   useEffect(() => {
     if (!open) {
       setTitle('')
@@ -66,9 +59,6 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
 
   if (!open) return null
 
-  // ────────────────────────────────────────────────────────────
-  //   Submit with auto‑suffix slug if 409
-  // ────────────────────────────────────────────────────────────
   const handleSave = async () => {
     const t = title.trim()
     const p = parseFloat(price)
@@ -79,14 +69,23 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
 
     const baseSlug = slugify(t, { lower: true, strict: true })
 
-    const commonPayload = {
+    const productBase = {
       title: t,
-      price: p,
       image_url: imageUrl || undefined,
       description: description.trim() || undefined,
       weight: w || undefined,
-      category_id: String(cId),
+      category_id: parseInt(cId),
       active,
+      variants: [
+        {
+          price: p,
+          old_price: null,
+          sku: '',
+          weight: w || undefined,
+          is_available: true,
+          option_value_ids: [],
+        },
+      ],
     }
 
     let attempt = 0
@@ -94,7 +93,7 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
     while (attempt < maxAttempts) {
       const currentSlug = attempt === 0 ? baseSlug : `${baseSlug}-${attempt}`
       try {
-        await Promise.resolve(onSave({ ...commonPayload, slug: currentSlug }))
+        await Promise.resolve(onSave({ ...productBase, slug: currentSlug }))
         setMsg({ text: `Товар добавлен (slug: ${currentSlug})`, type: 'success' })
         return
       } catch (err) {
@@ -109,14 +108,8 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
     setMsg({ text: 'Не удалось уникализировать slug', type: 'error' })
   }
 
-  // ────────────────────────────────────────────────────────────
-  //   UI helpers
-  // ────────────────────────────────────────────────────────────
   const ImageField = fieldTypes.image || (() => null)
 
-  // ────────────────────────────────────────────────────────────
-  //   UI
-  // ────────────────────────────────────────────────────────────
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className="w-80 rounded bg-white p-4 shadow-xl">
