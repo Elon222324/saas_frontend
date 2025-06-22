@@ -8,6 +8,8 @@ import SiteSettings from './pages/Sites/SiteSettings'
 import Pages from './pages/Sites/SiteSettings/PagesTab'
 import BlocksEditor from './pages/Sites/SiteSettings/PagesTab/BlocksEditor'
 import Products from './pages/Sites/SiteSettings/Catalog/Products'
+import Options from './pages/Sites/SiteSettings/Catalog/Options'
+import Extras from './pages/Sites/SiteSettings/Catalog/Extras'
 import Integrations from './pages/Sites/SiteSettings/Integrations'
 import GeneralSettings from './pages/Sites/SiteSettings/GeneralSettings'
 import { SiteSettingsProvider } from './context/SiteSettingsContext'
@@ -34,6 +36,8 @@ export default function App() {
             <Route path="pages" element={<Pages />} />
             <Route path="pages/:slug" element={<BlocksEditor />} />
             <Route path="products" element={<Products />} />
+            <Route path="options" element={<Options />} />
+            <Route path="extras" element={<Extras />} />
             <Route path="integrations" element={<Integrations />} />
             <Route path="general" element={<GeneralSettings />} />
           </Route>

@@ -23,7 +23,7 @@ export default function SiteSettings() {
   const [catalogOpen, setCatalogOpen] = useState(
     location.pathname.includes('/products') ||
     location.pathname.includes('/options') ||
-    location.pathname.includes('/addons')
+    location.pathname.includes('/extras')
   )
 
   const containerSuffix = import.meta.env.VITE_CONTAINER_SUFFIX
@@ -123,7 +123,7 @@ export default function SiteSettings() {
                   </NavLink>
 
                   <NavLink
-                    to="addons"
+                    to="extras"
                     className={({ isActive }) =>
                       `flex items-center gap-2 py-1 rounded hover:bg-blue-50 text-sm transition-colors ${
                         isActive ? 'bg-blue-100 text-blue-600 font-semibold' : 'text-gray-700'
