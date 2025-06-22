@@ -27,12 +27,27 @@ export default function BlockDetails({ block, data, onSave, onBlockChange }) {
   useEffect(() => {
     if (!block?.real_id) return
 
+    let parsedSettings = {}
+    let parsedData = {}
+
+    try {
+      parsedSettings = typeof block.settings === 'string' ? JSON.parse(block.settings) : block.settings || {}
+    } catch (err) {
+      console.warn('❌ Ошибка парсинга block.settings:', err)
+    }
+
+    try {
+      parsedData = typeof block.data === 'string' ? JSON.parse(block.data) : block.data || {}
+    } catch (err) {
+      console.warn('❌ Ошибка парсинга block.data:', err)
+    }
+
     const combinedSettings = {
-      ...(typeof block.settings === 'string' ? JSON.parse(block.settings) : block.settings || {}),
+      ...parsedSettings,
       ...(data?.settings || {}),
     }
     const combinedData = {
-      ...(block.data || {}),
+      ...parsedData,
       ...(data?.data || {}),
     }
 
@@ -70,7 +85,7 @@ export default function BlockDetails({ block, data, onSave, onBlockChange }) {
     const previewProps = { settings: form.settings || form }
 
     if (block.type === 'navigation') {
-      previewProps.settings = {  block_id: form.block_id, ...(form.settings || {}) }
+      previewProps.settings = { block_id: form.block_id, ...(form.settings || {}) }
     }
 
     if (block.type === 'header') {
