@@ -12,11 +12,13 @@ const modalRoot =
 
 export default function EditValueModal({ open, onClose, onSave, valueItem }) {
   const [value, setValue] = useState('')
+  const [order, setOrder] = useState(0) // <-- ДОБАВЛЕНО
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (open && valueItem) {
       setValue(valueItem.value || '')
+      setOrder(valueItem.order || 0) // <-- ДОБАВЛЕНО: предзаполнение
       setLoading(false)
     }
   }, [open, valueItem])
@@ -28,7 +30,13 @@ export default function EditValueModal({ open, onClose, onSave, valueItem }) {
     if (!v) return
     setLoading(true)
     try {
-      await onSave({ id: valueItem.id, group_id: valueItem.group_id, value: v })
+      // ИЗМЕНЕНО: Отправляем поле order
+      await onSave({
+        id: valueItem.id,
+        group_id: valueItem.group_id,
+        value: v,
+        order: order,
+      })
     } finally {
       setLoading(false)
     }
@@ -44,6 +52,16 @@ export default function EditValueModal({ open, onClose, onSave, valueItem }) {
           type="text"
           value={value}
           onChange={(e) => setValue(e.target.value)}
+          className="mb-2 w-full rounded border px-2 py-1 focus:ring-2 focus:ring-blue-500"
+          disabled={loading}
+        />
+
+        {/* ДОБАВЛЕНО: Поле для редактирования порядка */}
+        <label className="mb-1 block text-sm">Порядок</label>
+        <input
+          type="number"
+          value={order}
+          onChange={(e) => setOrder(Number(e.target.value))}
           className="mb-4 w-full rounded border px-2 py-1 focus:ring-2 focus:ring-blue-500"
           disabled={loading}
         />

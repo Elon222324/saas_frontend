@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+// Убедитесь, что путь к вашему компоненту для изображений правильный
+import { fieldTypes } from '@/components/fields/fieldTypes'
 
 const modalRoot =
   document.getElementById('modal-root') ||
@@ -13,12 +15,19 @@ const modalRoot =
 export default function AddItemModal({ open, onClose, onSave, groupId }) {
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')
+  const [order, setOrder] = useState(0) // <-- ДОБАВЛЕНО
+  const [imageUrl, setImageUrl] = useState('') // <-- ДОБАВЛЕНО
   const [loading, setLoading] = useState(false)
+
+  // Получаем компонент для изображений из вашей библиотеки
+  const ImageField = fieldTypes.image || (() => null)
 
   useEffect(() => {
     if (!open) {
       setName('')
       setPrice('')
+      setOrder(0)
+      setImageUrl('')
       setLoading(false)
     }
   }, [open])
@@ -31,7 +40,14 @@ export default function AddItemModal({ open, onClose, onSave, groupId }) {
     if (!n || isNaN(p)) return
     setLoading(true)
     try {
-      await onSave({ group_id: groupId, name: n, price: p })
+      // ИЗМЕНЕНО: Отправляем новые поля
+      await onSave({
+        group_id: groupId,
+        name: n,
+        price: p,
+        order: order,
+        image_url: imageUrl || undefined,
+      })
     } finally {
       setLoading(false)
     }
@@ -51,11 +67,31 @@ export default function AddItemModal({ open, onClose, onSave, groupId }) {
           disabled={loading}
         />
 
+        {/* ДОБАВЛЕНО: Поле для изображения */}
+        <ImageField
+          key="image_url_extra"
+          label="Изображение"
+          value={imageUrl}
+          onChange={setImageUrl}
+          category="extras" /* Укажите правильную категорию для облака */
+          className="mb-2"
+        />
+
         <label className="mb-1 block text-sm">Цена</label>
         <input
           type="number"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
+          className="mb-2 w-full rounded border px-2 py-1 focus:ring-2 focus:ring-blue-500"
+          disabled={loading}
+        />
+
+        {/* ДОБАВЛЕНО: Поле для порядка */}
+        <label className="mb-1 block text-sm">Порядок</label>
+        <input
+          type="number"
+          value={order}
+          onChange={(e) => setOrder(Number(e.target.value))}
           className="mb-4 w-full rounded border px-2 py-1 focus:ring-2 focus:ring-blue-500"
           disabled={loading}
         />

@@ -13,12 +13,14 @@ const modalRoot =
 export default function EditGroupModal({ open, onClose, onSave, group }) {
   const [name, setName] = useState('')
   const [slug, setSlug] = useState('')
+  const [order, setOrder] = useState(0) // <-- ДОБАВЛЕНО
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (open && group) {
       setName(group.name || '')
       setSlug(group.slug || '')
+      setOrder(group.order || 0) // <-- ДОБАВЛЕНО: предзаполнение
       setLoading(false)
     }
   }, [open, group])
@@ -31,7 +33,8 @@ export default function EditGroupModal({ open, onClose, onSave, group }) {
     if (!n || !s) return
     setLoading(true)
     try {
-      await onSave({ id: group.id, name: n, slug: s })
+      // ИЗМЕНЕНО: Отправляем поле order
+      await onSave({ id: group.id, name: n, slug: s, order: order })
     } finally {
       setLoading(false)
     }
@@ -56,6 +59,16 @@ export default function EditGroupModal({ open, onClose, onSave, group }) {
           type="text"
           value={slug}
           onChange={(e) => setSlug(e.target.value)}
+          className="mb-2 w-full rounded border px-2 py-1 focus:ring-2 focus:ring-blue-500"
+          disabled={loading}
+        />
+
+        {/* ДОБАВЛЕНО: Поле для редактирования порядка */}
+        <label className="mb-1 block text-sm">Порядок</label>
+        <input
+          type="number"
+          value={order}
+          onChange={(e) => setOrder(Number(e.target.value))}
           className="mb-4 w-full rounded border px-2 py-1 focus:ring-2 focus:ring-blue-500"
           disabled={loading}
         />

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import slugify from 'slugify'
 
 const modalRoot =
   document.getElementById('modal-root') ||
@@ -13,15 +14,21 @@ const modalRoot =
 export default function AddGroupModal({ open, onClose, onSave }) {
   const [name, setName] = useState('')
   const [slug, setSlug] = useState('')
+  const [order, setOrder] = useState(0) // <-- ДОБАВЛЕНО
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (!open) {
       setName('')
       setSlug('')
+      setOrder(0) // <-- ДОБАВЛЕНО
       setLoading(false)
     }
   }, [open])
+
+  useEffect(() => {
+    setSlug(slugify(name, { lower: true, strict: true }))
+  }, [name])
 
   if (!open) return null
 
@@ -31,7 +38,8 @@ export default function AddGroupModal({ open, onClose, onSave }) {
     if (!n || !s) return
     setLoading(true)
     try {
-      await onSave({ name: n, slug: s })
+      // ИЗМЕНЕНО: Отправляем поле order
+      await onSave({ name: n, slug: s, order: order })
     } finally {
       setLoading(false)
     }
@@ -56,6 +64,16 @@ export default function AddGroupModal({ open, onClose, onSave }) {
           type="text"
           value={slug}
           onChange={(e) => setSlug(e.target.value)}
+          className="mb-2 w-full rounded border px-2 py-1 focus:ring-2 focus:ring-blue-500"
+          disabled={loading}
+        />
+
+        {/* ДОБАВЛЕНО: Поле для ввода порядка */}
+        <label className="mb-1 block text-sm">Порядок</label>
+        <input
+          type="number"
+          value={order}
+          onChange={(e) => setOrder(Number(e.target.value))}
           className="mb-4 w-full rounded border px-2 py-1 focus:ring-2 focus:ring-blue-500"
           disabled={loading}
         />
