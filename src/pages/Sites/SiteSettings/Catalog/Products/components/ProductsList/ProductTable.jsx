@@ -37,7 +37,7 @@ export default function ProductTable({
         <tbody>
           {Array.from({ length: 5 }).map((_, i) => (
             <tr key={i} className="animate-pulse border-t">
-              <td className="px-2 py-3" colSpan={11}>
+              <td className="px-2 py-3" colSpan={12}>
                 <div className="h-4 w-full rounded bg-gray-200" />
               </td>
             </tr>
@@ -50,17 +50,14 @@ export default function ProductTable({
       return (
         <tbody>
           <tr>
-            <td colSpan={11} className="py-6 text-center text-sm text-gray-500">
+            <td colSpan={12} className="py-6 text-center text-sm text-gray-500">
               {isFilteringByLabel ? (
                 'Нет товаров, соответствующих выбранной метке.'
               ) : !hasCategories ? (
                 <>
                   Сначала создайте категории товаров (например: Пицца, Напитки)
                   <div className="mt-2">
-                    <button
-                      onClick={() => setShowAddCat(true)}
-                      className="rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500"
-                    >
+                    <button onClick={() => setShowAddCat(true)} className="rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500">
                       Добавить категорию
                     </button>
                   </div>
@@ -69,10 +66,7 @@ export default function ProductTable({
                 <>
                   Вы ещё не добавили ни одного товара
                   <div className="mt-2">
-                    <button
-                      onClick={onAdd}
-                      className="rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500"
-                    >
+                    <button onClick={onAdd} className="rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500">
                       Добавить первый товар
                     </button>
                   </div>
@@ -85,12 +79,7 @@ export default function ProductTable({
     }
 
     return (
-      <DragDropContext
-        onDragEnd={({ source, destination }) => {
-          if (!destination || source.index === destination.index) return
-          onReorder(source.index, destination.index)
-        }}
-      >
+      <DragDropContext onDragEnd={({ source, destination }) => { if (!destination || source.index === destination.index) return; onReorder(source.index, destination.index); }}>
         <Droppable droppableId="products">
           {(prov) => (
             <tbody ref={prov.innerRef} {...prov.droppableProps}>
@@ -129,17 +118,11 @@ export default function ProductTable({
       <table className="w-full border text-left text-sm">
         <thead className="bg-gray-100">
           <tr>
-            <th className="w-8 px-2 py-1">
-              <input
-                type="checkbox"
-                onChange={toggleSelectAll}
-                checked={pageItems.length > 0 && pageItems.every((p) => selected.has(p.id))}
-                className="focus:ring-blue-500"
-              />
-            </th>
+            <th className="w-8 px-2 py-1"><input type="checkbox" onChange={toggleSelectAll} checked={pageItems.length > 0 && pageItems.every((p) => selected.has(p.id))} className="focus:ring-blue-500" /></th>
             <th className="w-4 px-2 py-1" />
             <th className="w-12 px-2 py-1">Фото</th>
             <th className="px-2 py-1">Название / SKU</th>
+            <th className="px-2 py-1">Порядок</th> {/* <-- ДОБАВЛЕНО */}
             <th className="px-2 py-1">Активен</th>
             <th className="px-2 py-1">В наличии</th>
             <th className="px-2 py-1">Цена</th>
@@ -152,15 +135,7 @@ export default function ProductTable({
         {renderBody()}
       </table>
 
-      <AddCategoryModal
-        open={showAddCat}
-        onClose={() => setShowAddCat(false)}
-        onSave={async (payload) => {
-          await addCat.mutateAsync(payload)
-          setShowAddCat(false)
-        }}
-        parents={[]} // если в будущем нужны иерархии — прокинь сюда дерево
-      />
+      <AddCategoryModal open={showAddCat} onClose={() => setShowAddCat(false)} onSave={async (payload) => { await addCat.mutateAsync(payload); setShowAddCat(false); }} parents={[]} />
     </>
   )
 }

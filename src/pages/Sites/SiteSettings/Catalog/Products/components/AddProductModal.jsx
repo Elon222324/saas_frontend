@@ -3,8 +3,13 @@ import { createPortal } from 'react-dom'
 import { useParams } from 'react-router-dom'
 import slugify from 'slugify'
 import { fieldTypes } from '@/components/fields/fieldTypes'
-
 import { useCategories } from '../hooks/useCategories'
+import { useExtraGroups } from '../../Extras/hooks/useExtraGroups'
+import { useOptionGroups } from '../../Options/hooks/useOptionGroups'
+import { Switch } from '@/components/ui/switch'
+import { Plus, Trash2 } from 'lucide-react'
+
+const cartesian = (...a) => a.reduce((a, b) => a.flatMap(d => b.map(e => [d, e].flat())))
 
 const modalRoot =
   document.getElementById('modal-root') ||
@@ -18,8 +23,9 @@ const modalRoot =
 export default function AddProductModal({ open, onClose, onSave, categoryId }) {
   const { domain } = useParams()
   const siteName = `${domain}_app`
-
   const { data: tree = [] } = useCategories(siteName)
+  const { data: allExtraGroups = [] } = useExtraGroups(siteName)
+  const { data: allOptionGroups = [] } = useOptionGroups(siteName)
 
   const categories = useMemo(() => {
     const list = []
@@ -34,58 +40,128 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
   }, [tree])
 
   const [title, setTitle] = useState('')
-  const [price, setPrice] = useState('')
   const [imageUrl, setImageUrl] = useState('')
   const [description, setDescription] = useState('')
-  const [weight, setWeight] = useState('')
   const [category, setCategory] = useState('')
   const [active, setActive] = useState(true)
   const [msg, setMsg] = useState(null)
+  const [order, setOrder] = useState(0)
+  const [selectedExtras, setSelectedExtras] = useState(new Set())
+  const [useVariants, setUseVariants] = useState(false)
+  const [price, setPrice] = useState('')
+  const [weight, setWeight] = useState('')
+  const [selectedOptionGroups, setSelectedOptionGroups] = useState(new Set())
+  const [variants, setVariants] = useState([])
+
+  const optionValueMap = useMemo(() => {
+    const map = new Map()
+    allOptionGroups.forEach(group => {
+      group.values.forEach(value => {
+        map.set(value.id, { ...value, groupName: group.name })
+      })
+    })
+    return map
+  }, [allOptionGroups])
 
   useEffect(() => {
     if (!open) {
-      setTitle('')
-      setPrice('')
-      setImageUrl('')
-      setDescription('')
-      setWeight('')
-      setCategory('')
-      setActive(true)
-      setMsg(null)
+      setTitle(''); setImageUrl(''); setDescription('')
+      setCategory(''); setActive(true); setMsg(null); setOrder(0)
+      setSelectedExtras(new Set()); setUseVariants(false)
+      setPrice(''); setWeight('')
+      setVariants([])
+      setSelectedOptionGroups(new Set())
     } else {
       setCategory(categoryId ?? '')
+      setVariants([])
     }
   }, [open, categoryId])
 
-  if (!open) return null
+  const handleExtraChange = (extraId) => {
+    setSelectedExtras(prev => {
+      const next = new Set(prev)
+      next.has(extraId) ? next.delete(extraId) : next.add(extraId)
+      return next
+    })
+  }
+
+  const handleOptionGroupSelect = (groupId) => {
+    setSelectedOptionGroups(prev => {
+      const next = new Set(prev)
+      next.has(groupId) ? next.delete(groupId) : next.add(groupId)
+      return next
+    })
+  }
+
+  const generateVariants = () => {
+    const arraysToCombine = Array.from(selectedOptionGroups).map(groupId => {
+      const group = allOptionGroups.find(g => g.id === groupId)
+      return group ? group.values.map(v => v.id) : []
+    }).filter(arr => arr.length > 0)
+
+    if (arraysToCombine.length === 0) return
+
+    const combinations = cartesian(...arraysToCombine)
+
+    const newVariants = combinations.map(combo => ({
+      price: price || '',
+      old_price: null,
+      sku: '',
+      weight: weight || '',
+      is_available: true,
+      option_value_ids: Array.isArray(combo) ? combo : [combo],
+      image_url: ''
+    }))
+    setVariants(newVariants)
+  }
+
+  const handleVariantChange = (index, field, value) => {
+    const newVariants = [...variants]
+    newVariants[index][field] = value
+    setVariants(newVariants)
+  }
+
+  const handleRemoveVariant = (index) => {
+    if (variants.length <= 1) {
+      alert('Нельзя удалить последний вариант.')
+      return
+    }
+    setVariants(variants.filter((_, i) => i !== index))
+  }
 
   const handleSave = async () => {
     const t = title.trim()
-    const p = parseFloat(price)
-    const cId = category
-    const w = weight.trim()
-
-    if (!t || isNaN(p) || !cId) return
+    if (!t || !category) return
 
     const baseSlug = slugify(t, { lower: true, strict: true })
 
+    const variantList = useVariants
+      ? variants
+      : [{
+        price: parseFloat(price) || 0,
+        old_price: null,
+        sku: '',
+        weight: weight.trim() || '',
+        is_available: true,
+        option_value_ids: [],
+        image_url: ''
+      }]
+
+    if (variantList.some(v => !v.price || isNaN(parseFloat(v.price)))) {
+      setMsg({ text: 'У всех вариантов должна быть указана цена.', type: 'error' })
+      return
+    }
+
     const productBase = {
       title: t,
-      image_url: imageUrl || undefined,
       description: description.trim() || undefined,
-      weight: w || undefined,
-      category_id: parseInt(cId),
+      image_url: imageUrl || undefined,
+      category_id: parseInt(category),
       active,
-      variants: [
-        {
-          price: p,
-          old_price: null,
-          sku: '',
-          weight: w || undefined,
-          is_available: true,
-          option_value_ids: [],
-        },
-      ],
+      order,
+      variants: variantList.map(v => ({ ...v, price: parseFloat(v.price) || 0 })),
+      labels: [],
+      extra_group_ids: Array.from(selectedExtras),
     }
 
     let attempt = 0
@@ -93,15 +169,15 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
     while (attempt < maxAttempts) {
       const currentSlug = attempt === 0 ? baseSlug : `${baseSlug}-${attempt}`
       try {
-        await Promise.resolve(onSave({ ...productBase, slug: currentSlug }))
+        await onSave({ ...productBase, slug: currentSlug })
         setMsg({ text: `Товар добавлен (slug: ${currentSlug})`, type: 'success' })
+        setTimeout(() => onClose(), 1000)
         return
       } catch (err) {
-        if (err?.status === 409) {
-          attempt += 1
-          continue
+        if (err?.response?.status === 409) {
+          attempt += 1; continue
         }
-        setMsg({ text: 'Не удалось сохранить товар', type: 'error' })
+        setMsg({ text: 'Не удалось сохранить товар. ' + (err?.response?.data?.detail || err.message), type: 'error' })
         return
       }
     }
@@ -110,94 +186,114 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
 
   const ImageField = fieldTypes.image || (() => null)
 
+  if (!open) return null
+
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="w-80 rounded bg-white p-4 shadow-xl">
-        <h3 className="mb-2 text-lg font-medium">Новый товар</h3>
+      <div className="w-[800px] max-h-[90vh] flex flex-col rounded bg-white shadow-xl">
+        <div className="p-4 border-b">
+          <h3 className="text-lg font-medium">Новый товар</h3>
+        </div>
 
-        <label className="mb-1 block text-sm">Название</label>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Введите название"
-          className="mb-1 w-full rounded border px-2 py-1 focus:ring-2 focus:ring-blue-500"
-        />
-        {msg && (
-          <p className={`mb-2 text-sm ${msg.type === 'error' ? 'text-red-600' : 'text-green-600'}`}>{msg.text}</p>
-        )}
+        <div className="overflow-y-auto p-4 space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="mb-1 block text-sm">Название</label>
+              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="mb-1 w-full rounded border px-2 py-1"/>
+              {msg && <p className={`mb-2 text-sm ${msg.type === 'error' ? 'text-red-600' : 'text-green-600'}`}>{msg.text}</p>}
+              <ImageField label="Основное фото" value={imageUrl} onChange={setImageUrl} category="products" className="mb-2"/>
+              <label className="mb-1 block text-sm">Порядок</label>
+              <input type="number" value={order} onChange={(e) => setOrder(Number(e.target.value))} className="mb-2 w-full rounded border px-2 py-1"/>
+              <label className="mb-1 block text-sm">Категория</label>
+              <select value={category} onChange={(e) => setCategory(e.target.value)} className="mb-2 w-full rounded border px-2 py-1">
+                <option value="" disabled>Выберите категорию</option>
+                {categories.map((c) => <option key={c.id} value={c.id}>{c.path}</option>)}
+              </select>
+              <label className="mb-1 flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} />
+                Активен
+              </label>
+            </div>
+            <div>
+              <h4 className="mb-2 font-medium text-sm">Доступные Дополнения</h4>
+              <div className="max-h-64 space-y-1 overflow-y-auto rounded border p-2">
+                {allExtraGroups.length > 0 ? allExtraGroups.map(group => (
+                  <label key={group.id} className="flex items-center gap-2 text-sm">
+                    <input type="checkbox" checked={selectedExtras.has(group.id)} onChange={() => handleExtraChange(group.id)} />
+                    {group.name}
+                  </label>
+                )) : <p className="text-xs text-gray-500">Группы добавок не найдены.</p>}
+              </div>
+            </div>
+          </div>
 
-        <label className="mb-1 block text-sm">Цена</label>
-        <input
-          type="number"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          className="mb-2 w-full rounded border px-2 py-1 focus:ring-2 focus:ring-blue-500"
-        />
+          <div>
+            <label className="mb-1 block text-sm">Краткое описание</label>
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={4} className="mb-2 w-full rounded border px-2 py-1"/>
+          </div>
 
-        <ImageField
-          key="image_url"
-          label="Основное фото"
-          value={imageUrl}
-          onChange={setImageUrl}
-          category="products"
-        />
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={useVariants} onChange={(e) => setUseVariants(e.target.checked)} />
+            Использовать варианты (размеры, опции и т.д.)
+          </label>
 
-        <label className="mb-1 block text-sm">Краткое описание</label>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="mb-2 w-full rounded border px-2 py-1 focus:ring-2 focus:ring-blue-500"
-        />
+          {useVariants ? (
+            <>
+              <div className="p-3 bg-gray-50 rounded border space-y-2">
+                <p className="text-xs text-gray-600">Выберите группы опций для создания комбинаций.</p>
+                <div className="flex flex-wrap gap-x-4 gap-y-2">
+                  {allOptionGroups.map(group => (
+                    <label key={group.id} className="flex items-center gap-2 text-sm">
+                      <input type="checkbox" checked={selectedOptionGroups.has(group.id)} onChange={() => handleOptionGroupSelect(group.id)} />
+                      {group.name}
+                    </label>
+                  ))}
+                </div>
+                <button onClick={generateVariants} className="rounded bg-blue-500 px-2 py-1 text-xs text-white hover:bg-blue-600 disabled:opacity-50" disabled={selectedOptionGroups.size === 0}>Сгенерировать</button>
+              </div>
 
-        <label className="mb-1 block text-sm">Вес/объём</label>
-        <input
-          type="text"
-          value={weight}
-          onChange={(e) => setWeight(e.target.value)}
-          className="mb-2 w-full rounded border px-2 py-1 focus:ring-2 focus:ring-blue-500"
-        />
+              <div className="space-y-3 rounded border p-3">
+                {variants.map((variant, index) => (
+                  <div key={`variant-${index}`} className="grid grid-cols-12 gap-2 items-end border-b pb-3 last:border-b-0">
+                    <div className="col-span-12 md:col-span-4">
+                      <label className="text-xs text-gray-500">Опции</label>
+                      <div className="flex flex-wrap gap-1 text-sm font-medium">
+                        {variant.option_value_ids.length > 0
+                          ? variant.option_value_ids.map(id => <span key={id} className="bg-gray-200 px-2 py-0.5 rounded">{optionValueMap.get(id)?.value || '...'}</span>)
+                          : <span className="text-gray-400">Базовый вариант</span>}
+                      </div>
+                    </div>
+                    <div className="col-span-6 md:col-span-2"><label className="text-xs text-gray-500">Цена*</label><input type="number" value={variant.price} onChange={e => handleVariantChange(index, 'price', e.target.value)} className="w-full rounded border px-2 py-1 text-sm"/></div>
+                    <div className="col-span-6 md:col-span-2"><label className="text-xs text-gray-500">Артикул</label><input type="text" value={variant.sku} onChange={e => handleVariantChange(index, 'sku', e.target.value)} className="w-full rounded border px-2 py-1 text-sm"/></div>
+                    <div className="col-span-6 md:col-span-2"><label className="text-xs text-gray-500">Вес</label><input type="text" value={variant.weight} onChange={e => handleVariantChange(index, 'weight', e.target.value)} className="w-full rounded border px-2 py-1 text-sm"/></div>
+                    <div className="col-span-12"><ImageField label="Фото варианта" value={variant.image_url} onChange={value => handleVariantChange(index, 'image_url', value)} category="products" /></div>
+                    <div className="col-span-12 flex justify-between items-center mt-1">
+                      <label className="flex items-center gap-2 text-sm"><Switch checked={variant.is_available} onCheckedChange={checked => handleVariantChange(index, 'is_available', checked)}/>В наличии</label>
+                      <button onClick={() => handleRemoveVariant(index)} className="p-1 text-red-500 hover:bg-red-100 rounded" title="Удалить вариант"><Trash2 size={16} /></button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="mb-1 block text-sm">Цена</label>
+                  <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className="mb-2 w-full rounded border px-2 py-1"/>
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm">Вес</label>
+                  <input type="text" value={weight} onChange={(e) => setWeight(e.target.value)} className="mb-2 w-full rounded border px-2 py-1"/>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
 
-        <label className="mb-1 block text-sm">Категория</label>
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="mb-2 w-full rounded border px-2 py-1 focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="" disabled>
-            Выберите категорию
-          </option>
-          {categories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.path}
-            </option>
-          ))}
-        </select>
-
-        <label className="mb-1 flex items-center gap-2 text-sm">
-          <input
-            type="checkbox"
-            checked={active}
-            onChange={(e) => setActive(e.target.checked)}
-            className="focus:ring-blue-500"
-          />
-          Активен
-        </label>
-
-        <div className="flex justify-end gap-2">
-          <button
-            onClick={onClose}
-            className="rounded px-3 py-1 text-sm hover:bg-gray-100 focus:ring-2 focus:ring-blue-500"
-          >
-            Отмена
-          </button>
-          <button
-            disabled={!title.trim() || !price || !category}
-            onClick={handleSave}
-            className="rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700 disabled:opacity-50 focus:ring-2 focus:ring-blue-500"
-          >
-            Сохранить
-          </button>
+        <div className="flex justify-end gap-2 border-t p-4 mt-auto">
+          <button onClick={onClose} className="rounded px-3 py-1 text-sm hover:bg-gray-100">Отмена</button>
+          <button disabled={!title.trim() || !category} onClick={handleSave} className="rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700 disabled:opacity-50">Сохранить</button>
         </div>
       </div>
     </div>,
