@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Plus, Pencil, Trash2 } from 'lucide-react'
+import { Plus, Pencil, Trash2, DollarSign } from 'lucide-react' // ✨ ИМПОРТ ИКОНКИ
 
 import { useOptionGroups } from '../../hooks/useOptionGroups'
 import { useOptionGroupCrud } from '../../hooks/useOptionGroupCrud'
@@ -12,50 +12,64 @@ export default function GroupList({ selected, onSelect }) {
   const { domain } = useParams()
   const siteName = `${domain}_app`
 
-  const { data: groups = [], isFetching, refetch } = useOptionGroups(siteName)
+  const { data: groups = [], isFetching } = useOptionGroups(siteName)
   const { add, update, remove } = useOptionGroupCrud(siteName)
 
   const [showAdd, setShowAdd] = useState(false)
   const [editState, setEditState] = useState({ open: false, group: null })
 
   return (
-    <div className="relative h-full space-y-4">
-      <div className="flex items-center justify-between px-2 pt-1">
-        <h3 className="font-medium">Группы опций</h3>
+    <div className="relative h-full">
+      <div className="flex items-center justify-between px-4 pt-4 pb-2">
+        <h3 className="text-lg font-semibold text-gray-800">Группы опций</h3>
         <button
           onClick={() => setShowAdd(true)}
-          className="rounded bg-blue-600 px-2 py-1 text-sm text-white hover:bg-blue-700"
+          className="flex items-center justify-center rounded-full bg-blue-600 p-2 text-white shadow-sm transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          aria-label="Добавить группу"
         >
-          <Plus size={16} />
+          <Plus size={18} />
         </button>
       </div>
-      <nav className="space-y-1 overflow-y-auto px-2">
+      <nav className="h-[calc(100%-80px)] space-y-1 overflow-y-auto px-2 pb-4">
         {groups.map((g) => (
           <div
             key={g.id}
-            className={`group flex items-center justify-between rounded px-2 py-1 text-sm cursor-pointer hover:bg-gray-100 ${selected === g.id ? 'bg-blue-100 text-blue-700' : 'text-gray-700'}`}
+            className={`group flex items-center justify-between rounded-md px-3 py-2 text-sm cursor-pointer transition-colors ${
+              selected === g.id 
+              ? 'bg-blue-100 font-semibold text-blue-800' 
+              : 'text-gray-700 hover:bg-gray-100'
+            }`}
             onClick={() => onSelect(g.id)}
           >
-            <span>{g.name}</span>
-            <span className="flex gap-1 opacity-0 group-hover:opacity-100">
-              <Pencil
-                size={14}
-                className="cursor-pointer hover:text-blue-600"
+            <div className="flex items-center gap-2">
+                {/* ✨ УСЛОВНЫЙ РЕНДЕР ИКОНКИ */}
+                {g.is_pricing && <DollarSign size={14} className="text-green-600" />}
+                <span>{g.name}</span>
+            </div>
+
+            <span className="flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
+              <button 
+                className="text-gray-500 hover:text-blue-600"
+                aria-label={`Редактировать ${g.name}`}
                 onClick={(e) => {
                   e.stopPropagation()
                   setEditState({ open: true, group: g })
                 }}
-              />
-              <Trash2
-                size={14}
-                className="cursor-pointer hover:text-red-600"
+              >
+                <Pencil size={14} />
+              </button>
+              <button
+                className="text-gray-500 hover:text-red-600"
+                aria-label={`Удалить ${g.name}`}
                 onClick={async (e) => {
                   e.stopPropagation()
-                  if (window.confirm(`Удалить «${g.name}»?`)) {
+                  if (window.confirm(`Вы уверены, что хотите удалить группу «${g.name}»?`)) {
                     await remove.mutateAsync(g.id)
                   }
                 }}
-              />
+              >
+                <Trash2 size={14} />
+              </button>
             </span>
           </div>
         ))}
@@ -81,7 +95,7 @@ export default function GroupList({ selected, onSelect }) {
       />
 
       {isFetching && (
-        <div className="absolute inset-x-0 bottom-2 text-center text-xs text-gray-500">Загрузка…</div>
+        <div className="absolute inset-x-0 bottom-2 text-center text-xs text-gray-400">Загрузка…</div>
       )}
     </div>
   )
