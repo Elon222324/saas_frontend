@@ -77,6 +77,13 @@ export default function EditProductModal({ open, onClose, onSave, product }) {
     return [pricing, descriptive]
   }, [allOptionGroups])
 
+  const selectedDescriptiveOptions = useMemo(() => {
+    return Array.from(selectedDescriptiveValues).map(id => {
+      const val = optionValueMap.get(id)
+      return val ? `${val.groupName}: ${val.value}` : null
+    }).filter(Boolean)
+  }, [selectedDescriptiveValues, optionValueMap])
+
   useEffect(() => {
     if (open && product) {
       setTitle(product.title || '')
@@ -89,7 +96,7 @@ export default function EditProductModal({ open, onClose, onSave, product }) {
       setSelectedExtras(new Set(product.extra_groups?.map(g => g.id) || []))
       setMsg(null)
 
-      setSelectedDescriptiveValues(new Set(product.descriptive_option_value_ids || []))
+      setSelectedDescriptiveValues(new Set((product.descriptive_option_value_ids || []).map(Number)))
 
       const incomingVariants = product.variants && product.variants.length > 0
         ? JSON.parse(JSON.stringify(product.variants))
@@ -127,9 +134,10 @@ export default function EditProductModal({ open, onClose, onSave, product }) {
   }
 
   const handleDescriptiveValueChange = (valueId) => {
+    const id = Number(valueId)
     setSelectedDescriptiveValues(prev => {
       const next = new Set(prev)
-      next.has(valueId) ? next.delete(valueId) : next.add(valueId)
+      next.has(id) ? next.delete(id) : next.add(id)
       return next
     })
   }
@@ -294,6 +302,15 @@ export default function EditProductModal({ open, onClose, onSave, product }) {
                   <div>
                     <p className="font-medium text-sm text-gray-800">2. Описательные опции (не влияют на цену)</p>
                     <p className="text-xs text-gray-600 mt-1">Выберите характеристики товара. Например: "Тесто: Тонкое". Они применятся ко всем вариантам.</p>
+                    {selectedDescriptiveOptions.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {selectedDescriptiveOptions.map(opt => (
+                          <span key={opt} className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded">
+                            {opt}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                     <div className="space-y-2 mt-2">
                       {descriptiveGroups.map(group => (
                         <div key={group.id}>
@@ -347,6 +364,15 @@ export default function EditProductModal({ open, onClose, onSave, product }) {
             <div className="p-3 bg-gray-50 rounded border space-y-4">
               <p className="font-medium text-sm text-gray-800">Описательные опции (не влияют на цену)</p>
               <p className="text-xs text-gray-600 mt-1">Выберите характеристики товара. Они применятся ко всем вариантам.</p>
+              {selectedDescriptiveOptions.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {selectedDescriptiveOptions.map(opt => (
+                    <span key={opt} className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded">
+                      {opt}
+                    </span>
+                  ))}
+                </div>
+              )}
               <div className="space-y-2 mt-2">
                 {descriptiveGroups.map(group => (
                   <div key={group.id}>

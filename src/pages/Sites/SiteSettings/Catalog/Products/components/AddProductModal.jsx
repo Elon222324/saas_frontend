@@ -89,6 +89,13 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
     return [pricing, descriptive];
   }, [allOptionGroups]);
 
+  const selectedDescriptiveOptions = useMemo(() => {
+    return Array.from(selectedDescriptiveValues).map(id => {
+      const val = optionValueMap.get(id);
+      return val ? `${val.groupName}: ${val.value}` : null;
+    }).filter(Boolean);
+  }, [selectedDescriptiveValues, optionValueMap]);
+
 
   // Effect to reset state when modal opens/closes
   useEffect(() => {
@@ -125,9 +132,10 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
 
   // Handler for selecting descriptive option values
   const handleDescriptiveValueChange = (valueId) => {
+    const id = Number(valueId);
     setSelectedDescriptiveValues(prev => {
       const next = new Set(prev);
-      next.has(valueId) ? next.delete(valueId) : next.add(valueId);
+      next.has(id) ? next.delete(id) : next.add(id);
       return next;
     });
   };
@@ -221,7 +229,7 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
       variants: variantList.map(v => ({ ...v, price: parseFloat(v.price) || 0 })),
       labels: [],
       extra_group_ids: Array.from(selectedExtras),
-      descriptive_option_value_ids: Array.from(selectedDescriptiveValues),
+      descriptive_option_value_ids: Array.from(selectedDescriptiveValues).map(Number),
     }
 
     let attempt = 0
@@ -320,6 +328,15 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
                   <div>
                     <p className="font-medium text-sm text-gray-800">2. Описательные опции (не влияют на цену)</p>
                     <p className="text-xs text-gray-600 mt-1">Выберите характеристики товара. Например: "Тесто: Тонкое". Эти опции будут применены ко всем вариантам.</p>
+                    {selectedDescriptiveOptions.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {selectedDescriptiveOptions.map(opt => (
+                          <span key={opt} className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded">
+                            {opt}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                     <div className="space-y-2 mt-2">
                       {descriptiveGroups.map(group => (
                         <div key={group.id}>
