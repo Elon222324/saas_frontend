@@ -54,15 +54,13 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
   const [useVariants, setUseVariants] = useState(false)
   const [price, setPrice] = useState('')
   const [weight, setWeight] = useState('')
-  
+
   // State for variant generation
   const [selectedOptionGroups, setSelectedOptionGroups] = useState(new Set())
   const [variants, setVariants] = useState([])
 
-  // --- CHANGED: START ---
-  // NEW State for descriptive options (that don't affect price)
+  // State for descriptive options (that don't affect price)
   const [selectedDescriptiveValues, setSelectedDescriptiveValues] = useState(new Set())
-  // --- CHANGED: END ---
 
   // Memoized map for quick option value lookup
   const optionValueMap = useMemo(() => {
@@ -75,32 +73,40 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
     return map
   }, [allOptionGroups])
 
+  // Split option groups based on the `is_pricing` flag.
+  const [pricingGroups, descriptiveGroups] = useMemo(() => {
+    const pricing = [];
+    const descriptive = [];
+    
+    allOptionGroups.forEach(group => {
+      if (group.is_pricing) {
+        pricing.push(group);
+      } else {
+        descriptive.push(group);
+      }
+    });
+
+    return [pricing, descriptive];
+  }, [allOptionGroups]);
+
+
   // Effect to reset state when modal opens/closes
   useEffect(() => {
     if (!open) {
       setTitle(''); setImageUrl(''); setDescription('')
       setCategory(''); setActive(true); setMsg(null); setOrder(0)
       setSelectedExtras(new Set()); setUseVariants(false)
-      setPrice(''); setWeight('')
+      setPrice(''); setWeight('');
       setVariants([])
       setSelectedOptionGroups(new Set())
-      // --- CHANGED: START ---
-      // Reset new state for descriptive options
       setSelectedDescriptiveValues(new Set())
-      // --- CHANGED: END ---
     } else {
       setCategory(categoryId ?? '')
       setVariants([])
     }
   }, [open, categoryId])
 
-  // --- CHANGED: START ---
-  // Memoized list of groups available for descriptive selection
-  const descriptiveGroups = useMemo(() => {
-      return allOptionGroups.filter(g => !selectedOptionGroups.has(g.id));
-  }, [allOptionGroups, selectedOptionGroups]);
-  // --- CHANGED: END ---
-  
+
   const handleExtraChange = (extraId) => {
     setSelectedExtras(prev => {
       const next = new Set(prev)
@@ -108,29 +114,16 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
       return next
     })
   }
-
-  // --- CHANGED: START ---
-  // Updated handler for selecting variant-generating option groups
+  
   const handleOptionGroupSelect = (groupId) => {
     setSelectedOptionGroups(prev => {
       const next = new Set(prev)
       next.has(groupId) ? next.delete(groupId) : next.add(groupId)
       return next
     });
-
-    // When a group is toggled for variant generation, its values are removed
-    // from the descriptive options to avoid conflicts and duplicates.
-    const group = allOptionGroups.find(g => g.id === groupId);
-    if (group) {
-        setSelectedDescriptiveValues(prev => {
-            const next = new Set(prev);
-            group.values.forEach(v => next.delete(v.id));
-            return next;
-        });
-    }
   }
-  
-  // NEW handler for selecting descriptive option values
+
+  // Handler for selecting descriptive option values
   const handleDescriptiveValueChange = (valueId) => {
     setSelectedDescriptiveValues(prev => {
       const next = new Set(prev);
@@ -138,17 +131,15 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
       return next;
     });
   };
-  // --- CHANGED: END ---
 
 
   const generateVariants = () => {
-    // This function now correctly uses ONLY the groups selected for variant generation
     const arraysToCombine = Array.from(selectedOptionGroups).map(groupId => {
+      // Find the group in the main list, as it's the source of truth
       const group = allOptionGroups.find(g => g.id === groupId)
       return group ? group.values.map(v => v.id) : []
     }).filter(arr => arr.length > 0)
 
-    // If no variant groups are selected, create one base variant to edit
     if (arraysToCombine.length === 0) {
         setVariants([{
             price: price || '',
@@ -184,7 +175,8 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
 
   const handleRemoveVariant = (index) => {
     if (variants.length <= 1) {
-      alert('Нельзя удалить последний вариант.') // Consider replacing with a custom modal/toast
+      // In a real app, use a non-blocking notification instead of alert
+      console.warn('Cannot delete the last variant.');
       return
     }
     setVariants(variants.filter((_, i) => i !== index))
@@ -217,12 +209,10 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
       setMsg({ text: 'У всех вариантов должна быть указана цена.', type: 'error' })
       return
     }
-    
-    // --- CHANGED: START ---
-    // Added descriptive_option_value_ids to the product payload
+
     const productBase = {
       title: t,
-      slug: baseSlug, // Slug is now handled in the loop
+      slug: baseSlug,
       description: description.trim() || undefined,
       image_url: imageUrl || undefined,
       category_id: parseInt(category),
@@ -233,7 +223,6 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
       extra_group_ids: Array.from(selectedExtras),
       descriptive_option_value_ids: Array.from(selectedDescriptiveValues),
     }
-    // --- CHANGED: END ---
 
     let attempt = 0
     const maxAttempts = 10
@@ -310,20 +299,19 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
 
           {useVariants ? (
             <>
-            {/* --- CHANGED: START --- */}
-            {/* The entire options section is restructured for clarity */}
               <div className="p-3 bg-gray-50 rounded border space-y-4">
                 {/* Section 1: For options that generate variants */}
                 <div>
                   <p className="font-medium text-sm text-gray-800">1. Опции для генерации вариантов (влияют на цену)</p>
                   <p className="text-xs text-gray-600 mt-1">Выберите группы для создания комбинаций. Например: "Размер".</p>
                   <div className="flex flex-wrap gap-x-4 gap-y-2 mt-2">
-                    {allOptionGroups.map(group => (
+                    {pricingGroups.map(group => (
                       <label key={group.id} className="flex items-center gap-2 text-sm">
                         <input type="checkbox" checked={selectedOptionGroups.has(group.id)} onChange={() => handleOptionGroupSelect(group.id)} />
                         {group.name}
                       </label>
                     ))}
+                    {pricingGroups.length === 0 && <p className="text-xs text-gray-500">Группы опций для создания вариантов не найдены.</p>}
                   </div>
                 </div>
                 
@@ -353,7 +341,6 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
                     <button onClick={generateVariants} className="rounded bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-600 disabled:opacity-50">Сгенерировать варианты</button>
                 </div>
               </div>
-            {/* --- CHANGED: END --- */}
 
               <div className="space-y-3 rounded border p-3">
                 {variants.map((variant, index) => (
