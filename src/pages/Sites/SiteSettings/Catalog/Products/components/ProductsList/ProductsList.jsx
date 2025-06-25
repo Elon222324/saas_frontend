@@ -7,7 +7,7 @@ import { useCategories } from '../../hooks/useCategories'
 import { useLabels } from '../../hooks/useLabels'
 
 import AddProductModal from '../AddProductModal'
-import EditProductModal from '../EditProductModal'
+import EditProductModal from '@/components/products/EditProductModal'
 import Toolbar from './Toolbar'
 import BulkActionsBar from './BulkActionsBar'
 import ProductTable from './ProductTable'
