@@ -31,9 +31,6 @@ export default function useProductForm({ open, product, onSave, onClose }) {
 
   const [selectedOptionGroups, setSelectedOptionGroups] = useState(new Set())
   const [selectedDescriptiveValues, setSelectedDescriptiveValues] = useState(new Set())
-  
-  // State for descriptive groups specific to the current product
-  const [descriptiveGroups, setDescriptiveGroups] = useState([]);
 
   const categories = useMemo(() => {
     const list = []
@@ -57,10 +54,19 @@ export default function useProductForm({ open, product, onSave, onClose }) {
     return map
   }, [allOptionGroups])
 
-  // This memo now only calculates pricing groups from all available option groups
-  const pricingGroups = useMemo(() => {
-    return allOptionGroups.filter(group => group.is_pricing);
-  }, [allOptionGroups]);
+  // Split option groups into those affecting price and descriptive ones
+  const [pricingGroups, descriptiveGroups] = useMemo(() => {
+    const pricing = []
+    const descriptive = []
+    allOptionGroups.forEach(group => {
+      if (group.is_pricing) {
+        pricing.push(group)
+      } else {
+        descriptive.push(group)
+      }
+    })
+    return [pricing, descriptive]
+  }, [allOptionGroups])
 
   const selectedDescriptiveOptions = useMemo(() => {
     return Array.from(selectedDescriptiveValues).map(id => {
@@ -81,14 +87,10 @@ export default function useProductForm({ open, product, onSave, onClose }) {
       setSelectedExtras(new Set(product.extra_groups?.map(g => g.id) || []))
       setMsg(null)
       
-      // Set the descriptive option groups from the specific product's data
-      setDescriptiveGroups(product.descriptive_options || []);
-
-      // This part attempts to set the pre-selected values.
-      // For this to work, the API response for the product must include a
-      // `descriptive_option_value_ids` array, e.g., "descriptive_option_value_ids": [3, 5]
-      // With the current API response, it will default to an empty set.
-      setSelectedDescriptiveValues(new Set((product.descriptive_option_value_ids || []).map(Number)))
+      const existingDescIds = product.descriptive_option_value_ids
+        ? product.descriptive_option_value_ids
+        : (product.descriptive_options || []).flatMap(g => g.values.map(v => v.id))
+      setSelectedDescriptiveValues(new Set(existingDescIds.map(Number)))
 
       const incomingVariants = product.variants && product.variants.length > 0
         ? JSON.parse(JSON.stringify(product.variants))
@@ -226,7 +228,7 @@ export default function useProductForm({ open, product, onSave, onClose }) {
   return {
     allExtraGroups,
     pricingGroups,
-    descriptiveGroups, // returning the new state
+    descriptiveGroups,
     optionValueMap,
     categories,
     title,
