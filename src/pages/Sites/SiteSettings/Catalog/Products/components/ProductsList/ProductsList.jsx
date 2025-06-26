@@ -6,7 +6,7 @@ import { useProductCrud } from '../../hooks/useProductCrud'
 import { useCategories } from '../../hooks/useCategories'
 import { useLabels } from '../../hooks/useLabels'
 
-import AddProductModal from '../AddProductModal'
+import AddProductModal from '../AddProductModal/AddProductModal.jsx'
 import EditProductModal from '../EditProductModal/EditProductModal.jsx'
 import Toolbar from './Toolbar'
 import BulkActionsBar from './BulkActionsBar'

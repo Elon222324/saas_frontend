@@ -1,3 +1,4 @@
+// ValueList.jsx
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Plus, Pencil, Trash2 } from 'lucide-react'
@@ -8,7 +9,8 @@ import { useOptionValueCrud } from '../../hooks/useOptionValueCrud'
 import AddValueModal from '../AddValueModal'
 import EditValueModal from '../EditValueModal'
 
-export default function ValueList({ groupId }) {
+// Принимаем новый проп `isPricing`
+export default function ValueList({ groupId, isPricing }) {
   const { domain } = useParams()
   const siteName = `${domain}_app`
 
@@ -35,11 +37,25 @@ export default function ValueList({ groupId }) {
       </div>
 
       <table className="w-full border text-sm">
+        <thead>
+          <tr className="bg-gray-100">
+            <th className="px-2 py-1 text-left">Значение</th>
+            <th className="px-2 py-1 text-left">Порядок</th>
+            {/* Условно отображаем заголовок столбца */}
+            {isPricing && <th className="px-2 py-1 text-left">Надбавка</th>}
+            <th className="px-2 py-1 text-right w-16"></th>
+          </tr>
+        </thead>
         <tbody>
           {values.map((v) => (
             <tr key={v.id} className="border-b hover:bg-gray-50">
               <td className="px-2 py-1">{v.value}</td>
-              <td className="w-16 px-2 py-1 text-right">
+              <td className="px-2 py-1">{v.order}</td>
+              {/* Условно отображаем ячейку с надбавкой */}
+              {isPricing && (
+                <td className="px-2 py-1">{v.price_diff ? `+${v.price_diff}₽` : '—'}</td>
+              )}
+              <td className="px-2 py-1 text-right">
                 <span className="flex gap-1 justify-end">
                   <Pencil
                     size={14}
@@ -65,6 +81,7 @@ export default function ValueList({ groupId }) {
       <AddValueModal
         open={showAdd}
         groupId={groupId}
+        isPricing={isPricing} // Передаем флаг в модальное окно
         onClose={() => setShowAdd(false)}
         onSave={async (payload) => {
           await add.mutateAsync(payload)
@@ -75,6 +92,7 @@ export default function ValueList({ groupId }) {
       <EditValueModal
         open={editState.open}
         valueItem={editState.value}
+        isPricing={isPricing} // Передаем флаг в модальное окно
         onClose={() => setEditState({ open: false, value: null })}
         onSave={async (payload) => {
           await update.mutateAsync(payload)
