@@ -1,8 +1,8 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import { useCategories } from '../hooks/useCategories'
-import { useExtraGroups } from '../../Extras/hooks/useExtraGroups'
-import { useOptionGroups } from '../../Options/hooks/useOptionGroups'
+import { useCategories } from '../../hooks/useCategories'
+import { useExtraGroups } from '../../../Extras/hooks/useExtraGroups'
+import { useOptionGroups } from '../../../Options/hooks/useOptionGroups'
 
 const cartesian = (...a) => a.reduce((a, b) => a.flatMap(d => b.map(e => [d, e].flat())))
 
@@ -31,6 +31,9 @@ export default function useProductForm({ open, product, onSave, onClose }) {
 
   const [selectedOptionGroups, setSelectedOptionGroups] = useState(new Set())
   const [selectedDescriptiveValues, setSelectedDescriptiveValues] = useState(new Set())
+  
+  // State for descriptive groups specific to the current product
+  const [descriptiveGroups, setDescriptiveGroups] = useState([]);
 
   const categories = useMemo(() => {
     const list = []
@@ -54,14 +57,10 @@ export default function useProductForm({ open, product, onSave, onClose }) {
     return map
   }, [allOptionGroups])
 
-  const [pricingGroups, descriptiveGroups] = useMemo(() => {
-    const pricing = []
-    const descriptive = []
-    allOptionGroups.forEach(group => {
-      group.is_pricing ? pricing.push(group) : descriptive.push(group)
-    })
-    return [pricing, descriptive]
-  }, [allOptionGroups])
+  // This memo now only calculates pricing groups from all available option groups
+  const pricingGroups = useMemo(() => {
+    return allOptionGroups.filter(group => group.is_pricing);
+  }, [allOptionGroups]);
 
   const selectedDescriptiveOptions = useMemo(() => {
     return Array.from(selectedDescriptiveValues).map(id => {
@@ -81,7 +80,14 @@ export default function useProductForm({ open, product, onSave, onClose }) {
       setOrder(product.order || 0)
       setSelectedExtras(new Set(product.extra_groups?.map(g => g.id) || []))
       setMsg(null)
+      
+      // Set the descriptive option groups from the specific product's data
+      setDescriptiveGroups(product.descriptive_options || []);
 
+      // This part attempts to set the pre-selected values.
+      // For this to work, the API response for the product must include a
+      // `descriptive_option_value_ids` array, e.g., "descriptive_option_value_ids": [3, 5]
+      // With the current API response, it will default to an empty set.
       setSelectedDescriptiveValues(new Set((product.descriptive_option_value_ids || []).map(Number)))
 
       const incomingVariants = product.variants && product.variants.length > 0
@@ -220,7 +226,7 @@ export default function useProductForm({ open, product, onSave, onClose }) {
   return {
     allExtraGroups,
     pricingGroups,
-    descriptiveGroups,
+    descriptiveGroups, // returning the new state
     optionValueMap,
     categories,
     title,
