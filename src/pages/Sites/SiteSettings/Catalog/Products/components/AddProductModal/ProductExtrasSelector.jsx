@@ -1,0 +1,23 @@
+export default function ProductExtrasSelector({ allExtraGroups, selectedExtras, onChange }) {
+  return (
+    <div>
+      <h4 className="mb-2 font-medium text-sm">Доступные Дополнения</h4>
+      <div className="max-h-64 space-y-1 overflow-y-auto rounded border p-2">
+        {allExtraGroups.length > 0 ? (
+          allExtraGroups.map(group => (
+            <label key={group.id} className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={selectedExtras.has(group.id)}
+                onChange={() => onChange(group.id)}
+              />
+              {group.name}
+            </label>
+          ))
+        ) : (
+          <p className="text-xs text-gray-500">Группы добавок не найдены.</p>
+        )}
+      </div>
+    </div>
+  )
+}
