@@ -1,3 +1,4 @@
+// AddValueModal.jsx
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 
@@ -10,15 +11,18 @@ const modalRoot =
     return el
   })()
 
-export default function AddValueModal({ open, onClose, onSave, groupId }) {
+// Принимаем новый проп `isPricing`
+export default function AddValueModal({ open, onClose, onSave, groupId, isPricing }) {
   const [value, setValue] = useState('')
-  const [order, setOrder] = useState(0) // <-- ДОБАВЛЕНО
+  const [order, setOrder] = useState(0)
+  const [priceDiff, setPriceDiff] = useState(0)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (!open) {
       setValue('')
-      setOrder(0) // <-- ДОБАВЛЕНО
+      setOrder(0)
+      setPriceDiff(0)
       setLoading(false)
     }
   }, [open])
@@ -30,8 +34,13 @@ export default function AddValueModal({ open, onClose, onSave, groupId }) {
     if (!v) return
     setLoading(true)
     try {
-      // ИЗМЕНЕНО: Отправляем поле order
-      await onSave({ group_id: groupId, value: v, order: order })
+      await onSave({
+        group_id: groupId,
+        value: v,
+        order: order,
+        // Если поле не отображается, priceDiff будет 0, что корректно
+        price_diff: priceDiff,
+      })
     } finally {
       setLoading(false)
     }
@@ -51,15 +60,28 @@ export default function AddValueModal({ open, onClose, onSave, groupId }) {
           disabled={loading}
         />
 
-        {/* ДОБАВЛЕНО: Поле для ввода порядка */}
         <label className="mb-1 block text-sm">Порядок</label>
         <input
           type="number"
           value={order}
           onChange={(e) => setOrder(Number(e.target.value))}
-          className="mb-4 w-full rounded border px-2 py-1 focus:ring-2 focus:ring-blue-500"
+          className="mb-2 w-full rounded border px-2 py-1 focus:ring-2 focus:ring-blue-500"
           disabled={loading}
         />
+
+        {/* Условно отображаем поле для надбавки к цене */}
+        {isPricing && (
+          <>
+            <label className="mb-1 block text-sm">Надбавка к цене (₽)</label>
+            <input
+              type="number"
+              value={priceDiff}
+              onChange={(e) => setPriceDiff(Number(e.target.value))}
+              className="mb-4 w-full rounded border px-2 py-1 focus:ring-2 focus:ring-blue-500"
+              disabled={loading}
+            />
+          </>
+        )}
 
         <div className="flex justify-end gap-2">
           <button

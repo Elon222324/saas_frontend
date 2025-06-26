@@ -1,9 +1,10 @@
+// useProductForm.js
 import { useEffect, useState, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import slugify from 'slugify'
-import { useCategories } from '../hooks/useCategories'
-import { useExtraGroups } from '../../Extras/hooks/useExtraGroups'
-import { useOptionGroups } from '../../Options/hooks/useOptionGroups'
+import { useCategories } from '../../hooks/useCategories'
+import { useExtraGroups } from '../../../Extras/hooks/useExtraGroups'
+import { useOptionGroups } from '../../../Options/hooks/useOptionGroups'
 
 const cartesian = (...a) => a.reduce((a, b) => a.flatMap(d => b.map(e => [d, e].flat())))
 
@@ -149,15 +150,24 @@ export default function useProductForm({ open, onSave, onClose, categoryId }) {
 
     const combinations = cartesian(...arraysToCombine)
 
-    const newVariants = combinations.map(combo => ({
-      price: price || '',
-      old_price: null,
-      sku: '',
-      weight: weight || '',
-      is_available: true,
-      option_value_ids: Array.isArray(combo) ? combo : [combo],
-      image_url: ''
-    }))
+    const newVariants = combinations.map(combo => {
+      const valueIds = Array.isArray(combo) ? combo : [combo]
+      const totalDiff = valueIds.reduce((sum, id) => {
+        const val = optionValueMap.get(id)
+        return sum + (val?.price_diff || 0)
+      }, 0)
+
+      return {
+        price: parseFloat(price || 0) + totalDiff,
+        old_price: null,
+        sku: '',
+        weight: weight || '',
+        is_available: true,
+        option_value_ids: valueIds,
+        image_url: ''
+      }
+    })
+
     setVariants(newVariants)
   }
 

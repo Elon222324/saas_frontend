@@ -85,147 +85,214 @@
 │   │   ├── Sites
 │   │   │   ├── index.jsx
 │   │   │   └── SiteSettings
+│   │   │       ├── Catalog
+│   │   │       │   ├── Extras
+│   │   │       │   │   ├── components
+│   │   │       │   │   │   ├── AddGroupModal.jsx
+│   │   │       │   │   │   ├── AddItemModal.jsx
+│   │   │       │   │   │   ├── EditGroupModal.jsx
+│   │   │       │   │   │   ├── EditItemModal.jsx
+│   │   │       │   │   │   ├── GroupList
+│   │   │       │   │   │   │   └── GroupList.jsx
+│   │   │       │   │   │   └── ItemList
+│   │   │       │   │   │       └── ItemList.jsx
+│   │   │       │   │   ├── hooks
+│   │   │       │   │   │   ├── useExtraGroupCrud.js
+│   │   │       │   │   │   ├── useExtraGroups.js
+│   │   │       │   │   │   ├── useExtraItemCrud.js
+│   │   │       │   │   │   └── useExtraItems.js
+│   │   │       │   │   └── index.jsx
+│   │   │       │   ├── Options
+│   │   │       │   │   ├── components
+│   │   │       │   │   │   ├── AddGroupModal.jsx
+│   │   │       │   │   │   ├── AddValueModal.jsx
+│   │   │       │   │   │   ├── EditGroupModal.jsx
+│   │   │       │   │   │   ├── EditValueModal.jsx
+│   │   │       │   │   │   ├── GroupList
+│   │   │       │   │   │   │   └── GroupList.jsx
+│   │   │       │   │   │   └── ValueList
+│   │   │       │   │   │       └── ValueList.jsx
+│   │   │       │   │   ├── hooks
+│   │   │       │   │   │   ├── useOptionGroupCrud.js
+│   │   │       │   │   │   ├── useOptionGroups.js
+│   │   │       │   │   │   ├── useOptionValueCrud.js
+│   │   │       │   │   │   └── useOptionValues.js
+│   │   │       │   │   └── index.jsx
+│   │   │       │   └── Products
+│   │   │       │       ├── components
+│   │   │       │       │   ├── AddCategoryModal.jsx
+│   │   │       │       │   ├── AddProductModal
+│   │   │       │       │   │   ├── AddProductModal.jsx
+│   │   │       │       │   │   ├── index.js
+│   │   │       │       │   │   ├── ProductDescriptiveOptions.jsx
+│   │   │       │       │   │   ├── ProductExtrasSelector.jsx
+│   │   │       │       │   │   ├── ProductInfoForm.jsx
+│   │   │       │       │   │   ├── ProductVariantsManager.jsx
+│   │   │       │       │   │   └── useProductForm.js
+│   │   │       │       │   ├── CategoryList
+│   │   │       │       │   │   ├── CategoryItem.jsx
+│   │   │       │       │   │   ├── CategoryList.jsx
+│   │   │       │       │   │   ├── CategoryToolbar.jsx
+│   │   │       │       │   │   ├── TreeUtils.js
+│   │   │       │       │   │   └── useCategoryCrud.js
+│   │   │       │       │   ├── EditCategoryModal.jsx
+│   │   │       │       │   ├── EditProductModal
+│   │   │       │       │   │   ├── EditProductModal.jsx
+│   │   │       │       │   │   ├── index.js
+│   │   │       │       │   │   ├── ProductDescriptiveOptions.jsx
+│   │   │       │       │   │   ├── ProductExtrasSelector.jsx
+│   │   │       │       │   │   ├── ProductInfoForm.jsx
+│   │   │       │       │   │   ├── ProductVariantsManager.jsx
+│   │   │       │       │   │   └── useProductForm.js
+│   │   │       │       │   ├── Labels
+│   │   │       │       │   │   ├── LabelFormModal.jsx
+│   │   │       │       │   │   ├── LabelItem.jsx
+│   │   │       │       │   │   ├── LabelsList.jsx
+│   │   │       │       │   │   └── LabelToolbar.jsx
+│   │   │       │       │   └── ProductsList
+│   │   │       │       │       ├── BulkActionsBar.jsx
+│   │   │       │       │       ├── EditableLabelTags.jsx
+│   │   │       │       │       ├── Pagination.jsx
+│   │   │       │       │       ├── ProductRow.jsx
+│   │   │       │       │       ├── ProductsList.jsx
+│   │   │       │       │       ├── ProductTable.jsx
+│   │   │       │       │       ├── Toolbar.jsx
+│   │   │       │       │       └── useProductsList.js
+│   │   │       │       ├── hooks
+│   │   │       │       │   ├── useCategories.js
+│   │   │       │       │   ├── useDeleteCategory.js
+│   │   │       │       │   ├── useKeyboardTreeNav.js
+│   │   │       │       │   ├── useLabelCrud.js
+│   │   │       │       │   ├── useLabels.js
+│   │   │       │       │   ├── useProductCrud.js
+│   │   │       │       │   └── useProducts.js
+│   │   │       │       └── index.jsx
 │   │   │       ├── GeneralSettings
 │   │   │       │   └── index.jsx
 │   │   │       ├── index.jsx
 │   │   │       ├── Integrations
 │   │   │       │   └── index.jsx
-│   │   │       ├── PagesTab
-│   │   │       │   ├── BlocksEditor
-│   │   │       │   │   ├── forms
-│   │   │       │   │   │   ├── AboutCompany
-│   │   │       │   │   │   │   ├── AboutCompany.jsx
-│   │   │       │   │   │   │   ├── AboutCompanyPreview.jsx
-│   │   │       │   │   │   │   ├── aboutDataSchema.js
-│   │   │       │   │   │   │   ├── aboutSchema.js
-│   │   │       │   │   │   │   ├── Appearance.jsx
-│   │   │       │   │   │   │   ├── Editor.jsx
-│   │   │       │   │   │   │   ├── index.js
-│   │   │       │   │   │   │   └── ItemsEditor.jsx
-│   │   │       │   │   │   ├── Banner
-│   │   │       │   │   │   │   ├── Appearance.jsx
-│   │   │       │   │   │   │   ├── bannerDataSchema.js
-│   │   │       │   │   │   │   ├── BannerPreview.jsx
-│   │   │       │   │   │   │   ├── bannerSchema.js
-│   │   │       │   │   │   │   ├── Editor.jsx
-│   │   │       │   │   │   │   ├── index.js
-│   │   │       │   │   │   │   ├── ItemsEditor.jsx
-│   │   │       │   │   │   │   └── TopBanner.jsx
-│   │   │       │   │   │   ├── Delivery
-│   │   │       │   │   │   │   ├── Appearance.jsx
-│   │   │       │   │   │   │   ├── Delivery.jsx
-│   │   │       │   │   │   │   ├── deliveryDataSchema.js
-│   │   │       │   │   │   │   ├── DeliveryPreview.jsx
-│   │   │       │   │   │   │   ├── deliverySchema.js
-│   │   │       │   │   │   │   ├── Editor.jsx
-│   │   │       │   │   │   │   ├── index.js
-│   │   │       │   │   │   │   └── ItemsEditor.jsx
-│   │   │       │   │   │   ├── Footer
-│   │   │       │   │   │   │   ├── Appearance.jsx
-│   │   │       │   │   │   │   ├── Editor.jsx
-│   │   │       │   │   │   │   ├── Footer.jsx
-│   │   │       │   │   │   │   ├── footerDataSchema.js
-│   │   │       │   │   │   │   ├── FooterPreview.jsx
-│   │   │       │   │   │   │   ├── footerSchema.js
-│   │   │       │   │   │   │   ├── index.js
-│   │   │       │   │   │   │   └── ItemsEditor.jsx
-│   │   │       │   │   │   ├── Header
-│   │   │       │   │   │   │   ├── Appearance.jsx
-│   │   │       │   │   │   │   ├── Editor.jsx
-│   │   │       │   │   │   │   ├── Header.jsx
-│   │   │       │   │   │   │   ├── headerDataSchema.js
-│   │   │       │   │   │   │   ├── HeaderPreview.jsx
-│   │   │       │   │   │   │   ├── headerSchema.js
-│   │   │       │   │   │   │   ├── index.js
-│   │   │       │   │   │   │   └── ItemsEditor.jsx
-│   │   │       │   │   │   ├── hooks
-│   │   │       │   │   │   │   ├── useBlockAppearance.js
-│   │   │       │   │   │   │   └── useBlockData.js
-│   │   │       │   │   │   ├── MenuTabs
-│   │   │       │   │   │   │   ├── Appearance.jsx
-│   │   │       │   │   │   │   ├── Editor.jsx
-│   │   │       │   │   │   │   ├── index.js
-│   │   │       │   │   │   │   ├── ItemsEditor.jsx
-│   │   │       │   │   │   │   └── tabsSchema.js
-│   │   │       │   │   │   ├── Navigation
-│   │   │       │   │   │   │   ├── Appearance.jsx
-│   │   │       │   │   │   │   ├── Editor.jsx
-│   │   │       │   │   │   │   ├── index.js
-│   │   │       │   │   │   │   ├── ItemsEditor.jsx
-│   │   │       │   │   │   │   ├── Navigation.jsx
-│   │   │       │   │   │   │   ├── NavigationPreview.jsx
-│   │   │       │   │   │   │   └── navigationSchema.js
-│   │   │       │   │   │   ├── PopularItems
-│   │   │       │   │   │   │   ├── Appearance.jsx
-│   │   │       │   │   │   │   ├── Editor.jsx
-│   │   │       │   │   │   │   ├── index.js
-│   │   │       │   │   │   │   ├── ItemsEditor.jsx
-│   │   │       │   │   │   │   ├── PopularItems.jsx
-│   │   │       │   │   │   │   ├── PopularItemsPreview.jsx
-│   │   │       │   │   │   │   ├── productsDataSchema.js
-│   │   │       │   │   │   │   └── productsSchema.js
-│   │   │       │   │   │   ├── ProductGrid
-│   │   │       │   │   │   │   ├── Appearance.jsx
-│   │   │       │   │   │   │   ├── Editor.jsx
-│   │   │       │   │   │   │   ├── index.js
-│   │   │       │   │   │   │   ├── ItemsEditor.jsx
-│   │   │       │   │   │   │   └── productGridSchema.js
-│   │   │       │   │   │   ├── PromoCards
-│   │   │       │   │   │   │   ├── Appearance.jsx
-│   │   │       │   │   │   │   ├── Editor.jsx
-│   │   │       │   │   │   │   ├── index.js
-│   │   │       │   │   │   │   ├── ItemsEditor.jsx
-│   │   │       │   │   │   │   ├── PromoCards.jsx
-│   │   │       │   │   │   │   ├── PromoCardsPreview.jsx
-│   │   │       │   │   │   │   ├── promoDataSchema.js
-│   │   │       │   │   │   │   └── promoSchema.js
-│   │   │       │   │   │   ├── QuickInfo
-│   │   │       │   │   │   │   ├── Appearance.jsx
-│   │   │       │   │   │   │   ├── Editor.jsx
-│   │   │       │   │   │   │   ├── index.js
-│   │   │       │   │   │   │   ├── ItemsEditor.jsx
-│   │   │       │   │   │   │   ├── QuickInfo.jsx
-│   │   │       │   │   │   │   ├── quickInfoDataSchema.js
-│   │   │       │   │   │   │   ├── QuickInfoPreview.jsx
-│   │   │       │   │   │   │   └── quickInfoSchema.js
-│   │   │       │   │   │   ├── Reviews
-│   │   │       │   │   │   │   ├── Appearance.jsx
-│   │   │       │   │   │   │   ├── Editor.jsx
-│   │   │       │   │   │   │   ├── index.js
-│   │   │       │   │   │   │   ├── ItemsEditor.jsx
-│   │   │       │   │   │   │   ├── Reviews.jsx
-│   │   │       │   │   │   │   ├── reviewsDataSchema.js
-│   │   │       │   │   │   │   ├── ReviewsPreview.jsx
-│   │   │       │   │   │   │   └── reviewsSchema.js
-│   │   │       │   │   │   └── utils
-│   │   │       │   │   │       └── initBlockAppearanceFromCommon.js
-│   │   │       │   │   ├── index.jsx
-│   │   │       │   │   ├── parts
-│   │   │       │   │   │   ├── BlockAppearance.jsx
-│   │   │       │   │   │   ├── BlockEditorPanel.jsx
-│   │   │       │   │   │   ├── BlockListSidebar.jsx
-│   │   │       │   │   │   └── PageSelectHeader.jsx
-│   │   │       │   │   └── preview
-│   │   │       │   │       ├── BlockDetails.jsx
-│   │   │       │   │       ├── blockMap.js
-│   │   │       │   │       ├── PreviewWrapper.jsx
-│   │   │       │   │       └── utils
-│   │   │       │   │           └── applyCssVariables.js
-│   │   │       │   └── index.jsx
-│   │   │       └── Products
-│   │   │           ├── components
-│   │   │           │   ├── AddCategoryModal.jsx
-│   │   │           │   ├── CategoryList
-│   │   │           │   │   ├── CategoryItem.jsx
-│   │   │           │   │   ├── CategoryList.jsx
-│   │   │           │   │   ├── TreeUtils.js
-│   │   │           │   │   └── useCategoryCrud.js
-│   │   │           │   ├── EditCategoryModal.jsx
-│   │   │           │   └── ProductsList.jsx
-│   │   │           ├── hooks
-│   │   │           │   ├── useCategories.js
-│   │   │           │   ├── useDeleteCategory.js
-│   │   │           │   └── useKeyboardTreeNav.js
+│   │   │       └── PagesTab
+│   │   │           ├── BlocksEditor
+│   │   │           │   ├── forms
+│   │   │           │   │   ├── AboutCompany
+│   │   │           │   │   │   ├── AboutCompany.jsx
+│   │   │           │   │   │   ├── AboutCompanyPreview.jsx
+│   │   │           │   │   │   ├── aboutDataSchema.js
+│   │   │           │   │   │   ├── aboutSchema.js
+│   │   │           │   │   │   ├── Appearance.jsx
+│   │   │           │   │   │   ├── Editor.jsx
+│   │   │           │   │   │   ├── index.js
+│   │   │           │   │   │   └── ItemsEditor.jsx
+│   │   │           │   │   ├── Banner
+│   │   │           │   │   │   ├── Appearance.jsx
+│   │   │           │   │   │   ├── bannerDataSchema.js
+│   │   │           │   │   │   ├── BannerPreview.jsx
+│   │   │           │   │   │   ├── bannerSchema.js
+│   │   │           │   │   │   ├── Editor.jsx
+│   │   │           │   │   │   ├── index.js
+│   │   │           │   │   │   ├── ItemsEditor.jsx
+│   │   │           │   │   │   └── TopBanner.jsx
+│   │   │           │   │   ├── Delivery
+│   │   │           │   │   │   ├── Appearance.jsx
+│   │   │           │   │   │   ├── Delivery.jsx
+│   │   │           │   │   │   ├── deliveryDataSchema.js
+│   │   │           │   │   │   ├── DeliveryPreview.jsx
+│   │   │           │   │   │   ├── deliverySchema.js
+│   │   │           │   │   │   ├── Editor.jsx
+│   │   │           │   │   │   ├── index.js
+│   │   │           │   │   │   └── ItemsEditor.jsx
+│   │   │           │   │   ├── Footer
+│   │   │           │   │   │   ├── Appearance.jsx
+│   │   │           │   │   │   ├── Editor.jsx
+│   │   │           │   │   │   ├── Footer.jsx
+│   │   │           │   │   │   ├── footerDataSchema.js
+│   │   │           │   │   │   ├── FooterPreview.jsx
+│   │   │           │   │   │   ├── footerSchema.js
+│   │   │           │   │   │   ├── index.js
+│   │   │           │   │   │   └── ItemsEditor.jsx
+│   │   │           │   │   ├── Header
+│   │   │           │   │   │   ├── Appearance.jsx
+│   │   │           │   │   │   ├── Editor.jsx
+│   │   │           │   │   │   ├── Header.jsx
+│   │   │           │   │   │   ├── headerDataSchema.js
+│   │   │           │   │   │   ├── HeaderPreview.jsx
+│   │   │           │   │   │   ├── headerSchema.js
+│   │   │           │   │   │   ├── index.js
+│   │   │           │   │   │   └── ItemsEditor.jsx
+│   │   │           │   │   ├── hooks
+│   │   │           │   │   │   ├── useBlockAppearance.js
+│   │   │           │   │   │   └── useBlockData.js
+│   │   │           │   │   ├── MenuTabs
+│   │   │           │   │   │   ├── Appearance.jsx
+│   │   │           │   │   │   ├── Editor.jsx
+│   │   │           │   │   │   ├── index.js
+│   │   │           │   │   │   ├── ItemsEditor.jsx
+│   │   │           │   │   │   └── tabsSchema.js
+│   │   │           │   │   ├── Navigation
+│   │   │           │   │   │   ├── Appearance.jsx
+│   │   │           │   │   │   ├── Editor.jsx
+│   │   │           │   │   │   ├── index.js
+│   │   │           │   │   │   ├── ItemsEditor.jsx
+│   │   │           │   │   │   ├── Navigation.jsx
+│   │   │           │   │   │   ├── NavigationPreview.jsx
+│   │   │           │   │   │   └── navigationSchema.js
+│   │   │           │   │   ├── PopularItems
+│   │   │           │   │   │   ├── Appearance.jsx
+│   │   │           │   │   │   ├── Editor.jsx
+│   │   │           │   │   │   ├── index.js
+│   │   │           │   │   │   ├── ItemsEditor.jsx
+│   │   │           │   │   │   ├── PopularItems.jsx
+│   │   │           │   │   │   ├── PopularItemsPreview.jsx
+│   │   │           │   │   │   ├── productsDataSchema.js
+│   │   │           │   │   │   └── productsSchema.js
+│   │   │           │   │   ├── ProductGrid
+│   │   │           │   │   │   ├── Appearance.jsx
+│   │   │           │   │   │   ├── Editor.jsx
+│   │   │           │   │   │   ├── index.js
+│   │   │           │   │   │   ├── ItemsEditor.jsx
+│   │   │           │   │   │   └── productGridSchema.js
+│   │   │           │   │   ├── PromoCards
+│   │   │           │   │   │   ├── Appearance.jsx
+│   │   │           │   │   │   ├── Editor.jsx
+│   │   │           │   │   │   ├── index.js
+│   │   │           │   │   │   ├── ItemsEditor.jsx
+│   │   │           │   │   │   ├── PromoCards.jsx
+│   │   │           │   │   │   ├── PromoCardsPreview.jsx
+│   │   │           │   │   │   ├── promoDataSchema.js
+│   │   │           │   │   │   └── promoSchema.js
+│   │   │           │   │   ├── QuickInfo
+│   │   │           │   │   │   ├── Appearance.jsx
+│   │   │           │   │   │   ├── Editor.jsx
+│   │   │           │   │   │   ├── index.js
+│   │   │           │   │   │   ├── ItemsEditor.jsx
+│   │   │           │   │   │   ├── QuickInfo.jsx
+│   │   │           │   │   │   ├── quickInfoDataSchema.js
+│   │   │           │   │   │   ├── QuickInfoPreview.jsx
+│   │   │           │   │   │   └── quickInfoSchema.js
+│   │   │           │   │   ├── Reviews
+│   │   │           │   │   │   ├── Appearance.jsx
+│   │   │           │   │   │   ├── Editor.jsx
+│   │   │           │   │   │   ├── index.js
+│   │   │           │   │   │   ├── ItemsEditor.jsx
+│   │   │           │   │   │   ├── Reviews.jsx
+│   │   │           │   │   │   ├── reviewsDataSchema.js
+│   │   │           │   │   │   ├── ReviewsPreview.jsx
+│   │   │           │   │   │   └── reviewsSchema.js
+│   │   │           │   │   └── utils
+│   │   │           │   │       └── initBlockAppearanceFromCommon.js
+│   │   │           │   ├── index.jsx
+│   │   │           │   ├── parts
+│   │   │           │   │   ├── BlockAppearance.jsx
+│   │   │           │   │   ├── BlockEditorPanel.jsx
+│   │   │           │   │   ├── BlockListSidebar.jsx
+│   │   │           │   │   └── PageSelectHeader.jsx
+│   │   │           │   └── preview
+│   │   │           │       ├── BlockDetails.jsx
+│   │   │           │       ├── blockMap.js
+│   │   │           │       ├── PreviewWrapper.jsx
+│   │   │           │       └── utils
+│   │   │           │           └── applyCssVariables.js
 │   │   │           └── index.jsx
 │   │   └── Users
 │   │       └── index.jsx
@@ -240,4 +307,4 @@
 ├── tailwind.config.js
 └── vite.config.js
 
-47 directories, 194 files
+62 directories, 246 files
