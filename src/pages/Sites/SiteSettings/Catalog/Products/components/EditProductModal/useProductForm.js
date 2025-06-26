@@ -6,6 +6,20 @@ import { useOptionGroups } from '../../../Options/hooks/useOptionGroups'
 
 const cartesian = (...a) => a.reduce((a, b) => a.flatMap(d => b.map(e => [d, e].flat())))
 
+// Helper to check for duplicate variants based on options
+const hasDuplicateVariants = (variants) => {
+  const seen = new Set()
+  for (const variant of variants) {
+    if (!variant.option_value_ids || variant.option_value_ids.length === 0) continue
+    const key = JSON.stringify(variant.option_value_ids.slice().sort())
+    if (seen.has(key)) {
+      return true
+    }
+    seen.add(key)
+  }
+  return false
+}
+
 export default function useProductForm({ open, product, onSave, onClose }) {
   const { domain } = useParams()
   const siteName = `${domain}_app`
@@ -53,8 +67,15 @@ export default function useProductForm({ open, product, onSave, onClose }) {
     })
     return map
   }, [allOptionGroups])
+    
+  const groupValueMap = useMemo(() => {
+      const map = new Map();
+      allOptionGroups.forEach(group => {
+          map.set(group.id, group.values.map(v => v.id))
+      })
+      return map
+  }, [allOptionGroups]);
 
-  // Split option groups into those affecting price and descriptive ones
   const [pricingGroups, descriptiveGroups] = useMemo(() => {
     const pricing = []
     const descriptive = []
@@ -107,9 +128,20 @@ export default function useProductForm({ open, product, onSave, onClose }) {
         setBaseWeight(incomingVariants[0]?.weight || '')
       }
 
-      setSelectedOptionGroups(new Set())
+      const initialPricingGroups = new Set()
+      if (isComplex) {
+          const firstVariantOptions = incomingVariants[0]?.option_value_ids || [];
+          firstVariantOptions.forEach(valId => {
+              const option = optionValueMap.get(valId);
+              if (option && option.group_id) {
+                const group = pricingGroups.find(g => g.id === option.group_id);
+                if (group) initialPricingGroups.add(group.id);
+              }
+          })
+      }
+      setSelectedOptionGroups(initialPricingGroups)
     }
-  }, [open, product])
+  }, [open, product, optionValueMap, pricingGroups])
 
   const handleExtraChange = (extraId) => {
     setSelectedExtras(prev => {
@@ -162,6 +194,28 @@ export default function useProductForm({ open, product, onSave, onClose }) {
     setVariants(newVariants)
   }
 
+  const handleVariantOptionChange = (variantIndex, groupId, newValueId) => {
+    setVariants(currentVariants => {
+        const newVariants = [...currentVariants];
+        const variant = { ...newVariants[variantIndex] };
+        
+        // IDs of all possible values in the changed group
+        const groupValues = new Set(groupValueMap.get(groupId));
+
+        // Filter out old value from the same group
+        let newOptionIds = variant.option_value_ids.filter(id => !groupValues.has(id));
+
+        // Add the new value if it's not empty
+        if (newValueId) {
+            newOptionIds.push(Number(newValueId));
+        }
+
+        variant.option_value_ids = newOptionIds;
+        newVariants[variantIndex] = variant;
+        return newVariants;
+    });
+  };
+
   const handleRemoveVariant = (index) => {
     if (useVariants && variants.length <= 1) {
       setMsg({ text: 'Нельзя удалить последний вариант у сложного товара.', type: 'error' })
@@ -183,8 +237,15 @@ export default function useProductForm({ open, product, onSave, onClose }) {
   }
 
   const handleSave = async () => {
+    setMsg(null);
     const t = title.trim()
     if (!t || !category) return
+
+    if (useVariants && hasDuplicateVariants(variants)) {
+        setMsg({ text: 'Найдены варианты с одинаковым набором опций. Исправьте дубликаты.', type: 'error' });
+        return;
+    }
+
     const variantList = useVariants
       ? variants.map(v => ({ ...v, price: parseFloat(v.price) || 0 }))
       : [{
@@ -199,6 +260,10 @@ export default function useProductForm({ open, product, onSave, onClose }) {
     if (variantList.some(v => v.price === '' || isNaN(v.price))) {
       setMsg({ text: 'У всех вариантов должна быть указана цена.', type: 'error' })
       return
+    }
+    if (useVariants && variantList.some(v => v.option_value_ids.length === 0)) {
+        setMsg({ text: 'У каждого варианта должен быть выбран хотя бы один параметр.', type: 'error' });
+        return;
     }
     const payload = {
       id: product.id,
@@ -261,6 +326,7 @@ export default function useProductForm({ open, product, onSave, onClose }) {
     handleVariantChange,
     handleRemoveVariant,
     handleAddVariant,
+    handleVariantOptionChange, // <-- Экспортируем новый обработчик
     selectedDescriptiveValues,
     handleDescriptiveValueChange,
     selectedDescriptiveOptions,

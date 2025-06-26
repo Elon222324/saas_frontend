@@ -2,6 +2,7 @@ import { Plus, Trash2 } from 'lucide-react'
 import { Switch } from '@/components/ui/switch'
 import { fieldTypes } from '@/components/fields/fieldTypes'
 import ProductDescriptiveOptions from './ProductDescriptiveOptions'
+import { useMemo } from 'react'
 
 export default function ProductVariantsManager({
   useVariants,
@@ -14,6 +15,7 @@ export default function ProductVariantsManager({
   handleVariantChange,
   handleRemoveVariant,
   handleAddVariant,
+  handleVariantOptionChange, // <-- Получаем новый обработчик
   optionValueMap,
   descriptiveGroups,
   selectedDescriptiveValues,
@@ -25,6 +27,22 @@ export default function ProductVariantsManager({
   setBaseWeight
 }) {
   const ImageField = fieldTypes.image || (() => null)
+
+  // Memoize a map for quick lookup of a variant's selected option value for a given group
+  const variantOptionByGroupMap = useMemo(() => {
+    const map = new Map()
+    variants.forEach((variant, index) => {
+      const innerMap = new Map()
+      variant.option_value_ids.forEach(valueId => {
+        const option = optionValueMap.get(valueId)
+        if (option) {
+          innerMap.set(option.group_id, valueId)
+        }
+      })
+      map.set(index, innerMap)
+    })
+    return map
+  }, [variants, optionValueMap])
 
   return (
     <>
@@ -84,17 +102,34 @@ export default function ProductVariantsManager({
               <div key={variant.id || `new-${index}`} className="grid grid-cols-12 gap-2 items-end border-b pb-3 last:border-b-0">
                 <div className="col-span-12 md:col-span-4">
                   <label className="text-xs text-gray-500">Опции</label>
-                  <div className="flex flex-wrap gap-1 text-sm font-medium">
-                    {variant.option_value_ids.length > 0 ? (
-                      variant.option_value_ids.map(id => (
+                  {/* --- MODIFICATION START --- */}
+                  {variant.option_value_ids.length > 0 ? (
+                    <div className="flex flex-wrap gap-1 text-sm font-medium">
+                      {variant.option_value_ids.map(id => (
                         <span key={id} className="bg-gray-200 px-2 py-0.5 rounded">
                           {optionValueMap.get(id)?.value || '...'}
                         </span>
-                      ))
-                    ) : (
-                      <span className="text-gray-400">Базовый вариант</span>
-                    )}
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="space-y-1 mt-1">
+                      {pricingGroups.filter(g => selectedOptionGroups.has(g.id)).map(group => (
+                        <select
+                          key={group.id}
+                          value={variantOptionByGroupMap.get(index)?.get(group.id) || ''}
+                          onChange={(e) => handleVariantOptionChange(index, group.id, e.target.value)}
+                          className="w-full rounded border px-2 py-1 text-sm"
+                        >
+                          <option value="">Выберите {group.name.toLowerCase()}</option>
+                          {group.values.map(val => (
+                            <option key={val.id} value={val.id}>{val.value}</option>
+                          ))}
+                        </select>
+                      ))}
+                       {selectedOptionGroups.size === 0 && <p className="text-xs text-gray-500">Сначала выберите опции для генерации</p>}
+                    </div>
+                  )}
+                  {/* --- MODIFICATION END --- */}
                 </div>
                 <div className="col-span-6 md:col-span-2">
                   <label className="text-xs text-gray-500">Цена*</label>
@@ -151,7 +186,8 @@ export default function ProductVariantsManager({
             ))}
             <button
               onClick={handleAddVariant}
-              className="mt-2 flex items-center gap-1 rounded bg-gray-100 px-2 py-1 text-sm text-gray-700 hover:bg-gray-200"
+              disabled={selectedOptionGroups.size === 0}
+              className="mt-2 flex items-center gap-1 rounded bg-gray-100 px-2 py-1 text-sm text-gray-700 hover:bg-gray-200 disabled:opacity-50"
             >
               <Plus size={16} />Добавить вариант вручную
             </button>
