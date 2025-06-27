@@ -14,11 +14,41 @@ import Integrations from './pages/Sites/SiteSettings/Integrations'
 import GeneralSettings from './pages/Sites/SiteSettings/GeneralSettings'
 import { SiteSettingsProvider } from './context/SiteSettingsContext'
 
+// Owner layout and pages
+import OwnerLayout from './layouts/OwnerLayout'
+import OwnerPanel from './pages/OwnerPanel'
+import OwnerUsers from './pages/OwnerPanel/Users'
+import OwnerSites from './pages/OwnerPanel/Sites'
+import OwnerTools from './pages/OwnerPanel/Tools'
+import LibraryPage from './pages/OwnerPanel/Tools/Library'
+import StoragePage from './pages/OwnerPanel/Tools/Storage'
+import LogsPage from './pages/OwnerPanel/Tools/Logs'
+import TestingPage from './pages/OwnerPanel/Tools/Testing'
+
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+
         <Route path="/login" element={<Login />} />
+
+        {/* Панель владельца */}
+        <Route path="/owner" element={<OwnerLayout />}>
+          <Route index element={<OwnerPanel />} />
+          <Route path="users" element={<OwnerUsers />} />
+          <Route path="sites" element={<OwnerSites />} />
+
+          {/* Обёртка для инструментов с меню */}
+          <Route path="tools" element={<OwnerTools />}>
+            <Route index element={<LibraryPage />} />
+            <Route path="library" element={<LibraryPage />} />
+            <Route path="storage" element={<StoragePage />} />
+            <Route path="testing" element={<TestingPage />} />
+            <Route path="logs" element={<LogsPage />} />
+          </Route>
+        </Route>
+
+        {/* Основная админка */}
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="sites" element={<Sites />} />
