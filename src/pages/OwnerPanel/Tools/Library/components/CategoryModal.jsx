@@ -9,7 +9,7 @@ export default function CategoryModal({ isOpen, onClose, categoryToEdit }) {
     code: '',
     name: '',
     description: '',
-    category_type: 'library',
+    category_type: '', // ИЗМЕНЕНО
     display_order: 0,
   })
 
@@ -30,7 +30,7 @@ export default function CategoryModal({ isOpen, onClose, categoryToEdit }) {
         code: '',
         name: '',
         description: '',
-        category_type: 'library',
+        category_type: '', // ИЗМЕНЕНО
         display_order: 0,
       })
     }
@@ -43,7 +43,7 @@ export default function CategoryModal({ isOpen, onClose, categoryToEdit }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const name = form.name.trim()
-    if (!name) return
+    if (!name || !form.category_type) return // Добавлена проверка на тип категории
 
     const payload = {
       ...form,
@@ -102,14 +102,21 @@ export default function CategoryModal({ isOpen, onClose, categoryToEdit }) {
               className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
             />
           </div>
+          {/* БЛОК ИЗМЕНЕН */}
           <div>
-            <label className="mb-1 block font-medium text-gray-700">Тип категории</label>
-            <input
-              type="text"
+            <label htmlFor="category-type" className="mb-1 block font-medium text-gray-700">Тип категории</label>
+            <select
+              id="category-type"
               value={form.category_type}
               onChange={(e) => handleChange('category_type', e.target.value)}
               className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
-            />
+              required
+            >
+              <option value="" disabled>-- Выберите тип --</option>
+              <option value="library">Library</option>
+              <option value="products">Products</option>
+              <option value="system">System</option>
+            </select>
           </div>
           <div>
             <label className="mb-1 block font-medium text-gray-700">Порядок отображения</label>

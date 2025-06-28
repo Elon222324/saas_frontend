@@ -82,7 +82,7 @@ export default function LibraryList({ categoryCode }) {
               <img
                 src={toFullUrl(img.small_url)}
                 alt={img.alt_text || ''}
-                className="object-cover w-full h-32 transition-transform duration-300 group-hover:scale-105"
+                className="object-contain w-full h-32 transition-transform duration-300 group-hover:scale-105"
               />
               <div className="p-2 text-xs text-gray-700 truncate" title={img.filename}>
                 {img.filename}
