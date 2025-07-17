@@ -1,4 +1,5 @@
 import mapImage from '/images/7.webp'
+import { getImageVariants } from '@/utils/imageVariants'
 
 export const Delivery = ({ settings = {}, data = {}, commonSettings = {} }) => {
   const bg = settings.background_color ?? commonSettings.background?.base ?? '#FFFFFF'
@@ -38,10 +39,12 @@ export const Delivery = ({ settings = {}, data = {}, commonSettings = {} }) => {
   const mapTitle = data.map_title || 'ЗОНА ДОСТАВКИ ОГРАНИЧЕНА'
 
   const assetsBase = import.meta.env.VITE_ASSETS_URL || ''
-  const mapUrl =
+  const mapFullPath =
     data.map_image && data.map_image.startsWith('/')
       ? `${assetsBase}${data.map_image}`
-      : data.map_image || mapImage
+      : data.map_image || ''
+  const { small: mapUrlSmall } = getImageVariants(mapFullPath)
+  const mapUrl = mapFullPath ? mapUrlSmall : mapImage
 
   return (
     <div
