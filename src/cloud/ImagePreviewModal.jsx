@@ -119,7 +119,7 @@ export default function ImagePreviewModal({ isOpen, files = [], initialIndex = 0
               <div className="w-20 h-20 border-4 border-blue-300 border-t-transparent rounded-full animate-spin" />
             )}
             <img
-              src={file.big_url || file.url}
+              src={file.big || file.url}
               alt={file.name || file.filename}
               onLoad={() => setLoading(false)}
               onError={(e) => {

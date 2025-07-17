@@ -1,4 +1,5 @@
 import { ArrowRight } from 'lucide-react'
+import { getImageVariants } from '@/utils/imageVariants'
 import pizzaImg from '/images/1.png'
 
 export const TopBanner = ({ settings = {}, data = {}, commonSettings = {} }) => {
@@ -13,11 +14,14 @@ export const TopBanner = ({ settings = {}, data = {}, commonSettings = {} }) => 
 
   const rawImagePath = data?.image_url || ''
   const baseUrl = import.meta.env.VITE_LIBRARY_ASSETS_URL || ''
-  const imageUrl = rawImagePath
-    ? rawImagePath.startsWith('/')
-      ? baseUrl + rawImagePath
-      : rawImagePath
-    : pizzaImg
+  const fullImagePath = rawImagePath
+    ? rawImagePath.startsWith('/') ? baseUrl + rawImagePath : rawImagePath
+    : ''
+
+  const { small, medium } = getImageVariants(fullImagePath)
+
+  const imageUrlMobile = fullImagePath ? small : pizzaImg
+  const imageUrlDesktop = fullImagePath ? medium : pizzaImg
 
   const getGradient = () => {
     const from = settings.bg_gradient_from ?? commonSettings.background?.gradient_from ?? '#1976D2'
@@ -44,13 +48,13 @@ export const TopBanner = ({ settings = {}, data = {}, commonSettings = {} }) => 
         {/* 📱 Мобильная версия */}
         <div className="flex md:hidden items-center gap-4 px-4 py-4">
           <img
-            src={imageUrl}
+            src={imageUrlMobile}
             alt="Banner"
             className="w-[90px] h-[90px] object-contain transition duration-300 hover:scale-110"
           />
           <div className="flex flex-col justify-center text-[var(--text-color)]">
             <h2 className="text-lg font-extrabold">{titleText}</h2>
-            <p className="text-sm text-white/90 leading-tight">
+            <p className="text-sm text-[var(--text-color)]/90 leading-tight">
               {subtitleText}
             </p>
             <button className="mt-2 group inline-flex items-center gap-2 px-4 py-2 rounded-full font-semibold text-xs shadow transition bg-[var(--button-bg-color)] text-[var(--button-text-color)] hover:bg-[var(--button-hover-color)]">
@@ -79,7 +83,7 @@ export const TopBanner = ({ settings = {}, data = {}, commonSettings = {} }) => 
           <div className="relative w-1/2 flex justify-center">
             <div className="absolute w-60 h-60 bg-white/20 rounded-full blur-2xl z-0 animate-pulse-slow" />
             <img
-              src={imageUrl}
+              src={imageUrlDesktop}
               alt="Banner"
               className={imageClass}
             />

@@ -66,9 +66,9 @@ export default function CloudModal({ isOpen, category, onSelect }) {
   })
 
   const handleSelect = (file) => {
-    const relativeUrl = file.url?.startsWith('/')
-      ? file.url
-      : new URL(file.url, window.location.origin).pathname
+    const relativeUrl = file.base_url?.startsWith('/')
+      ? file.base_url
+      : new URL(file.base_url, window.location.origin).pathname
     onSelect?.(relativeUrl)
   }
 

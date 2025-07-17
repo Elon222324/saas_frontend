@@ -20,8 +20,8 @@ export default function CloudGrid({ files, selected, onSelect, onDelete, onEdit,
 
   const handleSelect = (file) => {
     const relativeUrl = file.url?.startsWith('/')
-      ? file.url
-      : new URL(file.url, window.location.origin).pathname
+      ? file.base_url
+      : new URL(file.base_url, window.location.origin).pathname
 
     onSelect?.({ ...file, url: relativeUrl })
     setIsPreviewOpen(false)
@@ -44,7 +44,7 @@ export default function CloudGrid({ files, selected, onSelect, onDelete, onEdit,
             }`}
           >
             <CloudFileCard
-              file={{ ...file, url: file.medium_url || file.url }}
+              file={{ ...file, url: file.small }}
               selected={selected}
               onSelect={(f) => handleSelect(f)}
             />

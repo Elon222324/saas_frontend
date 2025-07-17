@@ -1,59 +1,92 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import BaseModal from './BaseModal'
 import { useLibraryCrud } from '../hooks/useLibraryCrud'
 
 export default function ImageUploadModal({ isOpen, onClose, categoryId }) {
   const { uploadImage } = useLibraryCrud()
-  const [file, setFile] = useState(null)
+
+  // 1. Изменяем состояние для хранения нескольких файлов
+  const [files, setFiles] = useState([])
+  const [previews, setPreviews] = useState([])
   const [altText, setAltText] = useState('')
   const [description, setDescription] = useState('')
-  const [preview, setPreview] = useState(null)
+  const [isUploading, setIsUploading] = useState(false)
 
-  const handleFileChange = (e) => {
-    const selected = e.target.files[0]
-    if (selected) {
-      setFile(selected)
-      setPreview(URL.createObjectURL(selected))
-    }
-  }
-
+  // Функция для очистки состояния при закрытии модального окна
   const handleClose = () => {
-    setFile(null)
+    setFiles([])
+    setPreviews([])
     setAltText('')
     setDescription('')
-    setPreview(null)
+    setIsUploading(false)
     onClose()
   }
 
+  // Освобождаем память от созданных URL при размонтировании
+  useEffect(() => {
+    return () => previews.forEach(url => URL.revokeObjectURL(url))
+  }, [previews])
+
+
+  // 3. Обновляем логику для обработки нескольких файлов
+  const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files)
+    if (selectedFiles.length) {
+      setFiles(selectedFiles)
+      const newPreviews = selectedFiles.map(file => URL.createObjectURL(file))
+      setPreviews(newPreviews)
+    }
+  }
+
+  // 4. Реализуем параллельную загрузку всех файлов
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!file || !categoryId) return
+    if (files.length === 0 || !categoryId) return
 
-    const formData = new FormData()
-    formData.append('file', file)
-    formData.append('category_id', categoryId)
-    formData.append('alt_text', altText)
-    formData.append('description', description)
+    setIsUploading(true)
 
-    await uploadImage.mutateAsync(formData)
-    handleClose()
+    const uploadPromises = files.map(file => {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('category_id', categoryId)
+      // Применяем один и тот же alt и описание ко всем файлам
+      formData.append('alt_text', altText)
+      formData.append('description', description)
+      return uploadImage.mutateAsync(formData)
+    })
+
+    try {
+      await Promise.all(uploadPromises)
+      handleClose()
+    } catch (error) {
+      console.error("Ошибка при загрузке одного или нескольких файлов:", error)
+      alert("Не удалось загрузить один или несколько файлов. Проверьте консоль для деталей.")
+      setIsUploading(false)
+    }
   }
 
   return (
     <BaseModal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Загрузить изображение"
+      title="Массовая загрузка изображений"
     >
       <form onSubmit={handleSubmit} className="space-y-4 px-1 py-2 text-sm">
-        <div className="grid grid-cols-1 gap-3">
+        <div className="grid grid-cols-1 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Файл изображения</label>
-            <label className="relative flex h-40 cursor-pointer items-center justify-center overflow-hidden rounded-md border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100">
-              {preview ? (
-                <img src={preview} alt="Превью" className="object-contain w-full h-full" />
+            <label className="block text-sm font-medium text-gray-700 mb-1">Файлы изображений</label>
+            <label className="relative flex flex-col items-center justify-center rounded-md border-2 border-dashed border-gray-300 bg-gray-50 p-4 hover:bg-gray-100 min-h-[10rem] cursor-pointer">
+              {previews.length > 0 ? (
+                // 5. Отображаем превью для всех выбранных изображений
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                  {previews.map((src, index) => (
+                    <div key={index} className="relative aspect-square">
+                        <img src={src} alt={`Превью ${index + 1}`} className="object-contain w-full h-full rounded-md" />
+                    </div>
+                  ))}
+                </div>
               ) : (
-                <span className="text-gray-400">Нажмите для выбора файла</span>
+                <span className="text-center text-gray-400">Нажмите для выбора одного или нескольких файлов</span>
               )}
               <input
                 type="file"
@@ -61,8 +94,10 @@ export default function ImageUploadModal({ isOpen, onClose, categoryId }) {
                 onChange={handleFileChange}
                 className="absolute inset-0 opacity-0"
                 required
+                multiple // 2. Добавляем атрибут 'multiple' в input
               />
             </label>
+            {files.length > 0 && <p className="text-xs text-gray-500 mt-2">Выбрано файлов: {files.length}</p>}
           </div>
 
           <div>
@@ -84,6 +119,7 @@ export default function ImageUploadModal({ isOpen, onClose, categoryId }) {
               onChange={(e) => setAltText(e.target.value)}
               className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
             />
+            <p className="text-xs text-gray-500 mt-1">Этот текст будет применен ко всем загружаемым изображениям.</p>
           </div>
 
           <div>
@@ -95,6 +131,7 @@ export default function ImageUploadModal({ isOpen, onClose, categoryId }) {
               rows={2}
               className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
             />
+             <p className="text-xs text-gray-500 mt-1">Это описание будет применено ко всем загружаемым изображениям.</p>
           </div>
         </div>
 
@@ -103,15 +140,16 @@ export default function ImageUploadModal({ isOpen, onClose, categoryId }) {
             type="button"
             onClick={handleClose}
             className="rounded-md border border-gray-300 bg-white px-4 py-2 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300"
+            disabled={isUploading}
           >
             Отмена
           </button>
           <button
             type="submit"
             className="rounded-md bg-purple-600 px-4 py-2 text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50"
-            disabled={uploadImage.isPending}
+            disabled={isUploading || files.length === 0}
           >
-            Загрузить
+            {isUploading ? `Загрузка... (${files.length})` : 'Загрузить все'}
           </button>
         </div>
       </form>

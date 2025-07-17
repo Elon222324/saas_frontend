@@ -4,11 +4,9 @@ import CloudModal from '@/cloud/CloudModal'
 export default function ImageInput({ label, value, onChange, category = 'logos' }) {
   const [isOpen, setIsOpen] = useState(false)
 
-  // Подставляем полный URL для превью, если передан относительный путь
+  // Превью: показываем small-версию, но не трогаем оригинальный value
   const previewSrc = value
-    ? value.startsWith('http')
-      ? value
-      : `${import.meta.env.VITE_ASSETS_URL}${value}`
+    ? `${import.meta.env.VITE_LIBRARY_ASSETS_URL || ''}${value}_small.webp`
     : ''
 
   return (
@@ -25,6 +23,10 @@ export default function ImageInput({ label, value, onChange, category = 'logos' 
               src={previewSrc}
               alt="preview"
               className="w-10 h-10 object-contain"
+              onError={(e) => {
+                e.currentTarget.onerror = null
+                e.currentTarget.src = 'https://placehold.co/40x40?text=✖'
+              }}
             />
             <span className="text-sm text-gray-600 truncate">{value}</span>
           </>

@@ -5,16 +5,7 @@ export default function CloudFileCard({ file, selected, onSelect }) {
 
   const src = useMemo(() => {
     if (!file?.url) return fallback
-
-    if (file.url.startsWith('http')) {
-      return file.url
-    }
-
-    if (file.url.startsWith('/')) {
-      return `${import.meta.env.VITE_LIBRARY_ASSETS_URL || ''}${file.url}`
-    }
-
-    return fallback
+    return file.url // уже готовый абсолютный путь из getImageVariants
   }, [file])
 
   useEffect(() => {

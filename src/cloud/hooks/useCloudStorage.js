@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
+import { getImageVariants } from '@/utils/imageVariants'
 
 export default function useCloudStorage() {
   const { site_name } = useSiteSettings()
@@ -28,17 +29,23 @@ export default function useCloudStorage() {
 
       const grouped = {}
       const allFiles = []
+
       for (const cat of data) {
         const parent = cat.is_system ? 'СИСТЕМНЫЕ' : 'ТОВАРЫ'
         if (!grouped[parent]) grouped[parent] = []
-        grouped[parent].push({ id: cat.id, title: cat.description || cat.name, code: `${cat.code}-site` })
+        // Название берется из `name`, описание - как запасной вариант
+        grouped[parent].push({ id: cat.id, title: cat.name || cat.description, code: cat.code })
+
         if (cat.images) {
           cat.images.forEach((img) => {
+            const base = `${import.meta.env.VITE_LIBRARY_ASSETS_URL || ''}${img.url}`
+            const variants = getImageVariants(base)
+
             allFiles.push({
               ...img,
               category: cat.id,
-              url: `${import.meta.env.VITE_LIBRARY_ASSETS_URL || ''}${img.medium_url || img.url}`,
-              big_url: `${import.meta.env.VITE_LIBRARY_ASSETS_URL || ''}${img.big_url || img.url}`,
+              base_url: base,
+              ...variants,
             })
           })
         }
@@ -56,7 +63,11 @@ export default function useCloudStorage() {
     fetchData()
   }, [fetchData])
 
-  const createCategory = async (name) => {
+  /**
+   * Обновлено: Принимает объект `categoryData` для соответствия схеме CategoryCreate на бэкенде.
+   * @param {object} categoryData - например, { name: 'Новая категория', description: '...' }
+   */
+  const createCategory = async (categoryData) => {
     try {
       const res = await fetch(`${API_URL}/images/categories/?site_name=${site_name}`, {
         method: 'POST',
@@ -65,7 +76,7 @@ export default function useCloudStorage() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify(categoryData),
       })
       if (res.ok) await fetchData()
     } catch (err) {
@@ -73,14 +84,38 @@ export default function useCloudStorage() {
     }
   }
 
-  const uploadFiles = async (filesList, categoryId) => {
+  /**
+   * Обновлено: Принимает опциональные метаданные и корректно формирует URL.
+   * @param {FileList} filesList - Список файлов для загрузки.
+   * @param {number} categoryId - ID категории.
+   * @param {object} metadata - Опционально, { alt_text: '...', description: '...' }.
+   */
+  const uploadFiles = async (filesList, categoryId, metadata = {}) => {
     setIsUploading(true)
+    
+    // Находим строковый код категории, который требует бэкенд
+    const categoryCode = groups.flatMap(g => g.children).find(c => c.id === categoryId)?.code
+    if (!categoryCode) {
+        console.error("Не удалось найти код категории для ID:", categoryId);
+        setIsUploading(false);
+        return;
+    }
+
     for (const file of filesList) {
       const formData = new FormData()
       formData.append('file', file)
+
+      // Добавляем опциональные метаданные, если они есть
+      if (metadata.alt_text) {
+        formData.append('alt_text', metadata.alt_text)
+      }
+      if (metadata.description) {
+        formData.append('description', metadata.description)
+      }
+
       try {
         const res = await fetch(
-          `${API_URL}/images/?site_name=${site_name}&category_id=${categoryId}&category=${categoryId}`,
+          `${API_URL}/images/?site_name=${site_name}&category_id=${categoryId}&category=${categoryCode}`,
           {
             method: 'POST',
             credentials: 'include',
@@ -153,7 +188,7 @@ export default function useCloudStorage() {
     const categoryId = uploadInputRef.current?.dataset.categoryId
     if (!categoryId) return
     const list = Array.from(e.target.files || [])
-    uploadFiles(list, categoryId)
+    uploadFiles(list, parseInt(categoryId, 10)) // Убедимся, что ID - это число
     e.target.value = ''
   }
 

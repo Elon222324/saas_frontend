@@ -18,7 +18,7 @@ export const Header = ({ settings = {}, data = {}, commonSettings = {}, navigati
 
   const rawLogoPath = data.logo_url || '/images/logo.webp'
   const baseUrl = import.meta.env.VITE_LIBRARY_ASSETS_URL || ''
-  const logoUrl = rawLogoPath.startsWith('/') ? baseUrl + rawLogoPath : rawLogoPath
+  const logoUrl = rawLogoPath.startsWith('/') ? `${baseUrl}${rawLogoPath}_small.webp` : rawLogoPath
 
   const subtitle = data.subtitle || 'Описание'
   const city = data.city || 'Город'
