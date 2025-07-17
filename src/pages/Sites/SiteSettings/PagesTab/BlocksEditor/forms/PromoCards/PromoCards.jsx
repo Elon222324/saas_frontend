@@ -1,5 +1,6 @@
 import pizzaImg from '/images/9.webp'
 import { useRef } from 'react'
+import { getImageVariants } from '@/utils/imageVariants'
 
 export const PromoCards = ({ settings = {}, data = {}, commonSettings = {} }) => {
   const bg_color = settings.bg_color ?? commonSettings.background?.card ?? '#FFFFFF'
@@ -105,11 +106,13 @@ export const PromoCards = ({ settings = {}, data = {}, commonSettings = {} }) =>
         style={{ gap: `${gap}px`, WebkitOverflowScrolling: 'touch' }}
       >
         {cards.map((card) => {
-          const imageUrl = card.img_url
+          const fullPath = card.img_url
             ? card.img_url.startsWith('/')
               ? baseUrl + card.img_url
               : card.img_url
-            : pizzaImg
+            : ''
+          const { small } = getImageVariants(fullPath)
+          const imageUrl = fullPath ? small : pizzaImg
           return (
           <div key={card.id} style={{ perspective: '1000px' }}>
             <div style={{ paddingTop: `${card_padding}px`, paddingBottom: `${card_padding}px` }}>

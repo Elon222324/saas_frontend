@@ -2,6 +2,7 @@
 
 import { LogIn, Star, CircleDollarSign, Menu, X } from 'lucide-react'
 import { useState } from 'react'
+import { getImageVariants } from '@/utils/imageVariants'
 
 export const Header = ({ settings = {}, data = {}, commonSettings = {}, navigation }) => {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -18,7 +19,9 @@ export const Header = ({ settings = {}, data = {}, commonSettings = {}, navigati
 
   const rawLogoPath = data.logo_url || '/images/logo.webp'
   const baseUrl = import.meta.env.VITE_LIBRARY_ASSETS_URL || ''
-  const logoUrl = rawLogoPath.startsWith('/') ? `${baseUrl}${rawLogoPath}_small.webp` : rawLogoPath
+  const fullLogoPath = rawLogoPath.startsWith('/') ? baseUrl + rawLogoPath : rawLogoPath
+  const { small } = getImageVariants(fullLogoPath)
+  const logoUrl = fullLogoPath ? small : rawLogoPath
 
   const subtitle = data.subtitle || 'Описание'
   const city = data.city || 'Город'

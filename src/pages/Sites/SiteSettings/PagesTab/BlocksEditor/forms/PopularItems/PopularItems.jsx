@@ -1,4 +1,5 @@
 import pizzaImg from '/images/8.webp'
+import { getImageVariants } from '@/utils/imageVariants'
 
 export const PopularItems = ({ settings = {}, data = {}, commonSettings = {} }) => {
   const backgroundColor = settings.bg_color ?? commonSettings.background?.card ?? '#FFFFFF'
@@ -87,7 +88,15 @@ export const PopularItems = ({ settings = {}, data = {}, commonSettings = {} }) 
               }}
             />
             <img
-              src={item.img_url ? (item.img_url.startsWith('/') ? baseUrl + item.img_url : item.img_url) : pizzaImg}
+              src={(() => {
+                const fullPath = item.img_url
+                  ? item.img_url.startsWith('/')
+                    ? baseUrl + item.img_url
+                    : item.img_url
+                  : ''
+                const { small } = getImageVariants(fullPath)
+                return fullPath ? small : pizzaImg
+              })()}
               alt={item.name}
               className={`${imageSize} object-cover`}
             />

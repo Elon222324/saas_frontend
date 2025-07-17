@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
 import pizzaImg from '/images/6.webp'
+import { getImageVariants } from '@/utils/imageVariants'
 import { defaultReviews } from './reviewsDataSchema'
 
 export const Reviews = ({ settings = {}, data = {}, commonSettings = {} }) => {
@@ -167,8 +168,24 @@ export const Reviews = ({ settings = {}, data = {}, commonSettings = {} }) => {
             >
               <div className="flex items-center gap-3 mb-2">
                 <img
-                  src={review.img_url && review.img_url.startsWith('/') ? `${assetsBase}${review.img_url}` : review.img_url || pizzaImg}
-                  data-src={review.img_url && review.img_url.startsWith('/') ? `${assetsBase}${review.img_url}` : review.img_url || pizzaImg}
+                  src={(() => {
+                    const fullPath = review.img_url
+                      ? review.img_url.startsWith('/')
+                        ? assetsBase + review.img_url
+                        : review.img_url
+                      : ''
+                    const { small } = getImageVariants(fullPath)
+                    return fullPath ? small : pizzaImg
+                  })()}
+                  data-src={(() => {
+                    const fullPath = review.img_url
+                      ? review.img_url.startsWith('/')
+                        ? assetsBase + review.img_url
+                        : review.img_url
+                      : ''
+                    const { small } = getImageVariants(fullPath)
+                    return fullPath ? small : pizzaImg
+                  })()}
                   alt={review.name}
                   className="object-cover rounded-full border"
                   style={{ width: avatarSize, height: avatarSize }}
