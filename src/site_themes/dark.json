@@ -10,20 +10,24 @@
     },
     "text": {
       "primary": "#F9FAFB"
+    },
+    "button": {
+      "bg": "#60A5FA",
+      "text": "#111827",
+      "hover_bg": "#3B82F6"
     }
   },
   "blocks": {
     "header": {
       "block_id": 2,
       "settings": {
-
-        "background_color": "#FFFFFF",
+        "background_color": "#111827",
         "text_color": "#F9FAFB",
-        "secondary_color": "#6B7280",
-        "primary_color": "#90CAF9",
-        "button_bg_color": "#1F2937",
-        "button_text_color": "#F9FAFB",
-        "button_hover_color": "#1565C0",
+        "secondary_color": "#9CA3AF",
+        "primary_color": "#60A5FA",
+        "button_bg_color": "#60A5FA",
+        "button_text_color": "#111827",
+        "button_hover_color": "#3B82F6",
         "rating_color": "#FACC15",
         "show_login_button": true,
         "show_bonus_button": true,
@@ -36,25 +40,23 @@
     "navigation": {
       "block_id": 1,
       "settings": {
-
         "bg_color": "#1F2937",
         "text_color": "#F9FAFB",
-        "hover_color": "#1565C0",
-        "hover_bg_color": "#1F2937",
-        "border_color": "#E5E7EB",
+        "hover_color": "#60A5FA",
+        "hover_bg_color": "#374151",
+        "border_color": "#374151",
         "show_border": true
       }
     },
     "banner": {
       "block_id": 3,
       "settings": {
-
-        "bg_gradient_from": "#1F2937",
+        "bg_gradient_from": "#111827",
         "bg_gradient_to": "#1F2937",
         "text_color": "#F9FAFB",
-        "button_bg_color": "#1F2937",
-        "button_text_color": "#F9FAFB",
-        "button_hover_color": "#1565C0",
+        "button_bg_color": "#60A5FA",
+        "button_text_color": "#111827",
+        "button_hover_color": "#3B82F6",
         "alignment": "center",
         "img_style": "default",
         "hover_effect": false,
@@ -65,17 +67,16 @@
     "quickinfo": {
       "block_id": 4,
       "settings": {
-
-        "bg_color": "#1F2937",
-        "title_color": "#0F172A",
-        "desc_color": "#1976D2",
+        "bg_color": "#111827",
+        "title_color": "#F9FAFB",
+        "desc_color": "#60A5FA",
         "gap": 24,
         "grid_cols": 4,
         "border_radius": 8,
         "font_size_title": 14,
         "font_size_desc": 16,
         "card_bg_color": "#1F2937",
-        "card_border_color": "#E5E7EB",
+        "card_border_color": "#374151",
         "card_variant": "hover-shadow",
         "show_cards": true
       }
@@ -83,11 +84,10 @@
     "promocards": {
       "block_id": 5,
       "settings": {
-
-        "bg_color": "#1F2937",
-        "border_color": "#1976D2",
-        "title_color": "#0F172A",
-        "desc_color": "#6B7280",
+        "bg_color": "#111827",
+        "border_color": "#60A5FA",
+        "title_color": "#F9FAFB",
+        "desc_color": "#9CA3AF",
         "title_size": 14,
         "desc_size": 12,
         "border_radius": 12,
@@ -102,11 +102,10 @@
     "popularitems": {
       "block_id": 6,
       "settings": {
-
-        "bg_color": "#1F2937",
-        "border_color": "#E5E7EB",
-        "title_color": "#0F172A",
-        "price_color": "#1976D2",
+        "bg_color": "#111827",
+        "border_color": "#374151",
+        "title_color": "#F9FAFB",
+        "price_color": "#60A5FA",
         "card_shadow": "medium",
         "card_radius": 12,
         "font_size_title": 16,
@@ -120,38 +119,36 @@
     "menutabs": {
       "block_id": 7,
       "settings": {
-
         "bg_color": "#1F2937",
-        "active_bg_color": "#1F2937",
-        "active_text_color": "#F9FAFB",
+        "active_bg_color": "#60A5FA",
+        "active_text_color": "#111827",
         "text_color": "#F9FAFB",
-        "border_color": "#E5E7EB",
-        "hover_bg_color": "#1F2937",
+        "border_color": "#374151",
+        "hover_bg_color": "#374151",
         "hover_text_color": "#F9FAFB",
         "tab_spacing": 12,
         "font_size_tab": 14,
         "show_cart_button": true,
-        "cart_bg_color": "#1F2937",
-        "cart_text_color": "#F9FAFB",
-        "cart_hover_bg_color": "#1F2937",
-        "cart_hover_text_color": "#F9FAFB",
-        "cart_badge_bg_color": "#1F2937",
-        "cart_badge_text_color": "#F9FAFB",
-        "cart_badge_hover_bg_color": "#1F2937",
-        "cart_badge_hover_text_color": "#F9FAFB"
+        "cart_bg_color": "#60A5FA",
+        "cart_text_color": "#111827",
+        "cart_hover_bg_color": "#3B82F6",
+        "cart_hover_text_color": "#111827",
+        "cart_badge_bg_color": "#FACC15",
+        "cart_badge_text_color": "#111827",
+        "cart_badge_hover_bg_color": "#FBBF24",
+        "cart_badge_hover_text_color": "#111827"
       }
     },
     "productgrid": {
       "block_id": 8,
       "settings": {
-
-        "bg_color": "#1F2937",
+        "bg_color": "#111827",
         "text_color": "#F9FAFB",
         "price_bg_color": "#1F2937",
-        "price_color": "#1976D2",
-        "button_bg_color": "#1F2937",
-        "button_text_color": "#F9FAFB",
-        "button_hover_color": "#1565C0",
+        "price_color": "#60A5FA",
+        "button_bg_color": "#60A5FA",
+        "button_text_color": "#111827",
+        "button_hover_color": "#3B82F6",
         "card_border_radius": 12,
         "card_shadow": "medium",
         "font_size_name": 16,
@@ -165,14 +162,13 @@
     "reviewspreview": {
       "block_id": 9,
       "settings": {
-
-        "section_bg_color": "#1F2937",
+        "section_bg_color": "#111827",
         "text_color": "#F9FAFB",
-        "subtle_text_color": "#F9FAFB",
+        "subtle_text_color": "#9CA3AF",
         "card_bg_color": "#1F2937",
-        "card_border_color": "#E5E7EB",
+        "card_border_color": "#374151",
         "rating_color": "#FACC15",
-        "primary_color": "#90CAF9",
+        "primary_color": "#60A5FA",
         "show_modal_button": true,
         "slider_enabled": true,
         "avatar_size": "medium",
@@ -183,13 +179,12 @@
     "deliveryinfo": {
       "block_id": 10,
       "settings": {
-
-        "background_color": "#F3F4F6",
+        "background_color": "#111827",
         "card_bg_color": "#1F2937",
         "card_shadow": "medium",
         "text_color": "#F9FAFB",
-        "desc_color": "#6B7280",
-        "icon_color": "#1976D2",
+        "desc_color": "#9CA3AF",
+        "icon_color": "#60A5FA",
         "map_border_radius": 12,
         "map_shadow": "medium",
         "section_spacing_top": 48,
@@ -201,10 +196,9 @@
     "aboutcompany": {
       "block_id": 11,
       "settings": {
-
-        "background_color": "#F9FAFB",
+        "background_color": "#1F2937",
         "text_color": "#F9FAFB",
-        "subtle_text_color": "#F9FAFB",
+        "subtle_text_color": "#9CA3AF",
         "padding_top": 64,
         "padding_bottom": 64,
         "title_font_size": 28,
@@ -216,13 +210,12 @@
     "footer": {
       "block_id": 12,
       "settings": {
-
-        "background_color": "#F3F4F6",
+        "background_color": "#111827",
         "text_color": "#F9FAFB",
-        "border_color": "#E5E7EB",
+        "border_color": "#374151",
         "font_size_base": 14,
-        "icon_color": "#6B7280",
-        "icon_color_hover": "#1565C0",
+        "icon_color": "#9CA3AF",
+        "icon_color_hover": "#60A5FA",
         "section_spacing_top": 48,
         "section_spacing_bottom": 48,
         "alignment": "spread",

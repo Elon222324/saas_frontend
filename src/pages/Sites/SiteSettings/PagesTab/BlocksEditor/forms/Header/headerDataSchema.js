@@ -47,5 +47,29 @@ export const headerDataSchema = [
     default: '4.82',
     editable: true,
     group: 'right',
+  },
+  {
+    key: 'phone_number',
+    label: 'Номер телефона',
+    type: 'text',
+    default: '+79876545321',
+    editable: true,
+    group: 'right',
+  },
+  {
+    key: 'whatsapp_number',
+    label: 'Ваш whatsapp',
+    type: 'text',
+    default: '+79876545321',
+    editable: true,
+    group: 'right',
+  },
+  {
+    key: 'work_hours',
+    label: 'Рабочее время',
+    type: 'text',
+    default: 'Пн–Вс: 10:00–22:00',
+    editable: true,
+    group: 'right',
   }
 ]

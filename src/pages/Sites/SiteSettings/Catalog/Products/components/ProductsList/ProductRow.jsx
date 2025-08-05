@@ -6,6 +6,7 @@ import slugify from 'slugify'
 import EditableLabelTags from './EditableLabelTags'
 import { useOptionGroups } from '../../../Options/hooks/useOptionGroups'
 
+
 const toPublicUrl = (raw = '', siteName) => {
   if (!raw) return null
   if (/^https?:\/\//i.test(raw) && !raw.includes(`${siteName}:8001`)) return raw
@@ -136,7 +137,9 @@ export default function ProductRow({
     }
   }
 
-  const imgSrc = toPublicUrl(product.image_url, siteName)
+  const imgSrc = product.image_url
+    ? `${import.meta.env.VITE_LIBRARY_ASSETS_URL || ''}${product.image_url}_small.webp`
+    : ''
 
   return (
     <tr ref={innerRef} {...draggableProps} className="hover:bg-gray-50 focus-within:bg-gray-50">

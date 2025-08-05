@@ -95,6 +95,9 @@ export default function PageEditor() {
 
   const handleReorder = async (newBlocks) => {
     const payload = newBlocks.map(({ real_id, order }) => ({ id: real_id, order }))
+    console.log('[REORDER PAYLOAD]', payload)
+    console.log('🚀 reorder payload', newBlocks)
+    console.log('👉 payload to send', payload)
     const res = await fetch(`${API_URL}/blocks/reorder/${site_name}/${slug}`, {
       method: 'PATCH',
       headers: {

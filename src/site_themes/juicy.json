@@ -1,5 +1,10 @@
 {
   "common": {
+    "button": {
+      "bg": "#1F2937",
+      "text": "#FFFFFF",
+      "hover_bg": "#BE123C"
+    },
     "typography": {
       "font_family": "'Montserrat', sans-serif",
       "font_size_base": 16,

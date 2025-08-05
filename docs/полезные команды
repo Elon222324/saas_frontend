@@ -1,2 +1,2 @@
 # Создать структуру быстро
-tree -a -I 'node_modules|.git|.vscode|__pycache__|dist|build|.idea|*.pyc|*.pyo|*.egg-info|.DS_Store' > project_structure.txt
+tree -a -I 'node_modules|.git|.vscode|__pycache__|dist|build|.idea|*.pyc|*.pyo|*.egg-info|.DS_Store|.next' > project_structure.txt
