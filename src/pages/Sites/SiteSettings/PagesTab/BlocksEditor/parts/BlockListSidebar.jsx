@@ -2,7 +2,15 @@ import { Switch } from '@/components/ui/switch'
 import { Trash2, ChevronsUpDown, Info } from 'lucide-react'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 
-export default function BlockListSidebar({ blocks, selectedId, setSelectedId, setBlocks, handleReorder, handleAddBlock }) {
+export default function BlockListSidebar({
+  blocks,
+  selectedId,
+  setSelectedId,
+  setBlocks,
+  handleReorder,
+  handleAddBlock,
+  handleActivityChange, // 1. Принимаем новую функцию
+}) {
   function onDragEnd(result) {
     const { source, destination } = result
     if (!destination || source.index === destination.index) return
@@ -51,14 +59,19 @@ export default function BlockListSidebar({ blocks, selectedId, setSelectedId, se
                         } ${snap.isDragging ? 'bg-white shadow-lg' : ''}`}
                       >
                         <div className="flex items-center gap-2">
-                          <div className={`w-2 h-2 rounded-full ${
-                            block.active ? 'bg-green-500' : 'bg-gray-400'
-                          }`} />
+                          {/* 2. Используем is_active для отображения статуса */}
+                          <div
+                            className={`w-2 h-2 rounded-full ${
+                              block.active ? 'bg-green-500' : 'bg-gray-400'
+                            }`}
+                          />
                           <div className="text-sm">
                             <div className="font-semibold flex items-center gap-2">
                               {block.label || block.type}
                               {isSystem && (
-                                <span className="text-xs bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded">Fixed</span>
+                                <span className="text-xs bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded">
+                                  Fixed
+                                </span>
                               )}
                             </div>
                             <div className="text-gray-500 text-xs">
@@ -67,13 +80,13 @@ export default function BlockListSidebar({ blocks, selectedId, setSelectedId, se
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
                           <ChevronsUpDown size={16} className="text-gray-400" />
                           <Switch
+                            // 2. Используем is_active для состояния переключателя
                             checked={block.active}
-                            onCheckedChange={val =>
-                              setBlocks(bs => bs.map(b => b.id === block.id ? { ...b, active: val } : b))
-                            }
+                            // 3. Вызываем новую функцию handleActivityChange
+                            onCheckedChange={val => handleActivityChange(block.id, block.real_id, val)}
                           />
                           {!isSystem && (
                             <button

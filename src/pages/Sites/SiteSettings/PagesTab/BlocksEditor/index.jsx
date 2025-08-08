@@ -55,7 +55,48 @@ export default function PageEditor() {
     }))
   }
 
+  // 👇 ВОТ НОВАЯ ФУНКЦИЯ ДЛЯ РАБОТЫ С ОТДЕЛЬНЫМ ЭНДПОИНТОМ
+  const handleActivityChange = async (blockId, realBlockId, newActiveState) => {
+    // 1. Оптимистичное обновление UI
+    setBlocks(prevBlocks =>
+      prevBlocks.map(b => (b.id === blockId ? { ...b, is_active: newActiveState } : b))
+    );
+
+    try {
+      // 2. Запрос на новый, специальный эндпоинт
+      const res = await fetch(`${API_URL}/blocks/status/${site_name}/${slug}/${realBlockId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+        body: JSON.stringify({ is_active: newActiveState }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Ошибка сервера при обновлении статуса');
+      }
+      
+      // Обновляем глобальное состояние после успешного сохранения
+      setData(prev => {
+        const updatedBlocks = prev.blocks?.[slug]?.map(b => 
+          b.real_id === realBlockId ? { ...b, active: newActiveState } : b
+        );
+        return { ...prev, blocks: { ...prev.blocks, [slug]: updatedBlocks } };
+      });
+
+    } catch (error) {
+      console.error("Не удалось обновить статус блока:", error);
+      // 3. Откат UI в случае ошибки
+      setBlocks(prevBlocks =>
+        prevBlocks.map(b => (b.id === blockId ? { ...b, active: !newActiveState } : b))
+      );
+      alert('Не удалось обновить статус блока. Попробуйте снова.');
+    }
+  };
+
   const handleSaveAll = async () => {
+    // Теперь эта функция сохраняет только settings и data
     const payload = Object.entries(unsavedBlocks).map(([block_id, changes]) => ({
       block_id: Number(block_id),
       ...(changes.settings ? { settings: changes.settings } : {}),
@@ -82,8 +123,8 @@ export default function PageEditor() {
         if (!change) return b
         return {
           ...b,
-          ...(change.settings ? { settings: change.settings } : {}),
-          ...(change.data ? { data: change.data } : {}),
+          settings: change.settings || b.settings,
+          data: change.data || b.data,
         }
       })
       return { ...prev, blocks: { ...prev.blocks, [slug]: updatedBlocks } }
@@ -95,9 +136,6 @@ export default function PageEditor() {
 
   const handleReorder = async (newBlocks) => {
     const payload = newBlocks.map(({ real_id, order }) => ({ id: real_id, order }))
-    console.log('[REORDER PAYLOAD]', payload)
-    console.log('🚀 reorder payload', newBlocks)
-    console.log('👉 payload to send', payload)
     const res = await fetch(`${API_URL}/blocks/reorder/${site_name}/${slug}`, {
       method: 'PATCH',
       headers: {
@@ -146,6 +184,7 @@ export default function PageEditor() {
           setBlocks={setBlocks}
           handleReorder={handleReorder}
           handleAddBlock={handleAddBlock}
+          handleActivityChange={handleActivityChange} // <-- Передаем новую функцию
         />
         <BlockEditorPanel
           selectedBlock={selectedBlock}
