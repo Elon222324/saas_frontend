@@ -11,6 +11,8 @@ import Products from './pages/Sites/SiteSettings/Catalog/Products'
 import Options from './pages/Sites/SiteSettings/Catalog/Options'
 import Extras from './pages/Sites/SiteSettings/Catalog/Extras'
 import Integrations from './pages/Sites/SiteSettings/Integrations'
+import PromoCodes from './pages/Sites/SiteSettings/Commerce/PromoCodes'
+import Delivery from './pages/Sites/SiteSettings/Commerce/Delivery'
 import GeneralSettings from './pages/Sites/SiteSettings/GeneralSettings'
 import { SiteSettingsProvider } from './context/SiteSettingsContext'
 
@@ -68,6 +70,8 @@ export default function App() {
             <Route path="products" element={<Products />} />
             <Route path="options" element={<Options />} />
             <Route path="extras" element={<Extras />} />
+            <Route path="promocodes" element={<PromoCodes />} />
+            <Route path="delivery" element={<Delivery />} />
             <Route path="integrations" element={<Integrations />} />
             <Route path="general" element={<GeneralSettings />} />
           </Route>

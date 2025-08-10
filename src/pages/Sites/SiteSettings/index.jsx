@@ -5,6 +5,7 @@ import {
   ChevronRight,
   FileText,
   ShoppingBag,
+  ShoppingCart,
   Plug,
   Settings,
   List,
@@ -12,6 +13,8 @@ import {
   Layers,
   ChevronDown,
   ChevronUp,
+  Truck,
+  Percent,
 } from 'lucide-react'
 
 export default function SiteSettings() {
@@ -24,6 +27,10 @@ export default function SiteSettings() {
     location.pathname.includes('/products') ||
     location.pathname.includes('/options') ||
     location.pathname.includes('/extras')
+  )
+  const [commerceOpen, setCommerceOpen] = useState(
+    location.pathname.includes('/delivery') ||
+    location.pathname.includes('/promocodes')
   )
 
   const containerSuffix = import.meta.env.VITE_CONTAINER_SUFFIX
@@ -133,6 +140,55 @@ export default function SiteSettings() {
                   >
                     <PlusCircle size={16} />
                     {isExpanded && <span>Дополнения</span>}
+                  </NavLink>
+                </div>
+              )}
+            </div>
+
+            {/* Магазин с вложенными пунктами */}
+            <div className="mt-2">
+              <button
+                onClick={() => setCommerceOpen((prev) => !prev)}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded font-semibold transition-colors ${
+                  isExpanded ? 'text-gray-500' : 'justify-center text-gray-500'
+                } hover:bg-gray-100`}
+                title={!isExpanded ? 'Магазин' : ''}
+              >
+                <ShoppingCart size={20} />
+                {isExpanded && (
+                  <>
+                    <span>Магазин</span>
+                    <span className="ml-auto">{commerceOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}</span>
+                  </>
+                )}
+              </button>
+
+              {commerceOpen && (
+                <div className={`space-y-1 ${isExpanded ? 'ml-7' : 'px-2'}`}>
+                  <NavLink
+                    to="promocodes"
+                    className={({ isActive }) =>
+                      `flex items-center gap-2 py-1 rounded hover:bg-blue-50 text-sm transition-colors ${
+                        isActive ? 'bg-blue-100 text-blue-600 font-semibold' : 'text-gray-700'
+                      } ${!isExpanded ? 'justify-center' : 'px-2'}`
+                    }
+                    title={!isExpanded ? 'Промокоды' : ''}
+                  >
+                    <Percent size={16} />
+                    {isExpanded && <span>Промокоды</span>}
+                  </NavLink>
+
+                  <NavLink
+                    to="delivery"
+                    className={({ isActive }) =>
+                      `flex items-center gap-2 py-1 rounded hover:bg-blue-50 text-sm transition-colors ${
+                        isActive ? 'bg-blue-100 text-blue-600 font-semibold' : 'text-gray-700'
+                      } ${!isExpanded ? 'justify-center' : 'px-2'}`
+                    }
+                    title={!isExpanded ? 'Доставка' : ''}
+                  >
+                    <Truck size={16} />
+                    {isExpanded && <span>Доставка</span>}
                   </NavLink>
                 </div>
               )}
