@@ -1,10 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import {
-  LayoutDashboard,
-  Server,
-  Users,
-  LogOut,
-} from 'lucide-react'
+import { LayoutDashboard, Server, Users, ShoppingCart, LogOut } from 'lucide-react'
 
 export default function MainLayout() {
   return (
@@ -45,6 +40,17 @@ export default function MainLayout() {
               }
             >
               <Users size={18} /> Users
+            </NavLink>
+
+            <NavLink
+              to="/orders"
+              className={({ isActive }) =>
+                `flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-50 ${
+                  isActive ? 'bg-blue-100 text-blue-600 font-semibold' : ''
+                }`
+              }
+            >
+              <ShoppingCart size={18} /> Заказы
             </NavLink>
           </nav>
         </div>

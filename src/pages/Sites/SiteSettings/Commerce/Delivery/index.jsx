@@ -55,8 +55,8 @@ export default function Delivery() {
   const [newFreeThreshold, setNewFreeThreshold] = useState('')
 
   const canCreate = useMemo(() => {
-    const baseOk = Number(newBaseFee) > 0
-    const thresholdOk = newFreeThreshold === '' || Number(newFreeThreshold) > 0
+    const baseOk = newBaseFee !== '' && Number(newBaseFee) >= 0
+    const thresholdOk = newFreeThreshold === '' || Number(newFreeThreshold) >= 0
     return baseOk && thresholdOk
   }, [newBaseFee, newFreeThreshold])
 

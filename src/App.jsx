@@ -3,6 +3,7 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Sites from './pages/Sites'
 import Users from './pages/Users'
+import OrdersPage from './pages/Orders'
 import MainLayout from './layouts/MainLayout'
 import SiteSettings from './pages/Sites/SiteSettings'
 import Pages from './pages/Sites/SiteSettings/PagesTab'
@@ -55,6 +56,7 @@ export default function App() {
           <Route index element={<Dashboard />} />
           <Route path="sites" element={<Sites />} />
           <Route path="users" element={<Users />} />
+          <Route path="orders" element={<OrdersPage />} />
 
           {/* Обёртка для всех настроек сайта */}
           <Route
