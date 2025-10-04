@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Outlet, NavLink, useParams, useLocation } from 'react-router-dom'
+import { useSiteSettings } from '../../../context/SiteSettingsContext'
 import {
   ChevronLeft,
   ChevronRight,
@@ -21,6 +22,7 @@ import {
 export default function SiteSettings() {
   const { domain } = useParams()
   const location = useLocation()
+  const { siteToken, site_name } = useSiteSettings()
 
   const [collapsed, setCollapsed] = useState(false)
   const [hovered, setHovered] = useState(false)
@@ -37,10 +39,19 @@ export default function SiteSettings() {
   const containerSuffix = import.meta.env.VITE_CONTAINER_SUFFIX
   const baseDomain = import.meta.env.VITE_BASE_DOMAIN
 
-  const site_name = `${domain}${containerSuffix}`
+  const site_name_local = `${domain}${containerSuffix}`
   const full_domain = `${domain}.${baseDomain}`
 
   const isExpanded = !collapsed || hovered
+
+  // Логирование статуса токена сайта
+  useEffect(() => {
+    if (siteToken) {
+      console.log('🎯 [SITE SETTINGS] Токен сайта доступен в компоненте:', siteToken)
+    } else {
+      console.log('ℹ️ [SITE SETTINGS] Токен сайта не получен, работаем в режиме совместимости')
+    }
+  }, [siteToken])
 
   return (
     <div className="flex h-full pt-4 px-4 gap-4 bg-gray-100">
@@ -52,7 +63,17 @@ export default function SiteSettings() {
       >
         <div className="flex items-center justify-between p-4">
           {isExpanded ? (
-            <h2 className="text-lg font-bold text-blue-600 truncate">{full_domain}</h2>
+            <div className="flex flex-col">
+              <h2 className="text-lg font-bold text-blue-600 truncate">{full_domain}</h2>
+              {/* Индикатор статуса токена для тестирования */}
+              <div className="text-xs mt-1">
+                {siteToken ? (
+                  <span className="text-green-600 font-medium">🔑 Токен получен</span>
+                ) : (
+                  <span className="text-orange-500 font-medium">⚠️ Токен не получен</span>
+                )}
+              </div>
+            </div>
           ) : (
             <span className="text-blue-600 font-bold text-lg">i</span>
           )}
