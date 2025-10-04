@@ -46,6 +46,11 @@ export default function useProductForm({ open, product, onSave, onClose }) {
   const [selectedOptionGroups, setSelectedOptionGroups] = useState(new Set())
   const [selectedDescriptiveValues, setSelectedDescriptiveValues] = useState(new Set())
 
+  // SEO fields
+  const [metaTitle, setMetaTitle] = useState('')
+  const [metaDescription, setMetaDescription] = useState('')
+  const [keywords, setKeywords] = useState('')
+
   const categories = useMemo(() => {
     const list = []
     const walk = (nodes, prefix = '') =>
@@ -107,6 +112,11 @@ export default function useProductForm({ open, product, onSave, onClose }) {
       setOrder(product.order || 0)
       setSelectedExtras(new Set(product.extra_groups?.map(g => g.id) || []))
       setMsg(null)
+      
+      // Initialize SEO fields
+      setMetaTitle(product.meta_title || '')
+      setMetaDescription(product.meta_description || '')
+      setKeywords(product.keywords || '')
       
       const existingDescIds = product.descriptive_option_value_ids
         ? product.descriptive_option_value_ids
@@ -279,7 +289,10 @@ export default function useProductForm({ open, product, onSave, onClose }) {
       variants: variantList,
       labels: product.labels || [],
       extra_group_ids: Array.from(selectedExtras),
-      descriptive_option_value_ids: Array.from(selectedDescriptiveValues)
+      descriptive_option_value_ids: Array.from(selectedDescriptiveValues),
+      meta_title: metaTitle.trim() || undefined,
+      meta_description: metaDescription.trim() || undefined,
+      keywords: keywords.trim() || undefined
     }
     try {
       await onSave(payload)
@@ -330,6 +343,12 @@ export default function useProductForm({ open, product, onSave, onClose }) {
     selectedDescriptiveValues,
     handleDescriptiveValueChange,
     selectedDescriptiveOptions,
+    metaTitle,
+    setMetaTitle,
+    metaDescription,
+    setMetaDescription,
+    keywords,
+    setKeywords,
     handleSave
   }
 }

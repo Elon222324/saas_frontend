@@ -44,6 +44,11 @@ export default function useProductForm({ open, onSave, onClose, categoryId }) {
   const [variants, setVariants] = useState([])
   const [selectedDescriptiveValues, setSelectedDescriptiveValues] = useState(new Set())
 
+  // SEO fields
+  const [metaTitle, setMetaTitle] = useState('')
+  const [metaDescription, setMetaDescription] = useState('')
+  const [keywords, setKeywords] = useState('')
+
   const optionValueMap = useMemo(() => {
     const map = new Map()
     allOptionGroups.forEach(group => {
@@ -94,6 +99,9 @@ export default function useProductForm({ open, onSave, onClose, categoryId }) {
       setVariants([])
       setSelectedOptionGroups(new Set())
       setSelectedDescriptiveValues(new Set())
+      setMetaTitle('')
+      setMetaDescription('')
+      setKeywords('')
     } else {
       setCategory(categoryId ?? '')
       setVariants([])
@@ -226,7 +234,10 @@ export default function useProductForm({ open, onSave, onClose, categoryId }) {
       variants: variantList.map(v => ({ ...v, price: parseFloat(v.price) || 0 })),
       labels: [],
       extra_group_ids: Array.from(selectedExtras),
-      descriptive_option_value_ids: Array.from(selectedDescriptiveValues).map(Number)
+      descriptive_option_value_ids: Array.from(selectedDescriptiveValues).map(Number),
+      meta_title: metaTitle.trim() || undefined,
+      meta_description: metaDescription.trim() || undefined,
+      keywords: keywords.trim() || undefined
     }
 
     let attempt = 0
@@ -286,6 +297,12 @@ export default function useProductForm({ open, onSave, onClose, categoryId }) {
     setPrice,
     weight,
     setWeight,
+    metaTitle,
+    setMetaTitle,
+    metaDescription,
+    setMetaDescription,
+    keywords,
+    setKeywords,
     handleSave
   }
 }

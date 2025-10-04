@@ -3,6 +3,7 @@ import useProductForm from './useProductForm'
 import ProductInfoForm from './ProductInfoForm'
 import ProductExtrasSelector from './ProductExtrasSelector'
 import ProductVariantsManager from './ProductVariantsManager'
+import ProductSEOFields from '../ProductSEOFields'
 
 const modalRoot =
   document.getElementById('modal-root') ||
@@ -36,6 +37,12 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
     msg,
     selectedExtras,
     handleExtraChange,
+    metaTitle,
+    setMetaTitle,
+    metaDescription,
+    setMetaDescription,
+    keywords,
+    setKeywords,
     handleSave,
     ...variantProps
   } = form
@@ -81,6 +88,15 @@ export default function AddProductModal({ open, onClose, onSave, categoryId }) {
           </div>
 
           <ProductVariantsManager {...variantProps} />
+
+          <ProductSEOFields
+            metaTitle={metaTitle}
+            setMetaTitle={setMetaTitle}
+            metaDescription={metaDescription}
+            setMetaDescription={setMetaDescription}
+            keywords={keywords}
+            setKeywords={setKeywords}
+          />
         </div>
 
         <div className="flex justify-end gap-2 border-t p-4 mt-auto">

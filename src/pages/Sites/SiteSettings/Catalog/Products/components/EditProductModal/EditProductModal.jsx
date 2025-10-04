@@ -3,6 +3,7 @@ import useProductForm from './useProductForm'
 import ProductInfoForm from './ProductInfoForm'
 import ProductExtrasSelector from './ProductExtrasSelector'
 import ProductVariantsManager from './ProductVariantsManager'
+import ProductSEOFields from '../ProductSEOFields'
 
 const modalRoot =
   document.getElementById('modal-root') ||
@@ -38,6 +39,12 @@ export default function EditProductModal({ open, onClose, onSave, product }) {
     active,
     setActive,
     msg,
+    metaTitle,
+    setMetaTitle,
+    metaDescription,
+    setMetaDescription,
+    keywords,
+    setKeywords,
     handleSave,
     ...variantProps
   } = form
@@ -74,6 +81,15 @@ export default function EditProductModal({ open, onClose, onSave, product }) {
           </div>
 
           <ProductVariantsManager {...variantProps} />
+
+          <ProductSEOFields
+            metaTitle={metaTitle}
+            setMetaTitle={setMetaTitle}
+            metaDescription={metaDescription}
+            setMetaDescription={setMetaDescription}
+            keywords={keywords}
+            setKeywords={setKeywords}
+          />
 
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={active} onChange={e => setActive(e.target.checked)} />

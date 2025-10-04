@@ -15,6 +15,7 @@ import {
   ChevronUp,
   Truck,
   Percent,
+  Search,
 } from 'lucide-react'
 
 export default function SiteSettings() {
@@ -205,6 +206,19 @@ export default function SiteSettings() {
             >
               <Plug size={20} />
               {isExpanded && <span>Интеграции</span>}
+            </NavLink>
+
+            <NavLink
+              to="seo"
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2 rounded hover:bg-blue-50 transition-colors ${
+                  isActive ? 'bg-blue-100 text-blue-600 font-semibold' : 'text-gray-700'
+                } ${!isExpanded ? 'justify-center' : ''}`
+              }
+              title={!isExpanded ? 'SEO настройки' : ''}
+            >
+              <Search size={20} />
+              {isExpanded && <span>SEO настройки</span>}
             </NavLink>
 
             <NavLink
