@@ -34,6 +34,32 @@ export default function Sites() {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
       })
+      
+      // Логируем все данные сайтов для отладки
+      console.log('🔍 Получены данные сайтов:', res.data)
+      
+      // Логируем статусы каждого сайта
+      if (res.data && Array.isArray(res.data)) {
+        res.data.forEach((site, index) => {
+          console.log(`📊 Сайт ${index + 1} (${site.domain}):`, {
+            id: site.id,
+            name: site.name,
+            domain: site.domain,
+            status: site.status,
+            statusType: typeof site.status,
+            port: site.port,
+            path: site.path
+          })
+        })
+        
+        // Подсчитываем количество сайтов по статусам
+        const statusCounts = res.data.reduce((acc, site) => {
+          acc[site.status] = (acc[site.status] || 0) + 1
+          return acc
+        }, {})
+        console.log('📈 Статистика статусов:', statusCounts)
+      }
+      
       setSites(res.data)
     } catch (err) {
       console.error('Ошибка при получении сайтов:', err)
@@ -45,6 +71,7 @@ export default function Sites() {
   const handleAddSite = async () => {
     if (!newDomain.trim()) return
 
+    console.log(`➕ Добавление нового сайта: ${newDomain.trim()}`)
     try {
       setAdding(true)
       await api.post(
@@ -56,10 +83,11 @@ export default function Sites() {
           },
         }
       )
+      console.log(`✅ Сайт ${newDomain.trim()} успешно добавлен`)
       setNewDomain('')
       await fetchSites()
     } catch (err) {
-      console.error('Ошибка при добавлении сайта:', err)
+      console.error(`❌ Ошибка при добавлении сайта ${newDomain.trim()}:`, err)
     } finally {
       setAdding(false)
     }
@@ -67,6 +95,7 @@ export default function Sites() {
 
   const handleStopSite = async (domain) => {
     if (isSiteLoading(domain)) return
+    console.log(`🛑 Остановка сайта: ${domain}`)
     setSiteLoading(domain, true)
     try {
       await api.post('/sites/stop-site', { domain }, {
@@ -74,9 +103,10 @@ export default function Sites() {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
       })
+      console.log(`✅ Сайт ${domain} успешно остановлен`)
       await fetchSites()
     } catch (err) {
-      console.error('Ошибка при остановке сайта:', err)
+      console.error(`❌ Ошибка при остановке сайта ${domain}:`, err)
     } finally {
       setSiteLoading(domain, false)
     }
@@ -84,6 +114,7 @@ export default function Sites() {
 
   const handleStartSite = async (domain) => {
     if (isSiteLoading(domain)) return
+    console.log(`▶️ Запуск сайта: ${domain}`)
     setSiteLoading(domain, true)
     try {
       await api.post('/sites/start-site', { domain }, {
@@ -91,9 +122,10 @@ export default function Sites() {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
       })
+      console.log(`✅ Сайт ${domain} успешно запущен`)
       await fetchSites()
     } catch (err) {
-      console.error('Ошибка при запуске сайта:', err)
+      console.error(`❌ Ошибка при запуске сайта ${domain}:`, err)
     } finally {
       setSiteLoading(domain, false)
     }
@@ -101,6 +133,7 @@ export default function Sites() {
 
   const handleRestartSite = async (domain) => {
     if (isSiteLoading(domain)) return
+    console.log(`🔄 Перезапуск сайта: ${domain}`)
     setSiteLoading(domain, true)
     try {
       await api.post('/sites/restart-site', { domain }, {
@@ -108,9 +141,10 @@ export default function Sites() {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
       })
+      console.log(`✅ Сайт ${domain} успешно перезапущен`)
       await fetchSites()
     } catch (err) {
-      console.error('Ошибка при перезапуске сайта:', err)
+      console.error(`❌ Ошибка при перезапуске сайта ${domain}:`, err)
     } finally {
       setSiteLoading(domain, false)
     }
@@ -118,6 +152,7 @@ export default function Sites() {
 
   const handleDeleteSite = async (domain) => {
     if (isSiteLoading(domain)) return
+    console.log(`🗑️ Удаление сайта: ${domain}`)
     setSiteLoading(domain, true)
     try {
       await api.post('/sites/delete-site', { domain }, {
@@ -125,9 +160,10 @@ export default function Sites() {
           Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
       })
+      console.log(`✅ Сайт ${domain} успешно удален`)
       await fetchSites()
     } catch (err) {
-      console.error('Ошибка при удалении сайта:', err)
+      console.error(`❌ Ошибка при удалении сайта ${domain}:`, err)
     } finally {
       setSiteLoading(domain, false)
     }
@@ -169,15 +205,18 @@ export default function Sites() {
       </div>
 
       {/* Список сайтов */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {sites.map((site) => (
           <div
             key={site.id}
-            className="bg-white p-4 rounded shadow border border-gray-200 flex flex-col justify-between"
+            className="bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200 overflow-hidden"
           >
-            <div>
-              <div className="flex justify-between items-start mb-2">
-                <h2 className="text-lg font-semibold">{site.name}</h2>
+            {/* Заголовок */}
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-3 border-b border-gray-200">
+              <div className="flex justify-between items-center">
+                <h2 className="text-base font-semibold text-gray-800 truncate">
+                  {site.domain}.{baseDomain}
+                </h2>
                 <div className="flex gap-1">
                   <a
                     href={`https://${site.domain}.${baseDomain}`}
@@ -188,9 +227,9 @@ export default function Sites() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="bg-gray-100 hover:bg-gray-200 text-gray-600"
+                      className="h-8 w-8 hover:bg-white/80 text-gray-600 hover:text-blue-600 transition-colors"
                     >
-                      <ExternalLink size={18} />
+                      <ExternalLink className="h-4 w-4" />
                     </Button>
                   </a>
                   <Button
@@ -198,98 +237,125 @@ export default function Sites() {
                     size="icon"
                     onClick={() => handleCopyLink(site.domain)}
                     title="Скопировать ссылку"
-                    className="bg-gray-100 hover:bg-gray-200 text-gray-600"
+                    className="h-8 w-8 hover:bg-white/80 text-gray-600 hover:text-blue-600 transition-colors"
                   >
-                    <Copy size={18} />
+                    <Copy className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
-
-              <p className="text-sm text-gray-600">Домен: {site.domain}</p>
-              <p className="text-sm text-gray-600">Порт: {site.port}</p>
-              <p className="text-sm text-gray-600">Путь: {site.path}</p>
-              <p
-                className={`mt-2 text-sm font-medium ${
-                  site.status === 'running' ? 'text-green-600' : 'text-red-500'
-                }`}
-              >
-                Статус: {site.status}
-              </p>
             </div>
 
-            <div className="flex justify-start gap-2 mt-4 flex-wrap">
-              {site.status === 'running' ? (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  title="Остановить"
-                  onClick={() => handleStopSite(site.domain)}
-                  disabled={isSiteLoading(site.domain)}
-                  className={`${
-                    isSiteLoading(site.domain)
-                      ? 'bg-orange-200 text-orange-300 cursor-not-allowed'
-                      : 'bg-orange-100 hover:bg-orange-200 text-orange-600'
+            {/* Контент */}
+            <div className="p-4">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-sm text-gray-500">Статус:</span>
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${
+                    site.status === 'running' 
+                      ? 'bg-green-100 text-green-700 border border-green-300' 
+                      : site.status === 'stopped'
+                      ? 'bg-red-100 text-red-700 border border-red-300'
+                      : site.status === 'not_found'
+                      ? 'bg-orange-100 text-orange-700 border border-orange-300'
+                      : site.status === 'error'
+                      ? 'bg-rose-100 text-rose-700 border border-rose-300'
+                      : site.status === 'unknown'
+                      ? 'bg-gray-100 text-gray-700 border border-gray-300'
+                      : 'bg-gray-100 text-gray-600 border border-gray-200'
                   }`}
                 >
-                  <Pause size={18} />
-                </Button>
-              ) : (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  title="Запустить"
-                  onClick={() => handleStartSite(site.domain)}
-                  disabled={isSiteLoading(site.domain)}
-                  className={`${
-                    isSiteLoading(site.domain)
-                      ? 'bg-green-200 text-green-300 cursor-not-allowed'
-                      : 'bg-green-100 hover:bg-green-200 text-green-600'
-                  }`}
-                >
-                  <Play size={18} />
-                </Button>
-              )}
-
-              <Button
-                variant="ghost"
-                size="icon"
-                title="Перезапустить"
-                onClick={() => handleRestartSite(site.domain)}
-                disabled={isSiteLoading(site.domain)}
-                className={`${
-                  isSiteLoading(site.domain)
-                    ? 'bg-blue-200 text-blue-300 cursor-not-allowed'
-                    : 'bg-blue-100 hover:bg-blue-200 text-blue-600'
-                }`}
-              >
-                <RefreshCcw size={18} />
-              </Button>
-
-              <Button
-                variant="ghost"
-                size="icon"
-                title="Удалить"
-                onClick={() => handleDeleteSite(site.domain)}
-                disabled={isSiteLoading(site.domain)}
-                className={`${
-                  isSiteLoading(site.domain)
-                    ? 'bg-gray-200 text-gray-300 cursor-not-allowed'
-                    : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
-                }`}
-              >
-                <Trash2 size={18} />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                title="Настройки"
-                onClick={() =>
-                    window.location.href = `/settings/${site.domain}/pages`
+                  {
+                    site.status === 'running' 
+                      ? 'Запущен' 
+                      : site.status === 'stopped'
+                      ? 'Остановлен'
+                      : site.status === 'not_found'
+                      ? 'Не найден'
+                      : site.status === 'error'
+                      ? 'Ошибка'
+                      : site.status === 'unknown'
+                      ? 'Неизвестно'
+                      : site.status
                   }
-                className="bg-gray-100 hover:bg-gray-200 text-gray-600"
-              >
-                <Settings size={18} />
-              </Button>                
+                </span>
+              </div>
+
+              {/* Кнопки управления */}
+              <div className="flex gap-2 flex-wrap">
+                {site.status === 'running' ? (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    title="Остановить"
+                    onClick={() => handleStopSite(site.domain)}
+                    disabled={isSiteLoading(site.domain)}
+                    className={`h-9 w-9 rounded-lg transition-all ${
+                      isSiteLoading(site.domain)
+                        ? 'bg-orange-200 text-orange-400 cursor-not-allowed'
+                        : 'bg-orange-50 hover:bg-orange-100 text-orange-600 hover:text-orange-700 border border-orange-200'
+                    }`}
+                  >
+                    <Pause className="h-4 w-4" />
+                  </Button>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    title="Запустить"
+                    onClick={() => handleStartSite(site.domain)}
+                    disabled={isSiteLoading(site.domain)}
+                    className={`h-9 w-9 rounded-lg transition-all ${
+                      isSiteLoading(site.domain)
+                        ? 'bg-green-200 text-green-400 cursor-not-allowed'
+                        : 'bg-green-50 hover:bg-green-100 text-green-600 hover:text-green-700 border border-green-200'
+                    }`}
+                  >
+                    <Play className="h-4 w-4" />
+                  </Button>
+                )}
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  title="Перезапустить"
+                  onClick={() => handleRestartSite(site.domain)}
+                  disabled={isSiteLoading(site.domain)}
+                  className={`h-9 w-9 rounded-lg transition-all ${
+                    isSiteLoading(site.domain)
+                      ? 'bg-blue-200 text-blue-400 cursor-not-allowed'
+                      : 'bg-blue-50 hover:bg-blue-100 text-blue-600 hover:text-blue-700 border border-blue-200'
+                  }`}
+                >
+                  <RefreshCcw className="h-4 w-4" />
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  title="Настройки"
+                  onClick={() =>
+                      window.location.href = `/settings/${site.domain}/pages`
+                    }
+                  className="h-9 w-9 rounded-lg transition-all bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-700 border border-gray-200"
+                >
+                  <Settings className="h-4 w-4" />
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  title="Удалить"
+                  onClick={() => handleDeleteSite(site.domain)}
+                  disabled={isSiteLoading(site.domain)}
+                  className={`h-9 w-9 rounded-lg transition-all ${
+                    isSiteLoading(site.domain)
+                      ? 'bg-red-200 text-red-400 cursor-not-allowed'
+                      : 'bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 border border-red-200'
+                  }`}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
         ))}

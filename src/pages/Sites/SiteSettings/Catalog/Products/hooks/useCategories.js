@@ -1,31 +1,62 @@
 // src/pages/Sites/SiteSettings/Products/hooks/useCategories.js
 import { useQuery } from '@tanstack/react-query';
+import { useSiteSettings } from '../../../../../../context/SiteSettingsContext';
 
 const API_URL = import.meta.env.VITE_API_URL || '';
 
 export function useCategories(siteName, options = {}) {
+  const { siteToken } = useSiteSettings();
+  
   return useQuery({
-    queryKey: ['categories', siteName],
+    queryKey: ['categories', siteName, siteToken?.token],
+    enabled: Boolean(siteToken?.token) && (options?.enabled ?? true),
     /** -------------  здесь основной fetch ------------- **/
     queryFn: async () => {
-      console.log('[useCategories] → запрашиваю:', `${API_URL}/products/${siteName}/categories/all`);
+      // Убираем суффикс _app для нового API
+      const siteNameForApi = siteName.replace('_app', '');
+      const newApiUrl = `https://${siteNameForApi}.${import.meta.env.VITE_BASE_DOMAIN}/site-api/admin/products/categories/`;
+      
+      console.log('🔑 [useCategories] → запрашиваю новый API:', newApiUrl);
+      console.log('🔑 [useCategories] → используем админский JWT токен для аутентификации');
 
-      const res = await fetch(
-        `${API_URL}/products/${siteName}/categories/all`,
-        { credentials: 'include' },
-      );
+      // Используем ТОЛЬКО админский токен сайта из контекста
+      const adminToken = siteToken?.token;
+      if (!adminToken) {
+        console.error('❌ [useCategories] Админский токен сайта отсутствует');
+        throw new Error('Токен сайта не получен');
+      }
 
-      console.log('[useCategories] ← статус ответа:', res.status, res.statusText);
+      // Пытаемся прочитать клеймы токена (base64url) для проверки user_id и site_name
+      try {
+        const payloadPart = adminToken.split('.')[1]
+        const json = JSON.parse(atob(payloadPart.replace(/-/g, '+').replace(/_/g, '/')))
+        console.log('🧾 [useCategories] Claims:', { user_id: json.user_id, site_name: json.site_name, exp: json.exp })
+      } catch {}
+
+      const res = await fetch(newApiUrl, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${adminToken}`,
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+
+      console.log('🔑 [useCategories] ← статус ответа:', res.status, res.statusText);
 
       if (!res.ok) {
-        throw new Error('Не удалось получить категории');
+        if (res.status === 401) {
+          console.error('❌ [useCategories] Ошибка аутентификации (401)');
+          throw new Error('Ошибка аутентификации. Проверьте токен.');
+        }
+        throw new Error(`Не удалось получить категории: ${res.status} ${res.statusText}`);
       }
 
       const flat = await res.json();
-      console.log('[useCategories] ← сырой JSON:', flat);
+      console.log('✅ [useCategories] ← сырой JSON:', flat);
 
       const tree = buildTree(flat);
-      console.log('[useCategories] ← построенное дерево:', tree);
+      console.log('✅ [useCategories] ← построенное дерево:', tree);
 
       return tree;
     },
