@@ -1,24 +1,15 @@
-import { useRef, useState } from 'react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { ChevronLeft, ChevronRight, Upload } from 'lucide-react'
+import { useState } from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 import CategoryList from './components/CategoryList/CategoryList'
 import LibraryList from './components/LibraryList/LibraryList'
 
 export default function LibraryPage() {
-  const queryClientRef = useRef(new QueryClient())
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [collapsed, setCollapsed] = useState(false)
 
-  const handleUpload = () => {
-    alert('Открыть модалку загрузки изображения')
-    // TODO: подключить UploadModal
-  }
-
   return (
-    <QueryClientProvider client={queryClientRef.current}>
-      <div className="h-full px-0 pt-0 pb-4">
+    <div className="h-full px-0 pt-0 pb-4">
         <div className="flex h-full">
           <aside
             className={`relative transition-all duration-300 bg-white border-r ${
@@ -63,8 +54,6 @@ export default function LibraryPage() {
             <LibraryList categoryCode={selectedCategory} />
           </main>
         </div>
-      </div>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+    </div>
   )
 }

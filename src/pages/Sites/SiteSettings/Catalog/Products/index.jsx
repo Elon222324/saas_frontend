@@ -1,6 +1,4 @@
-import { useRef, useState } from 'react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
@@ -8,7 +6,6 @@ import CategoryList from './components/CategoryList/CategoryList'
 import ProductsList from './components/ProductsList/ProductsList'
 
 export default function Products() {
-  const queryClientRef = useRef(new QueryClient())
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [tab, setTab] = useState('categories')
   const [collapsed, setCollapsed] = useState(false)
@@ -23,8 +20,7 @@ export default function Products() {
   const siteName = `${domain}_app`
 
   return (
-    <QueryClientProvider client={queryClientRef.current}>
-      <div className="h-full px-0 pt-0 pb-4">
+    <div className="h-full px-0 pt-0 pb-4">
         {(tab === 'categories' || tab === 'labels') ? (
           <div className="flex h-full">
             <aside
@@ -82,8 +78,6 @@ export default function Products() {
             </main>
           </div>
         ) : null}
-      </div>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+    </div>
   )
 }
