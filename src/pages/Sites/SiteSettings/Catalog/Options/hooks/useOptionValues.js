@@ -1,15 +1,50 @@
 import { useQuery } from '@tanstack/react-query'
-
-const API_URL = import.meta.env.VITE_API_URL || ''
+import { useSiteSettings } from '../../../../../../context/SiteSettingsContext'
 
 export function useOptionValues(siteName, groupId, options = {}) {
+  const { siteToken } = useSiteSettings()
+
   return useQuery({
-    queryKey: ['optionValues', siteName, groupId],
+    queryKey: ['optionValues', siteName, groupId, siteToken?.token],
+    enabled: Boolean(siteToken?.token) && (options?.enabled ?? true),
     queryFn: async () => {
-      const url = groupId ? `${API_URL}/options/${siteName}/values?group_id=${groupId}` : `${API_URL}/options/${siteName}/values`
-      const res = await fetch(url, { credentials: 'include' })
-      if (!res.ok) throw new Error('Не удалось получить значения опций')
-      return res.json()
+      // Убираем суффикс _app для нового API
+      const siteNameForApi = siteName.replace('_app', '')
+      const baseUrl = `https://${siteNameForApi}.${import.meta.env.VITE_BASE_DOMAIN}/site-api/admin/options/values/`
+      const newApiUrl = groupId ? `${baseUrl}?group_id=${groupId}` : baseUrl
+
+      console.log('🔑 [useOptionValues] → запрашиваю новый API:', newApiUrl)
+
+      // Используем ТОЛЬКО админский токен сайта из контекста
+      const adminToken = siteToken?.token
+      if (!adminToken) {
+        console.error('❌ [useOptionValues] Админский токен сайта отсутствует')
+        throw new Error('Токен сайта не получен')
+      }
+
+      const res = await fetch(newApiUrl, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${adminToken}`,
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      })
+
+      console.log('🔑 [useOptionValues] ← статус ответа:', res.status, res.statusText)
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          console.error('❌ [useOptionValues] Ошибка аутентификации (401)')
+          throw new Error('Ошибка аутентификации. Проверьте токен.')
+        }
+        throw new Error(`Не удалось получить значения опций: ${res.status} ${res.statusText}`)
+      }
+
+      const data = await res.json()
+      console.log('✅ [useOptionValues] ← получено значений:', data?.length || 0)
+
+      return data
     },
     staleTime: 5 * 60 * 1000,
     ...options,
