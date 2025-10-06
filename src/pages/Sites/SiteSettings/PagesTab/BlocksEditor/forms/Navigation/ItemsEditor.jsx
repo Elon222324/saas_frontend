@@ -1,25 +1,55 @@
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import { GripVertical, Check, X, Pencil } from 'lucide-react'
 import { useState } from 'react'
+import { useSiteSettings } from '@/context/SiteSettingsContext'
 
 export default function NavigationItemsEditor({ items, siteName, siteData, setData, setItems, onChange, setShowToast }) {
+  const { siteToken } = useSiteSettings()
   const [editingIndex, setEditingIndex] = useState(null)
   const [editValue, setEditValue] = useState('')
+
+  // Убираем суффикс _app для нового API
+  const siteNameForApi = siteName?.replace('_app', '')
+  const baseDomain = import.meta.env.VITE_BASE_DOMAIN
+  const baseApiUrl = `https://${siteNameForApi}.${baseDomain}/site-api/admin/navigation/`
 
   const handleToggle = async (index) => {
     const item = items[index]
     const newVisible = !item.visible
+
+    if (!siteToken?.token) {
+      console.error('❌ [Navigation] Токен отсутствует')
+      alert('Токен авторизации отсутствует')
+      return
+    }
+
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/navigation/set-visible/${siteName}`, {
+      const setVisibleUrl = `${baseApiUrl}set-visible`
+      console.log('🔑 [Navigation] → изменяю видимость:', setVisibleUrl)
+      console.log('🔑 [Navigation] → данные:', { id: item.id, visible: newVisible })
+
+      const res = await fetch(setVisibleUrl, {
         method: 'PATCH',
         headers: {
+          'Authorization': `Bearer ${siteToken.token}`,
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
         },
         credentials: 'include',
         body: JSON.stringify({ id: Number(item.id), visible: newVisible }),
       })
-      if (!res.ok) throw new Error()
+
+      console.log('🔑 [Navigation] ← статус ответа:', res.status, res.statusText)
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          console.error('❌ [Navigation] Ошибка аутентификации (401)')
+          throw new Error('Ошибка аутентификации. Проверьте токен.')
+        }
+        throw new Error(`Ошибка обновления видимости: ${res.status}`)
+      }
+
+      console.log('✅ [Navigation] ← видимость обновлена')
+
       const updatedItems = [...items]
       updatedItems[index].visible = newVisible
       setItems(updatedItems)
@@ -29,8 +59,8 @@ export default function NavigationItemsEditor({ items, siteName, siteData, setDa
         navigation: prev.navigation.map(n => n.id === item.id ? { ...n, visible: newVisible } : n)
       }))
     } catch (err) {
-      console.error('❌ Ошибка обновления видимости:', err)
-      alert('Не удалось обновить видимость элемента')
+      console.error('❌ [Navigation] Ошибка обновления видимости:', err)
+      alert('Не удалось обновить видимость элемента: ' + err.message)
     }
   }
 
@@ -41,17 +71,40 @@ export default function NavigationItemsEditor({ items, siteName, siteData, setDa
       setEditingIndex(null)
       return
     }
+
+    if (!siteToken?.token) {
+      console.error('❌ [Navigation] Токен отсутствует')
+      alert('Токен авторизации отсутствует')
+      return
+    }
+
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/navigation/set-label/${siteName}`, {
+      const setLabelUrl = `${baseApiUrl}set-label`
+      console.log('🔑 [Navigation] → изменяю название:', setLabelUrl)
+      console.log('🔑 [Navigation] → данные:', { id: item.id, label: trimmed })
+
+      const res = await fetch(setLabelUrl, {
         method: 'PATCH',
         headers: {
+          'Authorization': `Bearer ${siteToken.token}`,
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
         credentials: 'include',
         body: JSON.stringify({ id: Number(item.id), label: trimmed }),
       })
-      if (!res.ok) throw new Error()
+
+      console.log('🔑 [Navigation] ← статус ответа:', res.status, res.statusText)
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          console.error('❌ [Navigation] Ошибка аутентификации (401)')
+          throw new Error('Ошибка аутентификации. Проверьте токен.')
+        }
+        throw new Error(`Ошибка обновления названия: ${res.status}`)
+      }
+
+      console.log('✅ [Navigation] ← название обновлено')
+
       const updatedItems = [...items]
       updatedItems[index].label = trimmed
       setItems(updatedItems)
@@ -62,8 +115,8 @@ export default function NavigationItemsEditor({ items, siteName, siteData, setDa
       }))
       setEditingIndex(null)
     } catch (err) {
-      console.error('❌ Ошибка обновления названия:', err)
-      alert('Не удалось сохранить название')
+      console.error('❌ [Navigation] Ошибка обновления названия:', err)
+      alert('Не удалось сохранить название: ' + err.message)
     }
   }
 
@@ -72,17 +125,40 @@ export default function NavigationItemsEditor({ items, siteName, siteData, setDa
       id: Number(item.id),
       order: Number(index + 1),
     }))
+
+    if (!siteToken?.token) {
+      console.error('❌ [Navigation] Токен отсутствует')
+      alert('Токен авторизации отсутствует')
+      return
+    }
+
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/navigation/reorder/${siteName}`, {
+      const reorderUrl = `${baseApiUrl}reorder`
+      console.log('🔑 [Navigation] → изменяю порядок:', reorderUrl)
+      console.log('🔑 [Navigation] → данные:', payload)
+
+      const res = await fetch(reorderUrl, {
         method: 'PATCH',
         headers: {
+          'Authorization': `Bearer ${siteToken.token}`,
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
         },
         credentials: 'include',
         body: JSON.stringify(payload),
       })
-      if (!res.ok) throw new Error()
+
+      console.log('🔑 [Navigation] ← статус ответа:', res.status, res.statusText)
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          console.error('❌ [Navigation] Ошибка аутентификации (401)')
+          throw new Error('Ошибка аутентификации. Проверьте токен.')
+        }
+        throw new Error(`Ошибка изменения порядка: ${res.status}`)
+      }
+
+      console.log('✅ [Navigation] ← порядок обновлен')
+
       const updatedItems = newItems.map((item, index) => ({
         ...item,
         order: index + 1,
@@ -99,8 +175,8 @@ export default function NavigationItemsEditor({ items, siteName, siteData, setDa
       setShowToast(true)
       setTimeout(() => setShowToast(false), 2000)
     } catch (err) {
-      console.error('❌ Ошибка при отправке порядка:', err)
-      alert('Не удалось сохранить порядок')
+      console.error('❌ [Navigation] Ошибка при отправке порядка:', err)
+      alert('Не удалось сохранить порядок: ' + err.message)
     }
   }
 
