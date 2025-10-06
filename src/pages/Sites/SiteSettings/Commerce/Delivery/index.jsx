@@ -12,11 +12,14 @@ function numberOrEmpty(value) {
 
 export default function Delivery() {
   const { domain } = useParams()
-  const { site_name } = useSiteSettings()
+  const { site_name, siteToken } = useSiteSettings()
 
-  const API_URL = import.meta.env.VITE_API_URL
   const baseDomain = import.meta.env.VITE_BASE_DOMAIN
   const full_domain = `${domain}.${baseDomain}`
+  
+  // Убираем суффикс _app для нового API
+  const siteNameForApi = site_name?.replace('_app', '') || domain
+  const baseApiUrl = `https://${siteNameForApi}.${baseDomain}/site-api/admin/delivery-rules/`
 
   const [rules, setRules] = useState([])
   const [isLoading, setIsLoading] = useState(false)
@@ -25,22 +28,40 @@ export default function Delivery() {
   const hasRules = rules && rules.length > 0
 
   const fetchRules = async () => {
-    if (!site_name) return
+    if (!siteToken?.token) {
+      console.log('⏳ [Delivery] Ожидание токена...')
+      return
+    }
+    
     setIsLoading(true)
     try {
-      const res = await fetch(`${API_URL}/delivery-rules/${site_name}/`, {
+      console.log('🔑 [Delivery] → запрашиваю правила доставки:', baseApiUrl)
+
+      const res = await fetch(baseApiUrl, {
+        method: 'GET',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-          Accept: 'application/json',
+          'Authorization': `Bearer ${siteToken.token}`,
+          'Content-Type': 'application/json',
         },
         credentials: 'include',
       })
-      if (!res.ok) throw new Error('Не удалось загрузить правила доставки')
+
+      console.log('🔑 [Delivery] ← статус ответа:', res.status, res.statusText)
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          console.error('❌ [Delivery] Ошибка аутентификации (401)')
+          throw new Error('Ошибка аутентификации. Проверьте токен.')
+        }
+        throw new Error(`Не удалось загрузить правила доставки: ${res.status}`)
+      }
+
       const data = await res.json()
+      console.log('✅ [Delivery] ← получено правил:', data?.length || 0)
       setRules(Array.isArray(data) ? data : [])
     } catch (err) {
-      console.error(err)
-      alert('Ошибка при загрузке правил доставки')
+      console.error('❌ [Delivery] Ошибка:', err)
+      alert('Ошибка при загрузке правил доставки: ' + err.message)
     } finally {
       setIsLoading(false)
     }
@@ -49,7 +70,7 @@ export default function Delivery() {
   useEffect(() => {
     fetchRules()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [site_name])
+  }, [siteToken?.token])
 
   const [newBaseFee, setNewBaseFee] = useState('')
   const [newFreeThreshold, setNewFreeThreshold] = useState('')
@@ -61,49 +82,86 @@ export default function Delivery() {
   }, [newBaseFee, newFreeThreshold])
 
   const handleCreate = async () => {
-    if (!canCreate) return
+    if (!canCreate || !siteToken?.token) return
     setIsSaving(true)
     try {
       const payload = {
         base_fee: Number(newBaseFee),
         free_delivery_threshold: newFreeThreshold === '' ? null : Number(newFreeThreshold),
       }
-      const res = await fetch(`${API_URL}/delivery-rules/${site_name}/`, {
+
+      console.log('🔑 [Delivery] → создаю правило:', baseApiUrl)
+      console.log('🔑 [Delivery] → данные:', payload)
+
+      const res = await fetch(baseApiUrl, {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${siteToken.token}`,
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
         credentials: 'include',
         body: JSON.stringify(payload),
       })
-      if (!res.ok) throw new Error('Не удалось создать правило')
+
+      console.log('🔑 [Delivery] ← статус ответа:', res.status, res.statusText)
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          console.error('❌ [Delivery] Ошибка аутентификации (401)')
+          throw new Error('Ошибка аутентификации. Проверьте токен.')
+        }
+        throw new Error(`Не удалось создать правило: ${res.status}`)
+      }
+
+      const result = await res.json()
+      console.log('✅ [Delivery] ← создано правило:', result)
+
       setNewBaseFee('')
       setNewFreeThreshold('')
       await fetchRules()
     } catch (err) {
-      console.error(err)
-      alert('Ошибка создания правила доставки')
+      console.error('❌ [Delivery] Ошибка создания:', err)
+      alert('Ошибка создания правила доставки: ' + err.message)
     } finally {
       setIsSaving(false)
     }
   }
 
   const handleActivate = async (ruleId) => {
+    if (!siteToken?.token) return
     setIsSaving(true)
     try {
-      const res = await fetch(`${API_URL}/delivery-rules/${site_name}/activate/${ruleId}`, {
+      const activateUrl = `${baseApiUrl}activate/${ruleId}`
+      console.log('🔑 [Delivery] → активирую правило:', activateUrl)
+
+      const res = await fetch(activateUrl, {
         method: 'PATCH',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          'Authorization': `Bearer ${siteToken.token}`,
+          'Content-Type': 'application/json',
         },
         credentials: 'include',
       })
-      if (!res.ok) throw new Error('Не удалось активировать правило')
+
+      console.log('🔑 [Delivery] ← статус ответа:', res.status, res.statusText)
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          console.error('❌ [Delivery] Ошибка аутентификации (401)')
+          throw new Error('Ошибка аутентификации. Проверьте токен.')
+        }
+        if (res.status === 404) {
+          console.error('❌ [Delivery] Правило не найдено (404)')
+          throw new Error('Правило не найдено')
+        }
+        throw new Error(`Не удалось активировать правило: ${res.status}`)
+      }
+
+      console.log('✅ [Delivery] ← правило активировано')
       await fetchRules()
     } catch (err) {
-      console.error(err)
-      alert('Ошибка активации правила доставки')
+      console.error('❌ [Delivery] Ошибка активации:', err)
+      alert('Ошибка активации правила доставки: ' + err.message)
     } finally {
       setIsSaving(false)
     }
