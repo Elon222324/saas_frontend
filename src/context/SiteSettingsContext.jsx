@@ -91,7 +91,7 @@ export const SiteSettingsProvider = ({ children }) => {
   // Первый запрос
   useEffect(() => {
     console.log('🚀 [SITE SETTINGS] Инициализация настроек сайта для:', site_name)
-    console.log('🔗 [SITE SETTINGS] URL для нового API категорий:', `https://${site_name_for_token}.${import.meta.env.VITE_BASE_DOMAIN}/site-api/admin/products/categories/`)
+    console.log('🔗 [SITE SETTINGS] URL для нового API категорий:', `https://${site_name_for_token}.${import.meta.env.VITE_BASE_DOMAIN}/site-api/admin/categories/`)
     
     // Сначала пытаемся получить токен сайта
     fetchSiteToken().then(() => {

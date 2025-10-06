@@ -1,6 +1,5 @@
 // src/pages/Sites/SiteSettings/Products/hooks/useCategoryCrud.js
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import slugify from 'slugify'
 import { useSiteSettings } from '../../../../../../../context/SiteSettingsContext'
 
 const API_URL = import.meta.env.VITE_API_URL || ''
@@ -11,17 +10,23 @@ export function useCategoryCrud(siteName) {
 
   // Убираем суффикс _app для нового API
   const siteNameForApi = siteName.replace('_app', '');
-  const baseApiUrl = `https://${siteNameForApi}.${import.meta.env.VITE_BASE_DOMAIN}/site-api/admin/products/categories/`;
+  const baseApiUrl = `https://${siteNameForApi}.${import.meta.env.VITE_BASE_DOMAIN}/site-api/admin/categories/`;
 
   /* CREATE ------------------------------------------------------------------ */
   const add = useMutation({
-    mutationFn: async ({ name, parent_id }) => {
+    mutationFn: async ({ slug, name, parent_id, code, description, image_url, display_order }) => {
       const body = {
-        slug: slugify(name, { lower: true, locale: 'ru' }),
+        slug,
         name,
         parent_id: parent_id || null,
         is_active: true,
       }
+      
+      // Добавляем опциональные поля только если они переданы
+      if (code) body.code = code
+      if (description) body.description = description
+      if (image_url) body.image_url = image_url
+      if (display_order !== undefined) body.display_order = display_order
       
       console.log('🔑 [useCategoryCrud] → создаю категорию:', baseApiUrl);
       console.log('🔑 [useCategoryCrud] → данные:', body);
@@ -66,12 +71,18 @@ export function useCategoryCrud(siteName) {
 
   /* UPDATE ------------------------------------------------------------------ */
   const update = useMutation({
-    mutationFn: async ({ id, name, parent_id }) => {
+    mutationFn: async ({ id, slug, name, parent_id, code, description, image_url, display_order }) => {
       const body = {
-        slug: slugify(name, { lower: true, locale: 'ru' }),
+        slug,
         name,
         parent_id: parent_id || null,
       }
+      
+      // Добавляем опциональные поля только если они переданы
+      if (code) body.code = code
+      if (description) body.description = description
+      if (image_url) body.image_url = image_url
+      if (display_order !== undefined) body.display_order = display_order
       
       const updateUrl = `${baseApiUrl}${id}`;
       console.log('🔑 [useCategoryCrud] → обновляю категорию:', updateUrl);

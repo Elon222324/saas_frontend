@@ -14,7 +14,7 @@ export function useCategories(siteName, options = {}) {
     queryFn: async () => {
       // Убираем суффикс _app для нового API
       const siteNameForApi = siteName.replace('_app', '');
-      const newApiUrl = `https://${siteNameForApi}.${import.meta.env.VITE_BASE_DOMAIN}/site-api/admin/products/categories/`;
+      const newApiUrl = `https://${siteNameForApi}.${import.meta.env.VITE_BASE_DOMAIN}/site-api/admin/categories/`;
       
       console.log('🔑 [useCategories] → запрашиваю новый API:', newApiUrl);
       console.log('🔑 [useCategories] → используем админский JWT токен для аутентификации');

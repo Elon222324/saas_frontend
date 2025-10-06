@@ -42,7 +42,7 @@ JWT токен должен содержать следующие поля:
 
 ### 1. Получить все категории
 ```http
-GET /site-api/admin/products/categories/
+GET /site-api/admin/categories/
 ```
 
 **Заголовки:**
@@ -73,11 +73,11 @@ Content-Type: application/json
 
 ### 2. Получить категорию по ID
 ```http
-GET /site-api/admin/products/categories/{category_id}
+GET /site-api/admin/categories/{id}
 ```
 
 **Параметры:**
-- `category_id` (int) - ID категории
+- `id` (int) - ID категории
 
 **Заголовки:**
 ```
@@ -109,7 +109,7 @@ Content-Type: application/json
 
 ### 3. Получить категорию по slug
 ```http
-GET /site-api/admin/products/categories/by-slug/{slug}
+GET /site-api/admin/categories/by-slug/{slug}
 ```
 
 **Параметры:**
@@ -145,7 +145,7 @@ Content-Type: application/json
 
 ### 4. Создать категорию
 ```http
-POST /site-api/admin/products/categories/
+POST /site-api/admin/categories/
 ```
 
 **Заголовки:**
@@ -205,11 +205,11 @@ Content-Type: application/json
 
 ### 5. Обновить категорию
 ```http
-PATCH /site-api/admin/products/categories/{category_id}
+PATCH /site-api/admin/categories/{id}
 ```
 
 **Параметры:**
-- `category_id` (int) - ID категории
+- `id` (int) - ID категории
 
 **Заголовки:**
 ```
@@ -257,11 +257,11 @@ Content-Type: application/json
 
 ### 6. Удалить категорию
 ```http
-DELETE /site-api/admin/products/categories/{category_id}
+DELETE /site-api/admin/categories/{id}
 ```
 
 **Параметры:**
-- `category_id` (int) - ID категории
+- `id` (int) - ID категории
 
 **Заголовки:**
 ```
@@ -314,7 +314,7 @@ Authorization: Bearer <admin_jwt_token>
 const token = 'your_admin_jwt_token';
 
 // Получить все категории
-const response = await fetch('/site-api/admin/products/categories/', {
+const response = await fetch('/site-api/admin/categories/', {
   method: 'GET',
   headers: {
     'Authorization': `Bearer ${token}`,
@@ -338,7 +338,7 @@ const api = axios.create({
 });
 
 // Создать категорию
-const newCategory = await api.post('/admin/products/categories/', {
+const newCategory = await api.post('/admin/categories/', {
   slug: 'new-category',
   name: 'Новая категория',
   description: 'Описание категории'
@@ -356,7 +356,7 @@ const useCategories = (token: string) => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch('/site-api/admin/products/categories/', {
+        const response = await fetch('/site-api/admin/categories/', {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
