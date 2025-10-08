@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import api from '@/lib/axios'
+import { useSiteTokenString } from '@/hooks/useSiteToken'
 // removed unused local UI imports
 import OrdersHeader from './components/OrdersHeader'
 import OrdersSidebar from './components/OrdersSidebar'
@@ -29,11 +30,19 @@ export default function OrdersPage() {
     return value.endsWith(containerSuffix) ? value.slice(0, -containerSuffix.length) : value
   }
 
+  // 🔑 Получаем токен сайта для нового API
+  const siteNameForToken = useMemo(() => stripAppSuffix(selectedSite), [selectedSite, containerSuffix])
+  const { token: siteToken, isLoading: tokenLoading, error: tokenError } = useSiteTokenString(
+    siteNameForToken, 
+    { enabled: Boolean(siteNameForToken) }
+  )
+
+  // User token для старых эндпоинтов (список сайтов)
   const authHeaders = useMemo(() => ({
     Authorization: `Bearer ${localStorage.getItem('access_token')}`,
   }), [])
 
-  // Текущее имя сайта для API с контейнерным суффиксом
+  // Текущее имя сайта для API с контейнерным суффиксом (для старого API)
   const siteNameForApi = useMemo(() => {
     if (!selectedSite) return ''
     return selectedSite.endsWith(containerSuffix)
@@ -73,23 +82,34 @@ export default function OrdersPage() {
         setSelectedSite(domainNoSuffix)
       }
     } catch (e) {
-      console.error(e)
+      console.error('❌ [Orders] Ошибка загрузки сайтов:', e)
+      setError('Не удалось загрузить список сайтов')
     } finally {
       setLoadingSites(false)
     }
   }
 
   const fetchOrders = async () => {
-    if (!selectedSite) return
+    if (!selectedSite || !siteToken) {
+      console.log('⏳ [Orders] Ожидаем токен сайта...')
+      return
+    }
+    
     setLoadingOrders(true)
     setError('')
     try {
-      const siteNameForApi = selectedSite.endsWith(containerSuffix)
-        ? selectedSite
-        : `${selectedSite}${containerSuffix}`
+      const siteForUrl = stripAppSuffix(selectedSite)
+      const newApiUrl = `https://${siteForUrl}.${baseDomain}/site-api/admin/orders/`
+      
+      console.log('🔑 [Orders] → Запрашиваю новый API:', newApiUrl)
+      console.log('🔑 [Orders] → Токен сайта:', siteToken ? 'получен' : 'отсутствует')
+      console.log('🔑 [Orders] → Сайт для API:', siteForUrl)
+
       const params = { limit, offset }
       if (searchQuery) params.search = searchQuery
-      if (Array.isArray(selectedStatuses) && selectedStatuses.length > 0) params.status = selectedStatuses.join(',')
+      if (Array.isArray(selectedStatuses) && selectedStatuses.length > 0) {
+        params.status = selectedStatuses.join(',')
+      }
       if (datePreset === 'today') {
         const today = new Date()
         const from = new Date(today.getFullYear(), today.getMonth(), today.getDate())
@@ -107,37 +127,130 @@ export default function OrdersPage() {
         params.date_to = new Date(dateTo).toISOString()
       }
 
-      const res = await api.get(`/orders/${siteNameForApi}/`, {
-        params,
-        headers: authHeaders,
+      const queryString = new URLSearchParams(params).toString()
+      const fullUrl = `${newApiUrl}?${queryString}`
+      console.log('🔑 [Orders] → Полный URL с параметрами:', fullUrl)
+
+      const res = await fetch(fullUrl, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${siteToken}`,
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
       })
+
+      console.log('🔑 [Orders] ← Статус ответа:', res.status, res.statusText)
+
+      if (!res.ok) {
+        // Пытаемся получить детали ошибки от сервера
+        let errorMessage = `HTTP ${res.status}: ${res.statusText}`
+        let errorDetails = null
+        
+        try {
+          const errorData = await res.json()
+          console.error('❌ [Orders] ← Детали ошибки сервера:', errorData)
+          errorDetails = errorData
+          
+          if (errorData.message) {
+            errorMessage = errorData.message
+          } else if (errorData.error) {
+            errorMessage = errorData.error
+          } else if (errorData.detail) {
+            errorMessage = errorData.detail
+          } else if (errorData.errors) {
+            // Обработка валидационных ошибок
+            const errors = Array.isArray(errorData.errors) 
+              ? errorData.errors.join(', ')
+              : JSON.stringify(errorData.errors)
+            errorMessage = `Ошибки валидации: ${errors}`
+          }
+        } catch (e) {
+          console.error('❌ [Orders] ← Не удалось прочитать детали ошибки:', e)
+        }
+
+        // Специальная обработка для разных статусов
+        if (res.status === 401) {
+          throw new Error('Ошибка аутентификации. Токен сайта недействителен или истек.')
+        } else if (res.status === 403) {
+          throw new Error('Доступ запрещен. Недостаточно прав для просмотра заказов.')
+        } else if (res.status === 404) {
+          throw new Error('API заказов не найден. Возможно, сайт не поддерживает этот функционал.')
+        } else if (res.status === 500) {
+          throw new Error(`Ошибка сервера: ${errorMessage}. Проверьте логи сервера.`)
+        } else if (res.status === 502 || res.status === 503) {
+          throw new Error('Сервис временно недоступен. Попробуйте позже.')
+        }
+        
+        throw new Error(`Не удалось получить заказы: ${errorMessage}`)
+      }
+
+      const data = await res.json()
+      console.log('🔍 [Orders] ← Полный ответ API:', data)
+      
       // Поддержка разных форматов ответа
-      // 1) { orders: [...] }
-      // 2) { results: [...] }
-      // 3) [...]
-      const data = Array.isArray(res.data)
-        ? res.data
-        : (res.data?.orders || res.data?.results || [])
-      setOrders(data)
+      const orders = Array.isArray(data)
+        ? data
+        : (data?.orders || data?.results || data?.data || [])
+      
+      console.log('✅ [Orders] ← Получено заказов:', orders.length)
+      console.log('📋 [Orders] ← Обработанные заказы:', orders.length, orders)
+      setOrders(orders)
     } catch (e) {
-      console.error('Ошибка при получении заказов', e)
-      setError('Не удалось загрузить заказы')
+      console.error('❌ [Orders] Ошибка при получении заказов:', e)
+      
+      // Более информативные сообщения об ошибках
+      let userMessage = 'Не удалось загрузить заказы'
+      if (e.message.includes('Failed to fetch')) {
+        userMessage = 'Ошибка сети. Проверьте подключение к интернету.'
+      } else if (e.message.includes('аутентификации')) {
+        userMessage = 'Ошибка авторизации. Попробуйте перезагрузить страницу.'
+      } else if (e.message.includes('сервера')) {
+        userMessage = 'Ошибка сервера. Обратитесь к администратору.'
+      } else if (e.message) {
+        userMessage = e.message
+      }
+      
+      setError(userMessage)
     } finally {
       setLoadingOrders(false)
     }
   }
 
   const fetchOrderDetails = async (orderId) => {
-    if (!selectedSite) return
+    if (!selectedSite || !siteToken) return
     try {
-      const siteNameForApi = selectedSite.endsWith(containerSuffix)
-        ? selectedSite
-        : `${selectedSite}${containerSuffix}`
-      const res = await api.get(`/orders/${siteNameForApi}/${orderId}`, { headers: authHeaders })
-      setDetailsOrder(res.data)
+      const siteForUrl = stripAppSuffix(selectedSite)
+      const newApiUrl = `https://${siteForUrl}.${baseDomain}/site-api/admin/orders/${orderId}/details`
+      
+      console.log('🔑 [Orders] → Запрашиваю детали заказа:', newApiUrl)
+
+      const res = await fetch(newApiUrl, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${siteToken}`,
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      })
+
+      if (!res.ok) {
+        let errorMessage = `HTTP ${res.status}: ${res.statusText}`
+        try {
+          const errorData = await res.json()
+          if (errorData.message) errorMessage = errorData.message
+        } catch (e) {
+          // Игнорируем ошибки парсинга
+        }
+        throw new Error(`Не удалось получить детали заказа: ${errorMessage}`)
+      }
+
+      const data = await res.json()
+      console.log('✅ [Orders] ← Детали заказа получены')
+      setDetailsOrder(data)
     } catch (e) {
-      console.error('Ошибка при получении заказа', e)
-      alert('Не удалось загрузить детали заказа')
+      console.error('❌ [Orders] Ошибка при получении заказа:', e)
+      alert(`Не удалось загрузить детали заказа: ${e.message}`)
     }
   }
 
@@ -168,10 +281,21 @@ export default function OrdersPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Обновляем заказы когда токен готов
   useEffect(() => {
-    fetchOrders()
+    if (siteToken) {
+      fetchOrders()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSite, limit, offset])
+  }, [selectedSite, limit, offset, siteToken])
+
+  // Показываем ошибку токена если есть
+  useEffect(() => {
+    if (tokenError) {
+      console.error('❌ [Orders] Ошибка получения токена:', tokenError)
+      setError(`Не удалось получить токен для сайта: ${tokenError.message}`)
+    }
+  }, [tokenError])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -227,18 +351,43 @@ export default function OrdersPage() {
           <OrderDetailsModal 
             details={detailsOrder} 
             onClose={() => setDetailsOrder(null)}
-            siteNameForApi={siteNameForApi}
-            headers={authHeaders}
+            siteNameForToken={siteNameForToken}
+            siteToken={siteToken}
+            baseDomain={baseDomain}
             refreshOrders={fetchOrders}
             reloadDetails={async () => {
               try {
-                if (!detailsOrder) return
+                if (!detailsOrder || !siteToken) return
                 const id = (detailsOrder.order || detailsOrder)?.id || (detailsOrder.order || detailsOrder)?.order_id
                 if (!id) return
-                const res = await api.get(`/orders/${siteNameForApi}/${id}`, { headers: authHeaders })
-                setDetailsOrder(res.data)
+                
+                const siteForUrl = stripAppSuffix(selectedSite)
+                const url = `https://${siteForUrl}.${baseDomain}/site-api/admin/orders/${id}/details`
+                
+                const res = await fetch(url, {
+                  headers: { 
+                    'Authorization': `Bearer ${siteToken}`,
+                    'Content-Type': 'application/json',
+                  },
+                  credentials: 'include',
+                })
+                
+                if (!res.ok) {
+                  let errorMessage = `HTTP ${res.status}: ${res.statusText}`
+                  try {
+                    const errorData = await res.json()
+                    if (errorData.message) errorMessage = errorData.message
+                  } catch (e) {
+                    // Игнорируем ошибки парсинга
+                  }
+                  throw new Error(`Не удалось обновить детали заказа: ${errorMessage}`)
+                }
+                
+                const data = await res.json()
+                setDetailsOrder(data)
               } catch (e) {
-                console.error('Не удалось обновить детали заказа', e)
+                console.error('❌ [Orders] Не удалось обновить детали заказа:', e)
+                alert(`Не удалось обновить детали заказа: ${e.message}`)
               }
             }}
           />
@@ -247,5 +396,3 @@ export default function OrdersPage() {
     </div>
   )
 }
-
-

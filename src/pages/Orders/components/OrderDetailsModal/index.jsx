@@ -9,7 +9,7 @@ import { EventsSection } from './components/EventsSection.jsx'
 import { ModalFooter } from './components/ModalFooter.jsx'
 import { useOrderDetails } from './hooks/useOrderDetails.js'
 
-export default function OrderDetailsModal({ details, onClose, siteNameForApi, headers, refreshOrders, reloadDetails }) {
+export default function OrderDetailsModal({ details, onClose, siteNameForToken, siteToken, baseDomain, refreshOrders, reloadDetails }) {
   if (!details) return null
 
   // API variants support
@@ -45,7 +45,7 @@ export default function OrderDetailsModal({ details, onClose, siteNameForApi, he
     isDetailsDirty,
     isStatusDirty,
     isPaymentStatusDirty,
-  } = useOrderDetails(details, siteNameForApi, headers, orderId, refreshOrders, reloadDetails)
+  } = useOrderDetails(details, siteNameForToken, siteToken, baseDomain, orderId, refreshOrders, reloadDetails)
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">

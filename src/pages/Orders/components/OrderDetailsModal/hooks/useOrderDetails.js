@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-import api from '@/lib/axios'
 import { extractErrorMessage, mapStatusForBackend, mapPaymentStatusForBackend } from '../utils.js'
 
-export function useOrderDetails(details, siteNameForApi, headers, orderId, refreshOrders, reloadDetails) {
+export function useOrderDetails(details, siteNameForToken, siteToken, baseDomain, orderId, refreshOrders, reloadDetails) {
   // Local editable state
   const [editAddress, setEditAddress] = useState(details?.order?.address_text || '')
   const [editComment, setEditComment] = useState(details?.order?.comment || '')
@@ -25,7 +24,13 @@ export function useOrderDetails(details, siteNameForApi, headers, orderId, refre
     }
   }, [details])
 
-  const canCallAdmin = useMemo(() => Boolean(siteNameForApi && headers && orderId), [siteNameForApi, headers, orderId])
+  const canCallAdmin = useMemo(() => Boolean(siteNameForToken && siteToken && baseDomain && orderId), [siteNameForToken, siteToken, baseDomain, orderId])
+
+  // Формируем базовый URL для нового API
+  const baseApiUrl = useMemo(() => {
+    if (!siteNameForToken || !baseDomain) return ''
+    return `https://${siteNameForToken}.${baseDomain}/site-api/admin/orders`
+  }, [siteNameForToken, baseDomain])
 
   const isDetailsDirty = useMemo(() => {
     if (!details) return false
@@ -48,24 +53,60 @@ export function useOrderDetails(details, siteNameForApi, headers, orderId, refre
 
   useEffect(() => {
     // Load events lazily on open
-    if (!canCallAdmin) return
+    if (!canCallAdmin || !baseApiUrl) return
     setEventsLoading(true)
-    api.get(`/orders/${siteNameForApi}/admin/${orderId}/events`, { headers })
-      .then((res) => setEvents(Array.isArray(res.data) ? res.data : (res.data?.events || [])))
-      .catch(() => setEvents([]))
+    
+    const url = `${baseApiUrl}/${orderId}/events`
+    console.log('🔑 [OrderDetails] → Загружаю события:', url)
+    
+    fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${siteToken}`,
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    })
+      .then(res => res.json())
+      .then((data) => {
+        setEvents(Array.isArray(data) ? data : (data?.events || []))
+        console.log('✅ [OrderDetails] ← События загружены')
+      })
+      .catch((err) => {
+        console.error('❌ [OrderDetails] Ошибка загрузки событий:', err)
+        setEvents([])
+      })
       .finally(() => setEventsLoading(false))
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canCallAdmin, siteNameForApi, orderId])
+  }, [canCallAdmin, baseApiUrl, orderId])
 
   const handleSaveEdits = async () => {
     if (!canCallAdmin) return
     setSaving(true)
     try {
-      await api.patch(`/orders/${siteNameForApi}/admin/${orderId}`, {
-        address_text: editAddress || undefined,
-        comment: editComment || undefined,
-        payment_method: editPaymentMethod || undefined,
-      }, { headers })
+      const url = `${baseApiUrl}/${orderId}`
+      console.log('🔑 [OrderDetails] → PATCH заказ:', url)
+      
+      const res = await fetch(url, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${siteToken}`,
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          address_text: editAddress || undefined,
+          comment: editComment || undefined,
+          payment_method: editPaymentMethod || undefined,
+        })
+      })
+
+      if (!res.ok) {
+        const error = await res.json().catch(() => ({ message: `HTTP ${res.status}` }))
+        throw error
+      }
+
+      console.log('✅ [OrderDetails] ← Заказ обновлен')
       await reloadDetails?.()
       await refreshOrders?.()
     } catch (e) {
@@ -80,7 +121,25 @@ export function useOrderDetails(details, siteNameForApi, headers, orderId, refre
     if (!canCallAdmin || !newStatus) return
     setSaving(true)
     try {
-      await api.patch(`/orders/${siteNameForApi}/admin/${orderId}/status`, { status: mapStatusForBackend(newStatus) }, { headers })
+      const url = `${baseApiUrl}/${orderId}/status`
+      console.log('🔑 [OrderDetails] → PATCH статус:', url)
+      
+      const res = await fetch(url, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${siteToken}`,
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ status: mapStatusForBackend(newStatus) })
+      })
+
+      if (!res.ok) {
+        const error = await res.json().catch(() => ({ message: `HTTP ${res.status}` }))
+        throw error
+      }
+
+      console.log('✅ [OrderDetails] ← Статус обновлен')
       await reloadDetails?.()
       await refreshOrders?.()
     } catch (e) {
@@ -95,7 +154,25 @@ export function useOrderDetails(details, siteNameForApi, headers, orderId, refre
     if (!canCallAdmin || !newPaymentStatus) return
     setSaving(true)
     try {
-      await api.patch(`/orders/${siteNameForApi}/admin/${orderId}/payment-status`, { payment_status: mapPaymentStatusForBackend(newPaymentStatus) }, { headers })
+      const url = `${baseApiUrl}/${orderId}/payment-status`
+      console.log('🔑 [OrderDetails] → PATCH статус оплаты:', url)
+      
+      const res = await fetch(url, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${siteToken}`,
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ payment_status: mapPaymentStatusForBackend(newPaymentStatus) })
+      })
+
+      if (!res.ok) {
+        const error = await res.json().catch(() => ({ message: `HTTP ${res.status}` }))
+        throw error
+      }
+
+      console.log('✅ [OrderDetails] ← Статус оплаты обновлен')
       await reloadDetails?.()
       await refreshOrders?.()
     } catch (e) {
@@ -110,7 +187,25 @@ export function useOrderDetails(details, siteNameForApi, headers, orderId, refre
     if (!canCallAdmin || !noteText.trim()) return
     setAddingNote(true)
     try {
-      await api.post(`/orders/${siteNameForApi}/admin/${orderId}/note`, { note: noteText.trim() }, { headers })
+      const url = `${baseApiUrl}/${orderId}/note`
+      console.log('🔑 [OrderDetails] → POST примечание:', url)
+      
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${siteToken}`,
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ note: noteText.trim() })
+      })
+
+      if (!res.ok) {
+        const error = await res.json().catch(() => ({ message: `HTTP ${res.status}` }))
+        throw error
+      }
+
+      console.log('✅ [OrderDetails] ← Примечание добавлено')
       setNoteText('')
       await reloadDetails?.()
     } catch (e) {
@@ -125,7 +220,25 @@ export function useOrderDetails(details, siteNameForApi, headers, orderId, refre
     const itemId = item.id || item.item_id
     if (!canCallAdmin || !itemId) return
     try {
-      await api.patch(`/orders/${siteNameForApi}/admin/${orderId}/items/${itemId}`, { quantity: Number(quantity) }, { headers })
+      const url = `${baseApiUrl}/${orderId}/items/${itemId}`
+      console.log('🔑 [OrderDetails] → PATCH количество товара:', url)
+      
+      const res = await fetch(url, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${siteToken}`,
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ quantity: Number(quantity) })
+      })
+
+      if (!res.ok) {
+        const error = await res.json().catch(() => ({ message: `HTTP ${res.status}` }))
+        throw error
+      }
+
+      console.log('✅ [OrderDetails] ← Количество обновлено')
       await reloadDetails?.()
       await refreshOrders?.()
     } catch (e) {

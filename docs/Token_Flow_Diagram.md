@@ -26,7 +26,7 @@
                 ▼             ▼                   ▼
         ┌──────────────────────────────────────────────────┐
         │             VITE_API_URL (Admin API)              │
-        │  /sites/*, /users/*, /orders/* (старый)          │
+        │  /sites/*, /users/*, /user/site-token/*          │
         └──────────────────────────────────────────────────┘
                                                   │
                                                   ▼
@@ -65,21 +65,11 @@
        │                                 │
        ▼                                 │
 ┌─────────────────────────────────────┐ │
-│  POST /user/admin-token/{site}      │ │
+│  POST /user/site-token/{site}       │ │
 │  Authorization: Bearer {userToken}  │ │
 └──────┬──────────────────────────────┘ │
        │                                 │
-   [SUCCESS]  [FAIL]                     │
-       │        │                        │
-       │        ▼                        │
-       │  ┌─────────────────────────┐   │
-       │  │ POST /user/site-token/  │   │
-       │  │ (fallback)              │   │
-       │  └──────┬──────────────────┘   │
-       │         │                      │
-       └────┬────┘                      │
-            │                           │
-            ▼                           │
+       ▼                                 │
 ┌─────────────────────────────────────┐ │
 │  Normalize & Cache Token            │ │
 │  staleTime: 5 min                   │ │
@@ -160,7 +150,7 @@ Cache:  Get Token   Use     Get Token   Use     Use cached!
           │      │ A tk │     │      │ B tk │     │
           ▼      └──────┘     ▼      └──────┘     ▼
 API:    POST                POST                 (no request)
-        admin-token         admin-token
+        site-token          site-token
         /t4a                /t5b
           │                   │                   │
           ▼                   ▼                   ▼
@@ -232,36 +222,29 @@ Component
 └────┬────────────────────────────────────┘
      │
      ▼
-POST /user/admin-token/t4a
+POST /user/site-token/t4a
      │
      ├─▶ [200 OK] ────────────────────────┐
      │                                     │
      ├─▶ [401 Unauthorized]                │
      │         │                           │
      │         ▼                           │
-     │   Retry with /site-token            │
+     │   Wait 1s → Retry                   │
      │         │                           │
      │         ├─▶ [200 OK] ───────────────┤
      │         │                           │
-     │         └─▶ [401]                   │
+     │         └─▶ [Error]                 │
      │               │                     │
      │               ▼                     │
-     │         Wait 1s → Retry             │
+     │         Wait 2s → Retry             │
      │               │                     │
      │               ├─▶ [200 OK] ─────────┤
      │               │                     │
      │               └─▶ [Error]           │
      │                     │               │
      │                     ▼               │
-     │               Wait 2s → Retry       │
-     │                     │               │
-     │                     ├─▶ [200 OK] ───┤
-     │                     │               │
-     │                     └─▶ [Error]     │
-     │                           │         │
-     │                           ▼         │
-     │                     Give Up         │
-     │                     Return error    │
+     │               Give Up               │
+     │               Return error          │
      │                                     │
      └─────────────────┬───────────────────┘
                        │
@@ -305,7 +288,7 @@ POST /user/admin-token/t4a
        │ token          │ token          │ token
        ▼                ▼                ▼
     FETCH            FETCH            FETCH
-    /admin-token     /admin-token     /admin-token
+    /site-token      /site-token      /site-token
     
 ❌ 3 запроса на получение одного и того же токена
 ❌ Нет кеширования между компонентами
@@ -341,7 +324,7 @@ POST /user/admin-token/t4a
                        │ Only ONE fetch
                        ▼
                     FETCH
-                    /admin-token
+                    /site-token
                     
 ✅ 1 запрос для всех компонентов
 ✅ Автоматическое кеширование

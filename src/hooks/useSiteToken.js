@@ -30,9 +30,9 @@ export function useSiteToken(siteName, options = {}) {
       if (!accessToken) {
         throw new Error('Отсутствует access_token пользователя')
       }
-
-      // Пробуем получить админский токен (содержит user_id)
-      let response = await fetch(`${API_URL}/user/admin-token/${siteName}`, {
+      
+      // Получаем токен сайта напрямую
+      const response = await fetch(`${API_URL}/user/site-token/${siteName}`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -40,21 +40,7 @@ export function useSiteToken(siteName, options = {}) {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
-      }).catch(() => null)
-
-      // Fallback на site-token если admin-token недоступен
-      if (!response || !response.ok) {
-        console.log('🔄 [useSiteToken] → Fallback на site-token')
-        response = await fetch(`${API_URL}/user/site-token/${siteName}`, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-        })
-      }
+      })
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -65,7 +51,7 @@ export function useSiteToken(siteName, options = {}) {
       // Нормализуем токен в единый формат
       const normalizedToken = typeof tokenData === 'string'
         ? tokenData
-        : (tokenData.token || tokenData.access_token || tokenData.site_token || tokenData.admin_token || null)
+        : (tokenData.token || tokenData.access_token || tokenData.site_token || null)
 
       if (!normalizedToken) {
         throw new Error('Не удалось извлечь токен из ответа')
