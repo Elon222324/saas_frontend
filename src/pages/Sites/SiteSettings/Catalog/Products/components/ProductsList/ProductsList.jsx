@@ -5,6 +5,8 @@ import { useProducts } from '../../hooks/useProducts'
 import { useProductCrud } from '../../hooks/useProductCrud'
 import { useCategories } from '../../hooks/useCategories'
 import { useLabels } from '../../hooks/useLabels'
+import { useOptionGroups } from '../../../Options/hooks/useOptionGroups'
+import { useExtraGroups } from '../../../Extras/hooks/useExtraGroups'
 
 import AddProductModal from '../AddProductModal/AddProductModal.jsx'
 import EditProductModal from '../EditProductModal/EditProductModal.jsx'
@@ -12,6 +14,7 @@ import Toolbar from './Toolbar'
 import BulkActionsBar from './BulkActionsBar'
 import ProductTable from './ProductTable'
 import Pagination from './Pagination'
+import FiltersPanel from './FiltersPanel'
 import useProductsList from './useProductsList'
 
 export default function ProductsList({ category, labels, noLabel }) {
@@ -22,6 +25,8 @@ export default function ProductsList({ category, labels, noLabel }) {
   const { add, update, remove } = useProductCrud(siteName)
   const { data: tree = [] } = useCategories(siteName)
   const { data: labelsList = [] } = useLabels(siteName)
+  const { data: optionGroups = [] } = useOptionGroups(siteName)
+  const { data: extraGroups = [] } = useExtraGroups(siteName)
 
   const [ordered, setOrdered] = useState([])
 
@@ -74,10 +79,42 @@ export default function ProductsList({ category, labels, noLabel }) {
     noLabel,
     categories: tree,
     removeFn: remove.mutateAsync,
+    optionGroups,
   })
 
   const [showAdd, setShowAdd] = useState(false)
   const [edit, setEdit] = useState({ open: false, product: null })
+  const [showFilters, setShowFilters] = useState(false)
+
+  const hasActiveFilters = () => {
+    return list.filters.status !== 'all' || 
+           list.filters.availability !== 'all' || 
+           list.filters.priceFrom !== '' || 
+           list.filters.priceTo !== '' ||
+           list.filters.weightFrom !== '' ||
+           list.filters.weightTo !== '' ||
+           list.filters.selectedLabels?.length > 0 ||
+           list.filters.selectedCategory !== '' ||
+           list.filters.selectedOptions?.length > 0 ||
+           list.filters.selectedExtras?.length > 0 ||
+           list.filters.sortBy !== 'order'
+  }
+
+  const resetFilters = () => {
+    list.setFilters({
+      status: 'all',
+      availability: 'all',
+      priceFrom: '',
+      priceTo: '',
+      weightFrom: '',
+      weightTo: '',
+      selectedLabels: [],
+      selectedCategory: '',
+      selectedOptions: [],
+      selectedExtras: [],
+      sortBy: 'order'
+    })
+  }
 
   const handleReorder = async (from, to) => {
     let updated = []
@@ -141,7 +178,35 @@ export default function ProductsList({ category, labels, noLabel }) {
           onDeactivate={() => handleBulkStatus({ active: false })}
         />
       ) : (
-        <Toolbar onAdd={() => setShowAdd(true)} search={list.search} onSearch={list.setSearch} disabledAdd={!Object.keys(categoryMap).length} />
+        <Toolbar 
+          onAdd={() => setShowAdd(true)} 
+          search={list.search} 
+          onSearch={list.setSearch} 
+          disabledAdd={!Object.keys(categoryMap).length}
+          showFilters={showFilters}
+          onToggleFilters={() => setShowFilters(!showFilters)}
+          hasActiveFilters={hasActiveFilters()}
+        />
+      )}
+
+      {showFilters && (
+        <FiltersPanel
+          filters={list.filters}
+          onFiltersChange={list.setFilters}
+          onClose={() => setShowFilters(false)}
+          onReset={resetFilters}
+          categoryOptions={categoryOptions}
+          labelsList={labelsList}
+          optionGroups={optionGroups}
+          extraGroups={extraGroups}
+        />
+      )}
+
+      {(hasActiveFilters() || list.search) && (
+        <div className="text-sm text-gray-600 bg-blue-50 border border-blue-200 rounded px-3 py-2">
+          Найдено товаров: <span className="font-semibold">{list.filtered.length}</span>
+          {list.filtered.length === 0 && ' — попробуйте изменить параметры фильтрации'}
+        </div>
       )}
 
       <ProductTable
