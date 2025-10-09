@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
-import { useLabelCrud } from '../../hooks/useLabelCrud'
+import { useLabelCrud } from './useLabelCrud'
 
 export default function LabelFormModal({ isOpen, onClose, siteName, label }) {
   const [name, setName] = useState('')

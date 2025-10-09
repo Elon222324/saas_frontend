@@ -5,10 +5,17 @@ import { useSiteSettings } from '@/context/SiteSettingsContext'
 import PageSelectHeader from './parts/PageSelectHeader'
 import BlockListSidebar from './parts/BlockListSidebar'
 import BlockEditorPanel from './parts/BlockEditorPanel'
+import { useBlocksApi } from './hooks/useBlocksApi'
 
 export default function PageEditor() {
   const { slug } = useParams()
-  const { data, loading: loadingContext, site_name, setData } = useSiteSettings()
+  const { data, loading: loadingContext, setData } = useSiteSettings()
+  const {
+    reorderBlocks,
+    updateAllBlocks,
+    updateBlockStatus,
+  } = useBlocksApi()
+
   const [blocks, setBlocks] = useState([])
   const [blockDataMap, setBlockDataMap] = useState({})
   const [selectedId, setSelectedId] = useState(null)
@@ -63,89 +70,40 @@ export default function PageEditor() {
     );
 
     try {
-      // 2. Запрос на новый, специальный эндпоинт
-      const res = await fetch(`${API_URL}/blocks/status/${site_name}/${slug}/${realBlockId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-        },
-        body: JSON.stringify({ is_active: newActiveState }),
-      });
-
-      if (!res.ok) {
-        throw new Error('Ошибка сервера при обновлении статуса');
-      }
-      
-      // Обновляем глобальное состояние после успешного сохранения
-      setData(prev => {
-        const updatedBlocks = prev.blocks?.[slug]?.map(b => 
-          b.real_id === realBlockId ? { ...b, active: newActiveState } : b
-        );
-        return { ...prev, blocks: { ...prev.blocks, [slug]: updatedBlocks } };
-      });
-
+      await updateBlockStatus.mutateAsync({ 
+        block_id: realBlockId, 
+        is_active: newActiveState 
+      })
     } catch (error) {
       console.error("Не удалось обновить статус блока:", error);
-      // 3. Откат UI в случае ошибки
+      // Откат UI в случае ошибки
       setBlocks(prevBlocks =>
-        prevBlocks.map(b => (b.id === blockId ? { ...b, active: !newActiveState } : b))
+        prevBlocks.map(b => (b.id === blockId ? { ...b, is_active: !newActiveState } : b))
       );
       alert('Не удалось обновить статус блока. Попробуйте снова.');
     }
   };
 
   const handleSaveAll = async () => {
-    // Теперь эта функция сохраняет только settings и data
-    const payload = Object.entries(unsavedBlocks).map(([block_id, changes]) => ({
-      block_id: Number(block_id),
-      ...(changes.settings ? { settings: changes.settings } : {}),
-      ...(changes.data ? { data: changes.data } : {}),
-    }))
+    if (Object.keys(unsavedBlocks).length === 0) return
 
-    if (payload.length === 0) return
-
-    const res = await fetch(`${API_URL}/blocks/update-all/${site_name}/${slug}`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-      body: JSON.stringify(payload),
-    })
-
-    if (!res.ok) return alert('Не удалось сохранить данные')
-
-    setData(prev => {
-      const updatedBlocks = prev.blocks?.[slug]?.map(b => {
-        const change = unsavedBlocks[b.real_id]
-        if (!change) return b
-        return {
-          ...b,
-          settings: change.settings || b.settings,
-          data: change.data || b.data,
-        }
-      })
-      return { ...prev, blocks: { ...prev.blocks, [slug]: updatedBlocks } }
-    })
-
-    setUnsavedBlocks({})
-    alert('Сохранено!')
+    try {
+      await updateAllBlocks.mutateAsync(unsavedBlocks)
+      setUnsavedBlocks({})
+      alert('Сохранено!')
+    } catch (error) {
+      console.error('Не удалось сохранить изменения:', error)
+      alert('Не удалось сохранить данные')
+    }
   }
 
   const handleReorder = async (newBlocks) => {
-    const payload = newBlocks.map(({ real_id, order }) => ({ id: real_id, order }))
-    const res = await fetch(`${API_URL}/blocks/reorder/${site_name}/${slug}`, {
-      method: 'PATCH',
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-      body: JSON.stringify(payload),
-    })
-    if (!res.ok) alert('Не удалось сохранить порядок блоков')
+    try {
+      await reorderBlocks.mutateAsync(newBlocks)
+    } catch(error) {
+      console.error('Не удалось сохранить порядок блоков:', error)
+      alert('Не удалось сохранить порядок блоков')
+    }
   }
 
   const handleAddBlock = () => {

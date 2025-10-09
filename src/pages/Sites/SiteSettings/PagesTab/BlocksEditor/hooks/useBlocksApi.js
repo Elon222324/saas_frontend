@@ -1,0 +1,115 @@
+import { useMutation } from '@tanstack/react-query'
+import { useSiteSettings } from '@/context/SiteSettingsContext'
+import { useParams } from 'react-router-dom'
+
+export function useBlocksApi() {
+  const { slug } = useParams()
+  const { siteToken, site_name, refetch: refetchSiteSettings } = useSiteSettings()
+
+  const siteNameForApi = site_name.replace(/_app$/, '')
+  const baseApiUrl = `https://${siteNameForApi}.${import.meta.env.VITE_BASE_DOMAIN}/site-api/admin/blocks`
+
+  const getHeaders = () => {
+    const adminToken = siteToken?.token
+    if (!adminToken) {
+      console.error('❌ [useBlocksApi] Admin token is missing')
+      throw new Error('Admin token is not available')
+    }
+    return {
+      Authorization: `Bearer ${adminToken}`,
+      'Content-Type': 'application/json',
+    }
+  }
+
+  const reorder = useMutation({
+    mutationFn: async (blocks) => {
+      const payload = blocks.map(({ real_id, order }) => ({ id: real_id, order }))
+      const res = await fetch(`${baseApiUrl}/reorder/${slug}`, {
+        method: 'PATCH',
+        headers: getHeaders(),
+        body: JSON.stringify(payload),
+      })
+      if (!res.ok) throw new Error(`Error reordering blocks: ${res.statusText}`)
+      return res.json()
+    },
+    onSuccess: () => {
+      refetchSiteSettings()
+    },
+  })
+
+  const updateAll = useMutation({
+    mutationFn: async (unsavedBlocks) => {
+      const payload = Object.entries(unsavedBlocks).map(([block_id, changes]) => ({
+        block_id: Number(block_id),
+        ...(changes.settings && { settings: changes.settings }),
+        ...(changes.data && { data: changes.data }),
+      }))
+      if (payload.length === 0) return
+
+      const res = await fetch(`${baseApiUrl}/update-all/${slug}`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify(payload),
+      })
+      if (!res.ok) throw new Error(`Error updating blocks: ${res.statusText}`)
+      return res.json()
+    },
+    onSuccess: () => {
+      refetchSiteSettings()
+    },
+  })
+
+  const updateStatus = useMutation({
+    mutationFn: async ({ block_id, is_active }) => {
+      const res = await fetch(`${baseApiUrl}/status/${slug}/${block_id}`, {
+        method: 'PATCH',
+        headers: getHeaders(),
+        body: JSON.stringify({ is_active }),
+      })
+      if (!res.ok) throw new Error(`Error updating block status: ${res.statusText}`)
+      return res.json()
+    },
+    onSuccess: () => {
+      // refetchSiteSettings() might be too heavy here, but let's use it for now for simplicity
+      refetchSiteSettings()
+    },
+  })
+  
+  const updateSettings = useMutation({
+    mutationFn: async ({ block_id, settings }) => {
+      const res = await fetch(`${baseApiUrl}/settings/${slug}/${block_id}`, {
+        method: 'PATCH',
+        headers: getHeaders(),
+        body: JSON.stringify(settings),
+      })
+      if (!res.ok) throw new Error(`Error updating block settings: ${res.statusText}`)
+      return res.json()
+    },
+    onSuccess: () => {
+      refetchSiteSettings()
+    },
+  })
+
+  const updateData = useMutation({
+    mutationFn: async ({ block_id, data }) => {
+      const res = await fetch(`${baseApiUrl}/data/${slug}/${block_id}`, {
+        method: 'PATCH',
+        headers: getHeaders(),
+        body: JSON.stringify(data),
+      })
+      if (!res.ok) throw new Error(`Error updating block data: ${res.statusText}`)
+      return res.json()
+    },
+    onSuccess: () => {
+      refetchSiteSettings()
+    },
+  })
+
+  return {
+    reorderBlocks: reorder,
+    updateAllBlocks: updateAll,
+    updateBlockStatus: updateStatus,
+    updateBlockSettings: updateSettings,
+    updateBlockData: updateData,
+  }
+}

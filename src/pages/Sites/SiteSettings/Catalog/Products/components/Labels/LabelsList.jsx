@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { useSiteSettings } from '../../../../../../../context/SiteSettingsContext'
 
-import { useLabelCrud } from '../../hooks/useLabelCrud'
+import { useLabelCrud } from './useLabelCrud'
 import LabelItem from './LabelItem'
 import LabelFormModal from './LabelFormModal'
 import LabelToolbar from './LabelToolbar'
@@ -10,12 +11,35 @@ export default function LabelsList({ siteName, selected, onSelect }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [labelToEdit, setLabelToEdit] = useState(null)
   const [search, setSearch] = useState('')
+  const { siteToken } = useSiteSettings()
 
-  const { getLabels, remove } = useLabelCrud(siteName)
+  const { remove } = useLabelCrud(siteName)
 
   const { data: labels = [], isLoading, isError, error } = useQuery({
     queryKey: ['labels', siteName],
-    queryFn: getLabels,
+    queryFn: async () => {
+      const siteNameForApi = siteName.replace('_app', '');
+      const url = `https://${siteNameForApi}.${import.meta.env.VITE_BASE_DOMAIN}/site-api/admin/labels/`;
+      
+      const adminToken = siteToken?.token;
+      if (!adminToken) {
+        console.error('❌ [LabelsList] Админский токен сайта отсутствует');
+        throw new Error('Токен сайта не получен');
+      }
+      
+      const res = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${adminToken}`,
+        },
+        credentials: 'include',
+      });
+
+      if (!res.ok) {
+        throw new Error(`Ошибка загрузки меток: ${res.status} ${res.statusText}`);
+      }
+      return res.json();
+    },
+    enabled: !!siteToken,
   })
 
   const handleDelete = (id, name) => {
