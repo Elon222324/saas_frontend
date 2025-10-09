@@ -5,11 +5,13 @@ import { Button } from '@/components/ui/button'
 import { Plus, ArrowRight } from 'lucide-react'
 import { Dialog } from '@headlessui/react'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
+import { usePagesApi } from './hooks/usePagesApi'
 
 export default function Pages() {
   const { domain } = useParams()
   const navigate = useNavigate()
   const { data, loading, site_name, refetch } = useSiteSettings()
+  const { addPage, togglePageActive, deletePage } = usePagesApi()
 
   const [pages, setPages] = useState([])
   const [isOpen, setIsOpen] = useState(false)
@@ -46,72 +48,51 @@ export default function Pages() {
   }, [title])
 
   const handleAddPage = async () => {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/pages/add?site_name=${site_name}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('access_token')}`
+    addPage.mutate({
+      title,
+      slug,
+      add_to_navigation: true,
+    }, {
+      onSuccess: () => {
+        setIsOpen(false)
+        setTitle('')
+        setSlug('')
+        // No need to reload, useSiteSettings refetch will update the data
       },
-      credentials: 'include',
-      body: JSON.stringify({
-        title,
-        slug,
-        add_to_navigation: true
-      })
+      onError: (error) => {
+        alert(`Ошибка при добавлении страницы: ${error.message}`)
+      }
     })
-    if (res.ok) {
-      setIsOpen(false)
-      window.location.reload()
-    } else {
-      alert('Ошибка при добавлении страницы')
-    }
   }
 
-  const handleToggleActive = async (slug, value) => {
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/pages/toggle-active?site_name=${site_name}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`
-        },
-        credentials: 'include',
-        body: JSON.stringify({ slug, value })
-      })
-      if (!res.ok) throw new Error('Ошибка смены статуса')
-
-      // Локальное обновление
-      setPages(prev => prev.map(p => p.slug === slug ? { ...p, is_active: value } : p))
-
-      // Перезапросим SiteSettings (navigation + pages)
-      await refetch()
-    } catch (err) {
-      console.error(err)
-      alert('Не удалось обновить статус активности страницы')
-    }
+  const handleToggleActive = (slug, value) => {
+    // Optimistically update UI
+    setPages(prev => prev.map(p => p.slug === slug ? { ...p, is_active: value } : p))
+    
+    togglePageActive.mutate({ slug, is_active: value }, {
+      onError: (error) => {
+        alert(`Не удалось обновить статус активности страницы: ${error.message}`)
+        // Revert optimistic update on error
+        setPages(prev => prev.map(p => p.slug === slug ? { ...p, is_active: !value } : p))
+      },
+      // onSuccess will trigger refetch via hook config
+    })
   }
 
-  const handleDeletePage = async (slug) => {
+  const handleDeletePage = (slug) => {
     const confirmed = window.confirm('Удалить эту страницу? Это действие необратимо.')
     if (!confirmed) return
 
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/pages/${slug}?site_name=${site_name}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-        },
-        credentials: 'include',
-      })
-      if (!res.ok) throw new Error('Ошибка удаления')
-
-      setPages(prev => prev.filter(p => p.slug !== slug))
-      await refetch()
-      alert('Страница удалена')
-    } catch (err) {
-      console.error(err)
-      alert('Не удалось удалить страницу')
-    }
+    deletePage.mutate(slug, {
+      onSuccess: () => {
+        // Optimistic update
+        setPages(prev => prev.filter(p => p.slug !== slug))
+        alert('Страница удалена')
+      },
+      onError: (error) => {
+        alert(`Не удалось удалить страницу: ${error.message}`)
+      }
+    })
   }
 
   if (loading) return <div className="p-6">Загрузка...</div>
@@ -192,7 +173,13 @@ export default function Pages() {
             </div>
             <div className="flex justify-end gap-2">
               <Button onClick={() => setIsOpen(false)} className="bg-gray-300">Отмена</Button>
-              <Button onClick={handleAddPage} className="bg-blue-600 text-white">Добавить</Button>
+              <Button 
+                onClick={handleAddPage} 
+                disabled={addPage.isLoading}
+                className="bg-blue-600 text-white"
+              >
+                {addPage.isLoading ? 'Добавление...' : 'Добавить'}
+              </Button>
             </div>
           </div>
         </Dialog>
