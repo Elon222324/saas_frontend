@@ -1,68 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
-
-function flattenTree(tree = []) {
-  const list = []
-  const walk = (nodes) => {
-    nodes.forEach((n) => {
-      list.push(n)
-      if (n.children?.length) walk(n.children)
-    })
-  }
-  walk(tree)
-  return list
-}
-
-function getAllNestedCategoryIds(rootId, categories = []) {
-  const ids = new Set()
-  const walk = (id) => {
-    ids.add(id)
-    categories
-      .filter((c) => String(c.parent_id) === String(id))
-      .forEach((c) => walk(c.id))
-  }
-  if (rootId) walk(rootId)
-  return ids
-}
-
-// Получить цену товара (из первого варианта или базовую)
-function getProductPrice(product) {
-  if (product.variants && product.variants.length > 0 && product.variants[0].price) {
-    return parseFloat(product.variants[0].price)
-  }
-  return product.price ? parseFloat(product.price) : 0
-}
-
-// Проверить наличие товара (хотя бы один вариант в наличии)
-function isProductAvailable(product) {
-  if (!product.variants || product.variants.length === 0) return true
-  return product.variants.some(v => v.is_available !== false)
-}
-
-// Получить вес товара (из первого варианта)
-function getProductWeight(product) {
-  if (product.variants && product.variants.length > 0 && product.variants[0].weight) {
-    return parseFloat(product.variants[0].weight)
-  }
-  return product.weight ? parseFloat(product.weight) : 0
-}
-
-// Проверить, есть ли у товара определенная опция (по ID группы опций)
-function productHasOptionGroup(product, optionGroupId) {
-  if (!product.variants || product.variants.length === 0) return false
-  // Проверяем, есть ли хотя бы один вариант с опцией из этой группы
-  return product.variants.some(variant => {
-    if (!variant.option_value_ids || variant.option_value_ids.length === 0) return false
-    // Нужно проверить, относятся ли какие-то из option_value_ids к нужной группе
-    // Это будет проверено в основной логике фильтрации с использованием optionValueMap
-    return variant.option_value_ids.length > 0
-  })
-}
-
-// Проверить, есть ли у товара определенное дополнение (по ID группы дополнений)
-function productHasExtraGroup(product, extraGroupId) {
-  if (!product.extra_groups || product.extra_groups.length === 0) return false
-  return product.extra_groups.some(eg => Number(eg.id) === Number(extraGroupId))
-}
+import { flattenTree } from './modules/utils'
+import { applyCategoryFilter } from './filters/categoryFilter'
+import { applySidebarLabelsFilter, applyPanelLabelsFilter } from './filters/labelsFilter'
+import { applySearchFilter } from './filters/searchFilter'
+import { applyStatusFilter, applyAvailabilityFilter } from './filters/statusAvailabilityFilter'
+import { applyPriceFilter, applyWeightFilter } from './filters/priceWeightFilter'
+import { buildOptionValueToGroupMap, applyOptionsFilter, applyExtrasFilter } from './filters/optionsExtrasFilter'
+import { sortProducts } from './sorting/sortProducts'
 
 export default function useProductsList({ 
   products = [], 
@@ -96,17 +40,7 @@ export default function useProductsList({
   const flatCategories = useMemo(() => flattenTree(categories), [categories])
 
   // Карта для быстрого поиска: option_value_id -> group_id
-  const optionValueToGroupMap = useMemo(() => {
-    const map = new Map()
-    optionGroups.forEach(group => {
-      if (group.values && Array.isArray(group.values)) {
-        group.values.forEach(value => {
-          map.set(Number(value.id), Number(group.id))
-        })
-      }
-    })
-    return map
-  }, [optionGroups])
+  const optionValueToGroupMap = useMemo(() => buildOptionValueToGroupMap(optionGroups), [optionGroups])
 
   // ─── Debounce поиска ─────────────────────────────────────────
   useEffect(() => {
@@ -118,133 +52,34 @@ export default function useProductsList({
   const filtered = useMemo(() => {
     let list = products
 
-    // Фильтр по категории: приоритет у фильтра из панели, если не выбран - используем боковой
-    const activeCategoryFilter = filters.selectedCategory || category
-    if (activeCategoryFilter && flatCategories.length) {
-      const allowedIds = getAllNestedCategoryIds(activeCategoryFilter, flatCategories)
-      list = list.filter((p) => allowedIds.has(Number(p.category_id)))
-    }
+    // Категории
+    list = applyCategoryFilter(list, {
+      selectedCategory: filters.selectedCategory,
+      fallbackCategory: category,
+      flatCategories,
+    })
 
-    // Фильтр по лейблам (из бокового меню)
-    if (noLabel) {
-      list = list.filter((p) => !Array.isArray(p.labels) || p.labels.length === 0)
-    } else if (Array.isArray(labels) && labels.length) {
-      const labelIds = labels.map((id) => Number(id))
-      list = list.filter(
-        (p) =>
-          Array.isArray(p.labels) &&
-          p.labels.some((lbl) => labelIds.includes(Number(lbl)))
-      )
-    }
+    // Лейблы (сайдбар) и метки (панель)
+    list = applySidebarLabelsFilter(list, { labels, noLabel })
+    list = applyPanelLabelsFilter(list, { selectedLabels: filters.selectedLabels })
 
-    // Фильтр по меткам (дополнительный из панели фильтров)
-    if (Array.isArray(filters.selectedLabels) && filters.selectedLabels.length > 0) {
-      const labelIds = filters.selectedLabels.map((id) => Number(id))
-      list = list.filter((p) =>
-        Array.isArray(p.labels) &&
-        p.labels.some((lbl) => labelIds.includes(Number(lbl)))
-      )
-    }
+    // Поиск
+    list = applySearchFilter(list, { debounced })
 
-    // Фильтр по поиску
-    if (debounced) {
-      list = list.filter((p) => p.title.toLowerCase().includes(debounced))
-    }
+    // Статус и наличие
+    list = applyStatusFilter(list, { status: filters.status })
+    list = applyAvailabilityFilter(list, { availability: filters.availability })
 
-    // Фильтр по статусу
-    if (filters.status === 'active') {
-      list = list.filter((p) => p.active === true)
-    } else if (filters.status === 'inactive') {
-      list = list.filter((p) => p.active === false)
-    }
+    // Цена и вес
+    list = applyPriceFilter(list, { priceFrom: filters.priceFrom, priceTo: filters.priceTo })
+    list = applyWeightFilter(list, { weightFrom: filters.weightFrom, weightTo: filters.weightTo })
 
-    // Фильтр по наличию
-    if (filters.availability === 'available') {
-      list = list.filter((p) => isProductAvailable(p))
-    } else if (filters.availability === 'unavailable') {
-      list = list.filter((p) => !isProductAvailable(p))
-    }
-
-    // Фильтр по цене
-    if (filters.priceFrom !== '') {
-      const minPrice = parseFloat(filters.priceFrom)
-      if (!isNaN(minPrice)) {
-        list = list.filter((p) => getProductPrice(p) >= minPrice)
-      }
-    }
-    if (filters.priceTo !== '') {
-      const maxPrice = parseFloat(filters.priceTo)
-      if (!isNaN(maxPrice)) {
-        list = list.filter((p) => getProductPrice(p) <= maxPrice)
-      }
-    }
-
-    // Фильтр по весу
-    if (filters.weightFrom !== '') {
-      const minWeight = parseFloat(filters.weightFrom)
-      if (!isNaN(minWeight)) {
-        list = list.filter((p) => getProductWeight(p) >= minWeight)
-      }
-    }
-    if (filters.weightTo !== '') {
-      const maxWeight = parseFloat(filters.weightTo)
-      if (!isNaN(maxWeight)) {
-        list = list.filter((p) => getProductWeight(p) <= maxWeight)
-      }
-    }
-
-    // Фильтр по опциям
-    if (Array.isArray(filters.selectedOptions) && filters.selectedOptions.length > 0) {
-      const optionGroupIds = filters.selectedOptions.map(id => Number(id))
-      list = list.filter((p) => {
-        if (!p.variants || p.variants.length === 0) return false
-        // Проверяем, есть ли хотя бы один вариант с опцией из выбранных групп
-        return p.variants.some(variant => {
-          if (!variant.option_value_ids || variant.option_value_ids.length === 0) return false
-          // Проверяем, есть ли хотя бы одно значение опции из нужной группы
-          return variant.option_value_ids.some(valueId => {
-            const groupId = optionValueToGroupMap.get(Number(valueId))
-            return groupId && optionGroupIds.includes(groupId)
-          })
-        })
-      })
-    }
-
-    // Фильтр по дополнениям
-    if (Array.isArray(filters.selectedExtras) && filters.selectedExtras.length > 0) {
-      const extraGroupIds = filters.selectedExtras.map(id => Number(id))
-      list = list.filter((p) => {
-        if (!p.extra_groups || p.extra_groups.length === 0) return false
-        return p.extra_groups.some(eg => extraGroupIds.includes(Number(eg.id)))
-      })
-    }
+    // Опции и дополнения
+    list = applyOptionsFilter(list, { selectedOptions: filters.selectedOptions, optionValueToGroupMap })
+    list = applyExtrasFilter(list, { selectedExtras: filters.selectedExtras })
 
     // Сортировка
-    const sorted = [...list]
-    switch (filters.sortBy) {
-      case 'title_asc':
-        sorted.sort((a, b) => a.title.localeCompare(b.title, 'ru'))
-        break
-      case 'title_desc':
-        sorted.sort((a, b) => b.title.localeCompare(a.title, 'ru'))
-        break
-      case 'price_asc':
-        sorted.sort((a, b) => getProductPrice(a) - getProductPrice(b))
-        break
-      case 'price_desc':
-        sorted.sort((a, b) => getProductPrice(b) - getProductPrice(a))
-        break
-      case 'created_asc':
-        sorted.sort((a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0))
-        break
-      case 'created_desc':
-        sorted.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
-        break
-      case 'order':
-      default:
-        // По умолчанию сортировка по order (уже должна быть в products)
-        break
-    }
+    const sorted = sortProducts(list, filters.sortBy)
 
     return sorted
   }, [products, category, labels, noLabel, debounced, flatCategories, filters, optionValueToGroupMap])
