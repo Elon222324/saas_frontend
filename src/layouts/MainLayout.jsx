@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { LayoutDashboard, Server, Users, ShoppingCart, LogOut, UserCog, Globe } from 'lucide-react'
+import { LayoutDashboard, Server, Users, ShoppingCart, LogOut, Crown } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 
 export default function MainLayout() {
@@ -66,29 +66,16 @@ export default function MainLayout() {
 
             {/* Super Admin only tabs */}
             {isSuperAdmin && (
-              <>
-                <NavLink
-                  to="/all-users"
-                  className={({ isActive }) =>
-                    `flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-50 ${
-                      isActive ? 'bg-blue-100 text-blue-600 font-semibold' : ''
-                    }`
-                  }
-                >
-                  <UserCog size={18} /> Пользователи
-                </NavLink>
-
-                <NavLink
-                  to="/all-sites"
-                  className={({ isActive }) =>
-                    `flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-50 ${
-                      isActive ? 'bg-blue-100 text-blue-600 font-semibold' : ''
-                    }`
-                  }
-                >
-                  <Globe size={18} /> Все сайты
-                </NavLink>
-              </>
+              <NavLink
+                to="/owner"
+                className={({ isActive }) =>
+                  `flex items-center gap-2 px-3 py-2 rounded-md hover:bg-purple-50 ${
+                    isActive ? 'bg-purple-100 text-purple-600 font-semibold' : ''
+                  }`
+                }
+              >
+                <Crown size={18} /> Owner Panel
+              </NavLink>
             )}
           </nav>
         </div>

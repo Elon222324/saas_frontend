@@ -1,13 +1,18 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard,
   Users,
   Server,
   Wrench,
   LogOut,
+  ArrowLeft,
 } from 'lucide-react'
+import { useUser } from '../context/UserContext'
 
 export default function OwnerLayout() {
+  const { logout } = useUser()
+  const navigate = useNavigate()
+
   return (
     <div className="flex flex-col h-screen bg-gray-100 text-gray-800 font-sans">
       {/* Header with top navigation */}
@@ -62,9 +67,20 @@ export default function OwnerLayout() {
           </nav>
         </div>
 
-        <button className="flex items-center gap-2 bg-red-100 text-red-600 px-4 py-2 rounded hover:bg-red-200">
-          <LogOut size={18} /> Logout
-        </button>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={() => navigate('/')}
+            className="flex items-center gap-2 bg-blue-100 text-blue-600 px-4 py-2 rounded hover:bg-blue-200"
+          >
+            <ArrowLeft size={18} /> Admin Panel
+          </button>
+          <button 
+            onClick={logout}
+            className="flex items-center gap-2 bg-red-100 text-red-600 px-4 py-2 rounded hover:bg-red-200"
+          >
+            <LogOut size={18} /> Logout
+          </button>
+        </div>
       </header>
 
       {/* Content */}
