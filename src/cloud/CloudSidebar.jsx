@@ -62,7 +62,14 @@ export default function CloudSidebar({
         <button
           onClick={() => {
             const name = window.prompt('Название категории')
-            if (name) onAddCategory(name)
+            if (name) {
+              onAddCategory({
+                name: name,
+                description: '', // опционально
+                type: 'custom', // опционально
+                display_order: 0 // опционально
+              })
+            }
           }}
           className="text-sm text-blue-600 hover:underline mt-4"
         >
