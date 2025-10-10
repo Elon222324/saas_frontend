@@ -17,7 +17,7 @@ export default function MainLayout() {
                 }`
               }
             >
-              <LayoutDashboard size={18} /> Dashboard
+              <LayoutDashboard size={18} /> Информация
             </NavLink>
 
             <NavLink
@@ -28,7 +28,7 @@ export default function MainLayout() {
                 }`
               }
             >
-              <Server size={18} /> Sites
+              <Server size={18} /> Мои сайты
             </NavLink>
 
             <NavLink
@@ -39,7 +39,7 @@ export default function MainLayout() {
                 }`
               }
             >
-              <Users size={18} /> Users
+              <Users size={18} /> Клиенты
             </NavLink>
 
             <NavLink
