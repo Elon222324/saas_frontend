@@ -5,7 +5,8 @@ import UsersHeader from './components/UsersHeader'
 import UsersControls from './components/UsersControls'
 import CustomersList from './components/CustomersList'
 import CustomerDetailsModal from './components/CustomerDetailsModal'
-import { stripAppSuffix } from './utils/domain'
+import OrderDetailsModal from '../Orders/components/OrderDetailsModal'
+import { stripAppSuffix, baseDomain } from './utils/domain'
 import { fetchCustomersApi, fetchCustomerDetailsApi } from './api/customers'
 import { getCustomerName, formatDate } from './utils/formatting'
 
@@ -29,6 +30,9 @@ export default function Users() {
   const [detailsLoading, setDetailsLoading] = useState(false)
   const [ordersLimit, setOrdersLimit] = useState(20)
   const [ordersOffset, setOrdersOffset] = useState(0)
+
+  // Order details modal state
+  const [selectedOrderDetails, setSelectedOrderDetails] = useState(null)
 
   const authHeaders = useMemo(() => ({
     Authorization: `Bearer ${localStorage.getItem('access_token')}`,
@@ -83,6 +87,43 @@ export default function Users() {
       setError('Не удалось загрузить детали клиента')
     } finally {
       setDetailsLoading(false)
+    }
+  }
+
+  const fetchOrderDetails = async (orderId) => {
+    if (!selectedSite || !siteToken) return
+    try {
+      const siteForUrl = stripAppSuffix(selectedSite)
+      const newApiUrl = `https://${siteForUrl}.${baseDomain}/site-api/admin/orders/${orderId}/details`
+      
+      console.log('🔑 [Customers] → Запрашиваю детали заказа:', newApiUrl)
+
+      const res = await fetch(newApiUrl, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${siteToken}`,
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      })
+
+      if (!res.ok) {
+        let errorMessage = `HTTP ${res.status}: ${res.statusText}`
+        try {
+          const errorData = await res.json()
+          if (errorData.message) errorMessage = errorData.message
+        } catch (e) {
+          // Игнорируем ошибки парсинга
+        }
+        throw new Error(`Не удалось получить детали заказа: ${errorMessage}`)
+      }
+
+      const data = await res.json()
+      console.log('✅ [Customers] ← Детали заказа получены')
+      setSelectedOrderDetails(data)
+    } catch (e) {
+      console.error('❌ [Customers] Ошибка при получении заказа:', e)
+      alert(`Не удалось загрузить детали заказа: ${e.message}`)
     }
   }
 
@@ -205,7 +246,7 @@ export default function Users() {
         />
       )}
 
-      {/* Details Modal */}
+      {/* Customer Details Modal */}
       <CustomerDetailsModal
         isOpen={Boolean(selectedCustomerId)}
         onClose={closeDetails}
@@ -218,7 +259,61 @@ export default function Users() {
         onPrevOrders={handleOrdersPrev}
         onNextOrders={handleOrdersNext}
         selectedCustomerId={selectedCustomerId}
+        onOpenOrderDetails={fetchOrderDetails}
       />
+
+      {/* Order Details Modal */}
+      {selectedOrderDetails && (
+        <OrderDetailsModal 
+          details={selectedOrderDetails} 
+          onClose={() => setSelectedOrderDetails(null)}
+          siteNameForToken={siteNameForToken}
+          siteToken={siteToken}
+          baseDomain={baseDomain}
+          refreshOrders={async () => {
+            // Refresh customer's orders list when order is updated
+            if (selectedCustomerId) {
+              await fetchCustomerDetails(selectedCustomerId)
+            }
+          }}
+          reloadDetails={async () => {
+            try {
+              if (!selectedOrderDetails || !siteToken) return
+              const order = selectedOrderDetails.order || selectedOrderDetails
+              const id = order?.id || order?.order_id
+              if (!id) return
+              
+              const siteForUrl = stripAppSuffix(selectedSite)
+              const url = `https://${siteForUrl}.${baseDomain}/site-api/admin/orders/${id}/details`
+              
+              const res = await fetch(url, {
+                headers: { 
+                  'Authorization': `Bearer ${siteToken}`,
+                  'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+              })
+              
+              if (!res.ok) {
+                let errorMessage = `HTTP ${res.status}: ${res.statusText}`
+                try {
+                  const errorData = await res.json()
+                  if (errorData.message) errorMessage = errorData.message
+                } catch (e) {
+                  // Игнорируем ошибки парсинга
+                }
+                throw new Error(`Не удалось обновить детали заказа: ${errorMessage}`)
+              }
+              
+              const data = await res.json()
+              setSelectedOrderDetails(data)
+            } catch (e) {
+              console.error('❌ [Customers] Не удалось обновить детали заказа:', e)
+              alert(`Не удалось обновить детали заказа: ${e.message}`)
+            }
+          }}
+        />
+      )}
     </div>
   )
 }

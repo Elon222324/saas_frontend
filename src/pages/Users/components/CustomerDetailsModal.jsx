@@ -1,9 +1,9 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Phone, Mail, Calendar, X } from 'lucide-react'
+import { Phone, Mail, Calendar, X, Eye } from 'lucide-react'
 import { getCustomerName, formatDate, formatPrice } from '../utils/formatting'
 
-function CustomerOrderRow({ order }) {
+function CustomerOrderRow({ order, onOpenDetails }) {
   const orderId = order?.id ?? order?.order_id
   const orderNo = order?.order_number || '—'
   const total = order?.total_amount ?? order?.total
@@ -22,13 +22,23 @@ function CustomerOrderRow({ order }) {
             <div className="text-sm text-gray-600">{formatDate(createdAt)}</div>
           )}
         </div>
-        <div className="text-right">
-          {typeof total !== 'undefined' && (
-            <div className="text-sm text-gray-500">Итого: <span className="font-semibold text-gray-900">{formatPrice(total)}</span></div>
-          )}
-          {orderId && (
-            <div className="text-xs text-gray-400">ID: {String(orderId)}</div>
-          )}
+        <div className="flex items-center gap-3">
+          <div className="text-right">
+            {typeof total !== 'undefined' && (
+              <div className="text-sm text-gray-500">Итого: <span className="font-semibold text-gray-900">{formatPrice(total)}</span></div>
+            )}
+            {orderId && (
+              <div className="text-xs text-gray-400">ID: {String(orderId)}</div>
+            )}
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2 border-blue-300 text-blue-700 hover:bg-blue-50 hover:border-blue-400 hover:text-blue-800 transition-colors"
+            onClick={() => onOpenDetails(orderId)}
+          >
+            <Eye size={14} /> Детали
+          </Button>
         </div>
       </div>
     </div>
@@ -47,6 +57,7 @@ export default function CustomerDetailsModal({
   onPrevOrders,
   onNextOrders,
   selectedCustomerId,
+  onOpenOrderDetails,
 }) {
   if (!isOpen) return null
   return (
@@ -98,7 +109,11 @@ export default function CustomerDetailsModal({
                   ) : (
                     <div className="divide-y">
                       {orders.map((o) => (
-                        <CustomerOrderRow key={String(o?.id || o?.order_id || Math.random())} order={o} />
+                        <CustomerOrderRow 
+                          key={String(o?.id || o?.order_id || Math.random())} 
+                          order={o}
+                          onOpenDetails={onOpenOrderDetails}
+                        />
                       ))}
                     </div>
                   )}
