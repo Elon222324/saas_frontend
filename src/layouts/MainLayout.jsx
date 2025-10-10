@@ -1,7 +1,18 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { LayoutDashboard, Server, Users, ShoppingCart, LogOut } from 'lucide-react'
+import { LayoutDashboard, Server, Users, ShoppingCart, LogOut, UserCog, Globe } from 'lucide-react'
+import { useUser } from '../context/UserContext'
 
 export default function MainLayout() {
+  const { user, loading, logout, isSuperAdmin } = useUser()
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-100">
+        <p className="text-gray-600">Загрузка...</p>
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col h-screen bg-gray-100 text-gray-800 font-sans">
       {/* Header with top navigation */}
@@ -52,10 +63,40 @@ export default function MainLayout() {
             >
               <ShoppingCart size={18} /> Заказы
             </NavLink>
+
+            {/* Super Admin only tabs */}
+            {isSuperAdmin && (
+              <>
+                <NavLink
+                  to="/all-users"
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-50 ${
+                      isActive ? 'bg-blue-100 text-blue-600 font-semibold' : ''
+                    }`
+                  }
+                >
+                  <UserCog size={18} /> Пользователи
+                </NavLink>
+
+                <NavLink
+                  to="/all-sites"
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-50 ${
+                      isActive ? 'bg-blue-100 text-blue-600 font-semibold' : ''
+                    }`
+                  }
+                >
+                  <Globe size={18} /> Все сайты
+                </NavLink>
+              </>
+            )}
           </nav>
         </div>
 
-        <button className="flex items-center gap-2 bg-red-100 text-red-600 px-4 py-2 rounded hover:bg-red-200">
+        <button 
+          onClick={logout}
+          className="flex items-center gap-2 bg-red-100 text-red-600 px-4 py-2 rounded hover:bg-red-200"
+        >
           <LogOut size={18} /> Logout
         </button>
       </header>
