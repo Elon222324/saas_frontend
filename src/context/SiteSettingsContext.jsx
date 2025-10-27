@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
-import { useSiteToken } from '../hooks/useSiteToken'
 
 const SiteSettingsContext = createContext()
 
@@ -12,63 +11,62 @@ export const SiteSettingsProvider = ({ children }) => {
   const API_URL = import.meta.env.VITE_API_URL
   const containerSuffix = import.meta.env.VITE_CONTAINER_SUFFIX
   const site_name = `${domain}${containerSuffix}`
-  const site_name_for_token = domain // Без суффикса для токена
-
-  // 🔑 Используем новый централизованный хук для получения токена
-  const { 
-    data: token, 
-    isLoading: tokenLoading, 
-    error: tokenError,
-    refetch: refetchSiteToken 
-  } = useSiteToken(site_name_for_token)
-
-  // Формируем объект токена в старом формате для обратной совместимости
-  const siteToken = token ? { token, raw: token } : null
 
   // 💡 refetch: функция повторной загрузки данных
   const fetchData = useCallback(() => {
     setLoading(true)
-    fetch(`${API_URL}/schema/site-settings?site_name=${site_name}`, {
+    const token = localStorage.getItem('access_token')
+    
+    if (!token) {
+      console.error('❌ [SITE SETTINGS] Токен не найден в localStorage!')
+      setLoading(false)
+      return
+    }
+    
+    const url = `${API_URL}/schema/site-settings?site_name=${site_name}`
+    console.log('📤 [SITE SETTINGS] Отправляем запрос на:', url)
+    console.log('🔑 [SITE SETTINGS] Authorization: Bearer', token.substring(0, 20) + '...')
+    
+    fetch(url, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-        Accept: 'application/json',
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
       },
       credentials: 'include',
     })
-      .then(res => res.json())
+      .then(res => {
+        console.log('📥 [SITE SETTINGS] Статус ответа:', res.status)
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`)
+        }
+        return res.json()
+      })
       .then((result) => {
-        console.log('[API result]:', result)
+        console.log('✅ [SITE SETTINGS] Результат получен:', result)
         setData(result)
       })
-      .catch(console.error)
+      .catch(error => {
+        console.error('❌ [SITE SETTINGS] Ошибка при загрузке:', error)
+      })
       .finally(() => setLoading(false))
   }, [API_URL, site_name])
 
-  // Загружаем данные когда токен готов
+  // Загружаем данные при монтировании компонента
   useEffect(() => {
-    if (token && !tokenLoading) {
-      console.log('🚀 [SITE SETTINGS] Инициализация настроек сайта для:', site_name)
-      console.log('🔗 [SITE SETTINGS] URL для нового API:', `https://${site_name_for_token}.${import.meta.env.VITE_BASE_DOMAIN}/site-api/admin/`)
-      fetchData()
-    }
-  }, [token, tokenLoading, fetchData, site_name, site_name_for_token])
-
-  // Логируем ошибки токена
-  useEffect(() => {
-    if (tokenError) {
-      console.error('❌ [SITE SETTINGS] Ошибка получения токена:', tokenError)
-    }
-  }, [tokenError])
+    console.log('🚀 [SITE SETTINGS] Инициализация настроек сайта для:', site_name)
+    console.log('🔗 [SITE SETTINGS] URL:', `${API_URL}/schema/site-settings?site_name=${site_name}`)
+    fetchData()
+  }, [fetchData, site_name, API_URL])
 
   return (
     <SiteSettingsContext.Provider value={{ 
       data, 
       setData, 
-      loading: loading || tokenLoading, 
+      loading, 
       site_name, 
-      siteToken,
+      siteToken: null,
       refetch: fetchData,
-      refetchSiteToken 
+      refetchSiteToken: null 
     }}>
       {children}
     </SiteSettingsContext.Provider>
