@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { LayoutDashboard, Server, Users, ShoppingCart, LogOut, Crown } from 'lucide-react'
+import { LayoutDashboard, Server, Users, ShoppingCart, MessageSquare, LogOut, Crown } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 
 export default function MainLayout() {
@@ -62,6 +62,17 @@ export default function MainLayout() {
               }
             >
               <ShoppingCart size={18} /> Заказы
+            </NavLink>
+
+            <NavLink
+              to="/tickets"
+              className={({ isActive }) =>
+                `flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-50 ${
+                  isActive ? 'bg-blue-100 text-blue-600 font-semibold' : ''
+                }`
+              }
+            >
+              <MessageSquare size={18} /> Обращения
             </NavLink>
 
             {/* Super Admin only tabs */}
