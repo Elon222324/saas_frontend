@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import api from '@/lib/axios'
 import { Button } from '@/components/ui/button'
+import PageLayout from '@/components/PageTemplate/PageLayout'
+import PageHeaderTitle from '@/components/PageTemplate/PageHeaderTitle'
 import {
   Pause,
   Play,
@@ -9,6 +11,7 @@ import {
   ExternalLink,
   Plus,
   Copy,
+  Globe,
   Settings,
 } from 'lucide-react'
 
@@ -179,187 +182,222 @@ export default function Sites() {
     fetchSites()
   }, [])
 
-  if (loading) return <div className="p-6">Загрузка...</div>
+  if (loading) return (
+    <PageLayout
+      backgroundGradient="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50"
+      containerClass="p-6 space-y-6 max-w-7xl mx-auto"
+      gridHeight="auto"
+      header={
+        <PageHeaderTitle
+          title="Сайты"
+          subtitle="Управление вашими сайтами и доменами"
+          icon={Globe}
+          onRefresh={fetchSites}
+        />
+      }
+      content={
+        <div className="flex items-center justify-center py-12">
+          <div className="text-gray-500">Загрузка...</div>
+        </div>
+      }
+    />
+  )
 
   return (
-    <div className="p-6 space-y-4">
-      <h1 className="text-2xl font-bold">Сайты</h1>
-
-      {/* Добавление сайта */}
-      <div className="flex gap-2 items-center">
-        <input
-          type="text"
-          placeholder="Введите домен (без .site)"
-          value={newDomain}
-          onChange={(e) => setNewDomain(e.target.value)}
-          className="border rounded px-4 py-2 w-full max-w-sm"
+    <PageLayout
+      backgroundGradient="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50"
+      containerClass="p-6 space-y-6 max-w-7xl mx-auto"
+      gridHeight="auto"
+      header={
+        <PageHeaderTitle
+          title="Сайты"
+          subtitle="Управление вашими сайтами и доменами"
+          icon={Globe}
+          onRefresh={fetchSites}
         />
-        <Button
-          onClick={handleAddSite}
-          disabled={adding}
-          className="flex gap-2 items-center"
-        >
-          <Plus size={18} />
-          {adding ? 'Добавление...' : 'Добавить'}
-        </Button>
-      </div>
+      }
+      content={
+        <div className="space-y-6">
+          {/* Добавление сайта */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div className="flex gap-2 items-center flex-col sm:flex-row">
+              <input
+                type="text"
+                placeholder="Введите домен (без .site)"
+                value={newDomain}
+                onChange={(e) => setNewDomain(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddSite()}
+                className="border border-gray-200 rounded-xl px-4 py-3 w-full sm:w-auto sm:flex-1 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+              />
+              <Button
+                onClick={handleAddSite}
+                disabled={adding}
+                className="flex gap-2 items-center w-full sm:w-auto bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
+              >
+                <Plus size={18} />
+                {adding ? 'Добавление...' : 'Добавить'}
+              </Button>
+            </div>
+          </div>
 
-      {/* Список сайтов */}
-      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {sites.map((site) => (
-          <div
-            key={site.id}
-            className="bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200 overflow-hidden"
-          >
-            {/* Заголовок */}
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-3 border-b border-gray-200">
-              <div className="flex justify-between items-center">
-                <h2 className="text-base font-semibold text-gray-800 truncate">
-                  {site.domain}.{baseDomain}
-                </h2>
-                <div className="flex gap-1">
-                  <a
-                    href={`https://${site.domain}.${baseDomain}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="Открыть сайт"
-                  >
+          {/* Список сайтов */}
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {sites.map((site) => (
+              <div
+                key={site.id}
+                className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 overflow-hidden"
+              >
+                {/* Заголовок */}
+                <div className="bg-white px-6 py-4 border-b border-gray-200">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-base font-semibold text-gray-800 truncate">
+                      {site.domain}.{baseDomain}
+                    </h2>
+                    <div className="flex gap-1">
+                      <a
+                        href={`https://${site.domain}.${baseDomain}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Открыть сайт"
+                      >
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 hover:bg-white/80 text-gray-600 hover:text-blue-600 transition-colors"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                        </Button>
+                      </a>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleCopyLink(site.domain)}
+                        title="Скопировать ссылку"
+                        className="h-8 w-8 hover:bg-white/80 text-gray-600 hover:text-blue-600 transition-colors"
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Контент */}
+                <div className="p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="text-sm text-gray-500">Статус:</span>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${
+                        site.status === 'running' 
+                          ? 'bg-green-100 text-green-700 border border-green-300' 
+                          : site.status === 'stopped'
+                          ? 'bg-red-100 text-red-700 border border-red-300'
+                          : site.status === 'not_found'
+                          ? 'bg-orange-100 text-orange-700 border border-orange-300'
+                          : site.status === 'error'
+                          ? 'bg-rose-100 text-rose-700 border border-rose-300'
+                          : site.status === 'unknown'
+                          ? 'bg-gray-100 text-gray-700 border border-gray-300'
+                          : 'bg-gray-100 text-gray-600 border border-gray-200'
+                      }`}
+                    >
+                      {
+                        site.status === 'running' 
+                          ? 'Запущен' 
+                          : site.status === 'stopped'
+                          ? 'Остановлен'
+                          : site.status === 'not_found'
+                          ? 'Не найден'
+                          : site.status === 'error'
+                          ? 'Ошибка'
+                          : site.status === 'unknown'
+                          ? 'Неизвестно'
+                          : site.status
+                      }
+                    </span>
+                  </div>
+
+                  {/* Кнопки управления */}
+                  <div className="flex gap-2 flex-wrap">
+                    {site.status === 'running' ? (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        title="Остановить"
+                        onClick={() => handleStopSite(site.domain)}
+                        disabled={isSiteLoading(site.domain)}
+                        className={`h-9 w-9 rounded-lg transition-all ${
+                          isSiteLoading(site.domain)
+                            ? 'bg-orange-200 text-orange-400 cursor-not-allowed'
+                            : 'bg-orange-50 hover:bg-orange-100 text-orange-600 hover:text-orange-700 border border-orange-200'
+                        }`}
+                      >
+                        <Pause className="h-4 w-4" />
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        title="Запустить"
+                        onClick={() => handleStartSite(site.domain)}
+                        disabled={isSiteLoading(site.domain)}
+                        className={`h-9 w-9 rounded-lg transition-all ${
+                          isSiteLoading(site.domain)
+                            ? 'bg-green-200 text-green-400 cursor-not-allowed'
+                            : 'bg-green-50 hover:bg-green-100 text-green-600 hover:text-green-700 border border-green-200'
+                        }`}
+                      >
+                        <Play className="h-4 w-4" />
+                      </Button>
+                    )}
+
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 hover:bg-white/80 text-gray-600 hover:text-blue-600 transition-colors"
+                      title="Перезапустить"
+                      onClick={() => handleRestartSite(site.domain)}
+                      disabled={isSiteLoading(site.domain)}
+                      className={`h-9 w-9 rounded-lg transition-all ${
+                        isSiteLoading(site.domain)
+                          ? 'bg-blue-200 text-blue-400 cursor-not-allowed'
+                          : 'bg-blue-50 hover:bg-blue-100 text-blue-600 hover:text-blue-700 border border-blue-200'
+                      }`}
                     >
-                      <ExternalLink className="h-4 w-4" />
+                      <RefreshCcw className="h-4 w-4" />
                     </Button>
-                  </a>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleCopyLink(site.domain)}
-                    title="Скопировать ссылку"
-                    className="h-8 w-8 hover:bg-white/80 text-gray-600 hover:text-blue-600 transition-colors"
-                  >
-                    <Copy className="h-4 w-4" />
-                  </Button>
+
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      title="Настройки"
+                      onClick={() =>
+                          window.location.href = `/settings/${site.domain}/pages`
+                        }
+                      className="h-9 w-9 rounded-lg transition-all bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-700 border border-gray-200"
+                    >
+                      <Settings className="h-4 w-4" />
+                    </Button>
+
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      title="Удалить"
+                      onClick={() => handleDeleteSite(site.domain)}
+                      disabled={isSiteLoading(site.domain)}
+                      className={`h-9 w-9 rounded-lg transition-all ${
+                        isSiteLoading(site.domain)
+                          ? 'bg-red-200 text-red-400 cursor-not-allowed'
+                          : 'bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 border border-red-200'
+                      }`}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            {/* Контент */}
-            <div className="p-4">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-sm text-gray-500">Статус:</span>
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${
-                    site.status === 'running' 
-                      ? 'bg-green-100 text-green-700 border border-green-300' 
-                      : site.status === 'stopped'
-                      ? 'bg-red-100 text-red-700 border border-red-300'
-                      : site.status === 'not_found'
-                      ? 'bg-orange-100 text-orange-700 border border-orange-300'
-                      : site.status === 'error'
-                      ? 'bg-rose-100 text-rose-700 border border-rose-300'
-                      : site.status === 'unknown'
-                      ? 'bg-gray-100 text-gray-700 border border-gray-300'
-                      : 'bg-gray-100 text-gray-600 border border-gray-200'
-                  }`}
-                >
-                  {
-                    site.status === 'running' 
-                      ? 'Запущен' 
-                      : site.status === 'stopped'
-                      ? 'Остановлен'
-                      : site.status === 'not_found'
-                      ? 'Не найден'
-                      : site.status === 'error'
-                      ? 'Ошибка'
-                      : site.status === 'unknown'
-                      ? 'Неизвестно'
-                      : site.status
-                  }
-                </span>
-              </div>
-
-              {/* Кнопки управления */}
-              <div className="flex gap-2 flex-wrap">
-                {site.status === 'running' ? (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    title="Остановить"
-                    onClick={() => handleStopSite(site.domain)}
-                    disabled={isSiteLoading(site.domain)}
-                    className={`h-9 w-9 rounded-lg transition-all ${
-                      isSiteLoading(site.domain)
-                        ? 'bg-orange-200 text-orange-400 cursor-not-allowed'
-                        : 'bg-orange-50 hover:bg-orange-100 text-orange-600 hover:text-orange-700 border border-orange-200'
-                    }`}
-                  >
-                    <Pause className="h-4 w-4" />
-                  </Button>
-                ) : (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    title="Запустить"
-                    onClick={() => handleStartSite(site.domain)}
-                    disabled={isSiteLoading(site.domain)}
-                    className={`h-9 w-9 rounded-lg transition-all ${
-                      isSiteLoading(site.domain)
-                        ? 'bg-green-200 text-green-400 cursor-not-allowed'
-                        : 'bg-green-50 hover:bg-green-100 text-green-600 hover:text-green-700 border border-green-200'
-                    }`}
-                  >
-                    <Play className="h-4 w-4" />
-                  </Button>
-                )}
-
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  title="Перезапустить"
-                  onClick={() => handleRestartSite(site.domain)}
-                  disabled={isSiteLoading(site.domain)}
-                  className={`h-9 w-9 rounded-lg transition-all ${
-                    isSiteLoading(site.domain)
-                      ? 'bg-blue-200 text-blue-400 cursor-not-allowed'
-                      : 'bg-blue-50 hover:bg-blue-100 text-blue-600 hover:text-blue-700 border border-blue-200'
-                  }`}
-                >
-                  <RefreshCcw className="h-4 w-4" />
-                </Button>
-
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  title="Настройки"
-                  onClick={() =>
-                      window.location.href = `/settings/${site.domain}/pages`
-                    }
-                  className="h-9 w-9 rounded-lg transition-all bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-700 border border-gray-200"
-                >
-                  <Settings className="h-4 w-4" />
-                </Button>
-
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  title="Удалить"
-                  onClick={() => handleDeleteSite(site.domain)}
-                  disabled={isSiteLoading(site.domain)}
-                  className={`h-9 w-9 rounded-lg transition-all ${
-                    isSiteLoading(site.domain)
-                      ? 'bg-red-200 text-red-400 cursor-not-allowed'
-                      : 'bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 border border-red-200'
-                  }`}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
-    </div>
+        </div>
+      }
+    />
   )
 }

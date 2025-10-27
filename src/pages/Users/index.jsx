@@ -213,7 +213,7 @@ export default function Users() {
 
   return (
     <PageLayout
-      backgroundGradient="min-h-screen bg-white"
+      backgroundGradient="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50"
       containerClass="p-6 space-y-6 max-w-7xl mx-auto"
       gridHeight="auto"
       header={

@@ -55,6 +55,45 @@ export default function UsersPage() {
 }
 ```
 
+### PageHeaderTitle
+Минималистичный компонент заголовка для сохранения единства дизайна на всех страницах.
+Можно использовать отдельно или встроить в PageHeader.
+
+#### Props
+- `title` (string) - Заголовок страницы (обязательно)
+- `subtitle` (string) - Подзаголовок (опционально)
+- `icon` (React Component) - Icon из lucide-react (опционально)
+- `onRefresh` (function) - Callback кнопки обновления (опционально)
+
+#### Примеры использования
+
+**Отдельно (для быстрого применения на новых страницах):**
+```jsx
+import PageHeaderTitle from '@/components/PageTemplate/PageHeaderTitle'
+import { Settings } from 'lucide-react'
+
+export default function SettingsPage() {
+  return (
+    <div className="p-6">
+      <PageHeaderTitle 
+        title="Настройки"
+        subtitle="Общие параметры сайта"
+        icon={Settings}
+        onRefresh={() => location.reload()}
+      />
+      {/* контент */}
+    </div>
+  )
+}
+```
+
+**Встроена в PageHeader:**
+```jsx
+import PageHeader from '@/components/PageTemplate/PageHeader'
+
+// PageHeader теперь использует PageHeaderTitle внутри для консистентности
+```
+
 ### PageHeader
 Header component for pages with title, subtitle, icon, and search functionality.
 
