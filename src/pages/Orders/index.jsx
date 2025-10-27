@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import api from '@/lib/axios'
 import { useSiteTokenString } from '@/hooks/useSiteToken'
 // removed unused local UI imports
+import PageLayout from '@/components/PageTemplate/PageLayout'
 import OrdersHeader from './components/OrdersHeader'
 import OrdersSidebar from './components/OrdersSidebar'
 import OrderList from './components/OrderList'
@@ -298,8 +299,9 @@ export default function OrdersPage() {
   }, [tokenError])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <PageLayout
+      backgroundGradient="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50"
+      header={
         <OrdersHeader
           title="Заказы"
           sites={sites}
@@ -316,83 +318,81 @@ export default function OrdersPage() {
           searchQuery={searchQuery}
           onChangeSearch={setSearchQuery}
         />
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-280px)]">
-          <div className="lg:col-span-3">
-            <OrdersSidebar
-              selectedStatuses={selectedStatuses}
-              onToggleStatus={onToggleStatus}
-              datePreset={datePreset}
-              onChangeDatePreset={setDatePreset}
-              dateFrom={dateFrom}
-              dateTo={dateTo}
-              onChangeDateFrom={setDateFrom}
-              onChangeDateTo={setDateTo}
-              onApply={onApplyFilters}
-              statusCounts={statusCounts}
-            />
-          </div>
-
-          <div className="lg:col-span-9">
-            <OrderList
-              orders={orders}
-              loading={loadingOrders}
-              error={error}
-              onDetails={fetchOrderDetails}
-              onPrevPage={onPrevPage}
-              onNextPage={onNextPage}
-              canPrev={canPrev}
-              canNext={canNext}
-            />
-          </div>
-        </div>
-
-        {detailsOrder && (
-          <OrderDetailsModal 
-            details={detailsOrder} 
-            onClose={() => setDetailsOrder(null)}
-            siteNameForToken={siteNameForToken}
-            siteToken={siteToken}
-            baseDomain={baseDomain}
-            refreshOrders={fetchOrders}
-            reloadDetails={async () => {
-              try {
-                if (!detailsOrder || !siteToken) return
-                const id = (detailsOrder.order || detailsOrder)?.id || (detailsOrder.order || detailsOrder)?.order_id
-                if (!id) return
-                
-                const siteForUrl = stripAppSuffix(selectedSite)
-                const url = `https://${siteForUrl}.${baseDomain}/site-api/admin/orders/${id}/details`
-                
-                const res = await fetch(url, {
-                  headers: { 
-                    'Authorization': `Bearer ${siteToken}`,
-                    'Content-Type': 'application/json',
-                  },
-                  credentials: 'include',
-                })
-                
-                if (!res.ok) {
-                  let errorMessage = `HTTP ${res.status}: ${res.statusText}`
-                  try {
-                    const errorData = await res.json()
-                    if (errorData.message) errorMessage = errorData.message
-                  } catch (e) {
-                    // Игнорируем ошибки парсинга
-                  }
-                  throw new Error(`Не удалось обновить детали заказа: ${errorMessage}`)
-                }
-                
-                const data = await res.json()
-                setDetailsOrder(data)
-              } catch (e) {
-                console.error('❌ [Orders] Не удалось обновить детали заказа:', e)
-                alert(`Не удалось обновить детали заказа: ${e.message}`)
-              }
-            }}
+      }
+      sidebar={
+        <OrdersSidebar
+          selectedStatuses={selectedStatuses}
+          onToggleStatus={onToggleStatus}
+          datePreset={datePreset}
+          onChangeDatePreset={setDatePreset}
+          dateFrom={dateFrom}
+          dateTo={dateTo}
+          onChangeDateFrom={setDateFrom}
+          onChangeDateTo={setDateTo}
+          onApply={onApplyFilters}
+          statusCounts={statusCounts}
+        />
+      }
+      content={
+        <>
+          <OrderList
+            orders={orders}
+            loading={loadingOrders}
+            error={error}
+            onDetails={fetchOrderDetails}
+            onPrevPage={onPrevPage}
+            onNextPage={onNextPage}
+            canPrev={canPrev}
+            canNext={canNext}
           />
-        )}
-      </div>
-    </div>
+
+          {detailsOrder && (
+            <OrderDetailsModal 
+              details={detailsOrder} 
+              onClose={() => setDetailsOrder(null)}
+              siteNameForToken={siteNameForToken}
+              siteToken={siteToken}
+              baseDomain={baseDomain}
+              refreshOrders={fetchOrders}
+              reloadDetails={async () => {
+                try {
+                  if (!detailsOrder || !siteToken) return
+                  const id = (detailsOrder.order || detailsOrder)?.id || (detailsOrder.order || detailsOrder)?.order_id
+                  if (!id) return
+                  
+                  const siteForUrl = stripAppSuffix(selectedSite)
+                  const url = `https://${siteForUrl}.${baseDomain}/site-api/admin/orders/${id}/details`
+                  
+                  const res = await fetch(url, {
+                    headers: { 
+                      'Authorization': `Bearer ${siteToken}`,
+                      'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                  })
+                  
+                  if (!res.ok) {
+                    let errorMessage = `HTTP ${res.status}: ${res.statusText}`
+                    try {
+                      const errorData = await res.json()
+                      if (errorData.message) errorMessage = errorData.message
+                    } catch (e) {
+                      // Игнорируем ошибки парсинга
+                    }
+                    throw new Error(`Не удалось обновить детали заказа: ${errorMessage}`)
+                  }
+                  
+                  const data = await res.json()
+                  setDetailsOrder(data)
+                } catch (e) {
+                  console.error('❌ [Orders] Не удалось обновить детали заказа:', e)
+                  alert(`Не удалось обновить детали заказа: ${e.message}`)
+                }
+              }}
+            />
+          )}
+        </>
+      }
+    />
   )
 }

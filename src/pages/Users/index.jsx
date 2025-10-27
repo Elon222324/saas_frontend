@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import api from '@/lib/axios'
 import { useSiteTokenString } from '@/hooks/useSiteToken'
+import PageLayout from '@/components/PageTemplate/PageLayout'
 import UsersHeader from './components/UsersHeader'
 import CustomersList from './components/CustomersList'
 import CustomerDetailsModal from './components/CustomerDetailsModal'
@@ -211,107 +212,116 @@ export default function Users() {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <UsersHeader
-        sites={sites}
-        selectedSite={selectedSite}
-        onChangeSite={setSelectedSite}
-        loadingSites={loadingSites}
-        limit={limit}
-        onChangeLimit={setLimit}
-        offset={offset}
-        onChangeOffset={setOffset}
-        onSearch={handleSearch}
-        baseDomain={baseDomain}
-        stripAppSuffix={stripAppSuffix}
-        searchQuery={query}
-        onChangeSearch={setQuery}
-      />
-
-      {/* Content */}
-      {error && (
-        <div className="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl">{error}</div>
-      )}
-
-      <CustomersList
-        customers={customers}
-        loading={loading}
-        error={error}
-        onPrev={handlePrevPage}
-        onNext={handleNextPage}
-        onOpenDetails={openDetails}
-        canPrev={offset > 0}
-        canNext={customers.length >= limit}
-      />
-
-      {/* Customer Details Modal */}
-      <CustomerDetailsModal
-        isOpen={Boolean(selectedCustomerId)}
-        onClose={closeDetails}
-        profile={profile}
-        orders={orders}
-        detailsLoading={detailsLoading}
-        ordersLimit={ordersLimit}
-        setOrdersLimit={setOrdersLimit}
-        ordersOffset={ordersOffset}
-        onPrevOrders={handleOrdersPrev}
-        onNextOrders={handleOrdersNext}
-        selectedCustomerId={selectedCustomerId}
-        onOpenOrderDetails={fetchOrderDetails}
-      />
-
-      {/* Order Details Modal */}
-      {selectedOrderDetails && (
-        <OrderDetailsModal 
-          details={selectedOrderDetails} 
-          onClose={() => setSelectedOrderDetails(null)}
-          siteNameForToken={siteNameForToken}
-          siteToken={siteToken}
+    <PageLayout
+      backgroundGradient="min-h-screen bg-white"
+      containerClass="p-6 space-y-6"
+      gridHeight="auto"
+      header={
+        <UsersHeader
+          sites={sites}
+          selectedSite={selectedSite}
+          onChangeSite={setSelectedSite}
+          loadingSites={loadingSites}
+          limit={limit}
+          onChangeLimit={setLimit}
+          offset={offset}
+          onChangeOffset={setOffset}
+          onSearch={handleSearch}
           baseDomain={baseDomain}
-          refreshOrders={async () => {
-            // Refresh customer's orders list when order is updated
-            if (selectedCustomerId) {
-              await fetchCustomerDetails(selectedCustomerId)
-            }
-          }}
-          reloadDetails={async () => {
-            try {
-              if (!selectedOrderDetails || !siteToken) return
-              const order = selectedOrderDetails.order || selectedOrderDetails
-              const id = order?.id || order?.order_id
-              if (!id) return
-              
-              const siteForUrl = stripAppSuffix(selectedSite)
-              const url = `https://${siteForUrl}.${baseDomain}/site-api/admin/orders/${id}/details`
-              
-              const res = await fetch(url, {
-                headers: { 
-                  'Authorization': `Bearer ${siteToken}`,
-                  'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-              })
-              
-              if (!res.ok) {
-                let errorMessage = `HTTP ${res.status}: ${res.statusText}`
-                try {
-                  const errorData = await res.json()
-                  if (errorData.message) errorMessage = errorData.message
-                } catch (e) {
-                  // Игнорируем ошибки парсинга
-                }
-                throw new Error(`Не удалось обновить детали заказа: ${errorMessage}`)
-              }
-              
-              const data = await res.json()
-              setSelectedOrderDetails(data)
-            } catch (e) {
-              console.error('❌ [Customers] Не удалось обновить детали заказа:', e)
-              alert(`Не удалось обновить детали заказа: ${e.message}`)
-            }
-          }}
+          stripAppSuffix={stripAppSuffix}
+          searchQuery={query}
+          onChangeSearch={setQuery}
         />
-      )}
-    </div>
+      }
+      content={
+        <>
+          {/* Error message */}
+          {error && (
+            <div className="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl">{error}</div>
+          )}
+
+          {/* Customers list */}
+          <CustomersList
+            customers={customers}
+            loading={loading}
+            error={error}
+            onPrev={handlePrevPage}
+            onNext={handleNextPage}
+            onOpenDetails={openDetails}
+            canPrev={offset > 0}
+            canNext={customers.length >= limit}
+          />
+
+          {/* Customer Details Modal */}
+          <CustomerDetailsModal
+            isOpen={Boolean(selectedCustomerId)}
+            onClose={closeDetails}
+            profile={profile}
+            orders={orders}
+            detailsLoading={detailsLoading}
+            ordersLimit={ordersLimit}
+            setOrdersLimit={setOrdersLimit}
+            ordersOffset={ordersOffset}
+            onPrevOrders={handleOrdersPrev}
+            onNextOrders={handleOrdersNext}
+            selectedCustomerId={selectedCustomerId}
+            onOpenOrderDetails={fetchOrderDetails}
+          />
+
+          {/* Order Details Modal */}
+          {selectedOrderDetails && (
+            <OrderDetailsModal 
+              details={selectedOrderDetails} 
+              onClose={() => setSelectedOrderDetails(null)}
+              siteNameForToken={siteNameForToken}
+              siteToken={siteToken}
+              baseDomain={baseDomain}
+              refreshOrders={async () => {
+                // Refresh customer's orders list when order is updated
+                if (selectedCustomerId) {
+                  await fetchCustomerDetails(selectedCustomerId)
+                }
+              }}
+              reloadDetails={async () => {
+                try {
+                  if (!selectedOrderDetails || !siteToken) return
+                  const order = selectedOrderDetails.order || selectedOrderDetails
+                  const id = order?.id || order?.order_id
+                  if (!id) return
+                  
+                  const siteForUrl = stripAppSuffix(selectedSite)
+                  const url = `https://${siteForUrl}.${baseDomain}/site-api/admin/orders/${id}/details`
+                  
+                  const res = await fetch(url, {
+                    headers: { 
+                      'Authorization': `Bearer ${siteToken}`,
+                      'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                  })
+                  
+                  if (!res.ok) {
+                    let errorMessage = `HTTP ${res.status}: ${res.statusText}`
+                    try {
+                      const errorData = await res.json()
+                      if (errorData.message) errorMessage = errorData.message
+                    } catch (e) {
+                      // Игнорируем ошибки парсинга
+                    }
+                    throw new Error(`Не удалось обновить детали заказа: ${errorMessage}`)
+                  }
+                  
+                  const data = await res.json()
+                  setSelectedOrderDetails(data)
+                } catch (e) {
+                  console.error('❌ [Customers] Не удалось обновить детали заказа:', e)
+                  alert(`Не удалось обновить детали заказа: ${e.message}`)
+                }
+              }}
+            />
+          )}
+        </>
+      }
+    />
   )
 }

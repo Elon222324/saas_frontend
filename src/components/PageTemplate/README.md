@@ -5,6 +5,56 @@ PageTemplate contains reusable components for common page layouts and patterns.
 
 ## Components
 
+### PageLayout
+Universal layout component that supports both single-column and two-column layouts.
+
+#### Props
+- `header` (React component) - Header component (optional but recommended)
+- `content` (React component) - Main content component (required)
+- `sidebar` (React component) - Sidebar component (optional - if provided, enables 2-column layout)
+- `backgroundGradient` (string) - Background CSS classes. Default: `'min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50'`
+- `containerClass` (string) - Container CSS classes. Default: `'p-6 space-y-6 max-w-7xl mx-auto'`
+- `gridHeight` (string) - Grid height CSS class. Default: `'h-[calc(100vh-280px)]'`
+
+#### Usage Examples
+
+**Two-column layout (with sidebar):**
+```jsx
+import PageLayout from '@/components/PageTemplate/PageLayout'
+import OrdersHeader from './components/OrdersHeader'
+import OrdersSidebar from './components/OrdersSidebar'
+import OrderList from './components/OrderList'
+
+export default function OrdersPage() {
+  return (
+    <PageLayout
+      header={<OrdersHeader {...props} />}
+      sidebar={<OrdersSidebar {...props} />}
+      content={<OrderList {...props} />}
+    />
+  )
+}
+```
+
+**Single-column layout (without sidebar):**
+```jsx
+import PageLayout from '@/components/PageTemplate/PageLayout'
+import UsersHeader from './components/UsersHeader'
+import CustomersList from './components/CustomersList'
+
+export default function UsersPage() {
+  return (
+    <PageLayout
+      backgroundGradient="min-h-screen bg-white"
+      containerClass="p-6 space-y-6"
+      gridHeight="auto"
+      header={<UsersHeader {...props} />}
+      content={<CustomersList {...props} />}
+    />
+  )
+}
+```
+
 ### PageHeader
 Header component for pages with title, subtitle, icon, and search functionality.
 
