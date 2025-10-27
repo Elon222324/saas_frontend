@@ -34,6 +34,15 @@ export default function CloudModal({ isOpen, category, onSelect }) {
   } = useTemplateGallery()
 
   useEffect(() => {
+    console.log('[🎨 CloudModal] ===== СОСТОЯНИЕ БИБЛИОТЕКИ =====')
+    console.log('[🎨 CloudModal] Активная вкладка:', activeTab)
+    console.log('[🎨 CloudModal] Группы библиотеки:', galleryGroups)
+    console.log('[🎨 CloudModal] Файлы библиотеки:', galleryFiles.length)
+    console.log('[🎨 CloudModal] Группы сайта:', userGroups)
+    console.log('[🎨 CloudModal] Файлы сайта:', userFiles.length)
+  }, [activeTab, galleryGroups, galleryFiles, userGroups, userFiles])
+
+  useEffect(() => {
     if (!isOpen || !category) return
     const code = `${category}-${activeTab}`
     const groups = activeTab === 'site' ? userGroups : galleryGroups
@@ -53,6 +62,12 @@ export default function CloudModal({ isOpen, category, onSelect }) {
 
   const currentGroups = activeTab === 'site' ? userGroups : galleryGroups
   const currentFiles = activeTab === 'site' ? userFiles : galleryFiles
+
+  console.log('[📊 CloudModal] ===== ТЕКУЩЕЕ ОТОБРАЖЕНИЕ =====')
+  console.log('[📊 CloudModal] Активная вкладка:', activeTab)
+  console.log('[📊 CloudModal] Текущие группы:', currentGroups)
+  console.log('[📊 CloudModal] Текущие файлы:', currentFiles.length)
+  console.log('[📊 CloudModal] Активная категория:', activeCategory)
 
   const filtered = currentFiles.filter((f) => {
     const term = search.trim().toLowerCase()

@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react'
 import { getImageVariants } from '@/utils/imageVariants'
 
+/**
+ * Получает токен пользователя из localStorage
+ * @returns {string | null} access_token или null
+ */
+const getAccessToken = () => {
+  return localStorage.getItem('access_token')
+}
+
 export default function useTemplateGallery() {
   const [groups, setGroups] = useState([])
   const [files, setFiles] = useState([])
@@ -8,7 +16,34 @@ export default function useTemplateGallery() {
   useEffect(() => {
     async function fetchLibrary() {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/cloud/library`)
+        const accessToken = getAccessToken()
+        
+        if (!accessToken) {
+          console.error('📦 [useTemplateGallery] Ошибка: отсутствует access_token')
+          throw new Error('Отсутствует access_token пользователя')
+        }
+
+        console.log('📦 [useTemplateGallery] → Запрос к:', `${import.meta.env.VITE_API_URL}/cloud/library`)
+
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/cloud/library`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        })
+
+        console.log('📦 [useTemplateGallery] ← Статус ответа:', res.status, res.statusText)
+
+        if (!res.ok) {
+          console.error('📦 [useTemplateGallery] ❌ Ошибка HTTP:', res.status)
+          if (res.status === 401) {
+            throw new Error('Токен истек или недействителен. Требуется повторная авторизация.')
+          }
+          throw new Error('Не удалось загрузить библиотеку')
+        }
+
         const data = await res.json()
         const base = import.meta.env.VITE_LIBRARY_ASSETS_URL || ''
 

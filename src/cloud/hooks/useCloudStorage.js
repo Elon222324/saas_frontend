@@ -2,6 +2,14 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
 import { getImageVariants } from '@/utils/imageVariants'
 
+/**
+ * Получает токен пользователя из localStorage
+ * @returns {string | null} access_token или null
+ */
+const getAccessToken = () => {
+  return localStorage.getItem('access_token')
+}
+
 export default function useCloudStorage() {
   const { site_name } = useSiteSettings()
   const API_URL = import.meta.env.VITE_API_URL
@@ -18,13 +26,31 @@ export default function useCloudStorage() {
   const fetchData = useCallback(async () => {
     if (!site_name) return
     try {
+      const accessToken = getAccessToken()
+      
+      if (!accessToken) {
+        console.error('☁️ [fetchData] Ошибка: отсутствует access_token')
+        throw new Error('Отсутствует access_token пользователя')
+      }
+
+      console.log('☁️ [fetchData] → Запрос к:', `${API_URL}/images/categories/?site_name=${site_name}`)
+
       const res = await fetch(`${API_URL}/images/categories/?site_name=${site_name}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
         },
         credentials: 'include',
       })
-      if (!res.ok) throw new Error('Failed to load categories')
+
+      console.log('☁️ [fetchData] ← Статус ответа:', res.status)
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          throw new Error('Токен истек или недействителен. Требуется повторная авторизация.')
+        }
+        throw new Error('Failed to load categories')
+      }
       const data = await res.json()
 
       const grouped = {}
@@ -69,18 +95,37 @@ export default function useCloudStorage() {
    */
   const createCategory = async (categoryData) => {
     try {
+      const accessToken = getAccessToken()
+      
+      if (!accessToken) {
+        console.error('☁️ [createCategory] Ошибка: отсутствует access_token')
+        throw new Error('Отсутствует access_token пользователя')
+      }
+
+      console.log('☁️ [createCategory] → Создание категории:', `${API_URL}/images/categories/?site_name=${site_name}`)
+
       const res = await fetch(`${API_URL}/images/categories/?site_name=${site_name}`, {
         method: 'POST',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          'Authorization': `Bearer ${accessToken}`,
         },
         body: JSON.stringify(categoryData),
       })
+
+      console.log('☁️ [createCategory] ← Статус ответа:', res.status)
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          throw new Error('Токен истек или недействителен. Требуется повторная авторизация.')
+        }
+        throw new Error('Failed to create category')
+      }
       if (res.ok) await fetchData()
     } catch (err) {
       console.error('Failed to create category', err)
+      throw err
     }
   }
 
@@ -114,17 +159,35 @@ export default function useCloudStorage() {
       }
 
       try {
+        const accessToken = getAccessToken()
+        
+        if (!accessToken) {
+          console.error('☁️ [uploadFiles] Ошибка: отсутствует access_token')
+          throw new Error('Отсутствует access_token пользователя')
+        }
+
+        console.log('☁️ [uploadFiles] → Загрузка файла:', `${API_URL}/images/?site_name=${site_name}&category_id=${categoryId}&category=${categoryCode}`)
+
         const res = await fetch(
           `${API_URL}/images/?site_name=${site_name}&category_id=${categoryId}&category=${categoryCode}`,
           {
             method: 'POST',
             credentials: 'include',
             headers: {
-              Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+              'Authorization': `Bearer ${accessToken}`,
             },
             body: formData,
           }
         )
+
+        console.log('☁️ [uploadFiles] ← Статус ответа:', res.status)
+
+        if (!res.ok) {
+          if (res.status === 401) {
+            throw new Error('Токен истек или недействителен. Требуется повторная авторизация.')
+          }
+          throw new Error('Upload failed')
+        }
         if (res.ok) {
           const img = await res.json()
           setFiles((prev) => [
@@ -139,6 +202,7 @@ export default function useCloudStorage() {
         }
       } catch (err) {
         console.error('Upload failed', err)
+        throw err
       }
     }
     await fetchData()
@@ -147,33 +211,72 @@ export default function useCloudStorage() {
 
   const deleteImage = async (id) => {
     try {
+      const accessToken = getAccessToken()
+      
+      if (!accessToken) {
+        console.error('☁️ [deleteImage] Ошибка: отсутствует access_token')
+        throw new Error('Отсутствует access_token пользователя')
+      }
+
+      console.log('☁️ [deleteImage] → Удаление изображения:', `${API_URL}/images/${id}?site_name=${site_name}`)
+
       const res = await fetch(`${API_URL}/images/${id}?site_name=${site_name}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
         },
       })
+
+      console.log('☁️ [deleteImage] ← Статус ответа:', res.status)
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          throw new Error('Токен истек или недействителен. Требуется повторная авторизация.')
+        }
+        throw new Error('Failed to delete image')
+      }
       if (res.ok) setFiles((prev) => prev.filter((f) => f.id !== id))
     } catch (err) {
       console.error('Failed to delete image', err)
+      throw err
     }
   }
 
   const updateImage = async (id, payload) => {
     try {
+      const accessToken = getAccessToken()
+      
+      if (!accessToken) {
+        console.error('☁️ [updateImage] Ошибка: отсутствует access_token')
+        throw new Error('Отсутствует access_token пользователя')
+      }
+
+      console.log('☁️ [updateImage] → Обновление изображения:', `${API_URL}/images/${id}?site_name=${site_name}`)
+
       const res = await fetch(`${API_URL}/images/${id}?site_name=${site_name}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          'Authorization': `Bearer ${accessToken}`,
         },
         body: JSON.stringify(payload),
       })
+
+      console.log('☁️ [updateImage] ← Статус ответа:', res.status)
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          throw new Error('Токен истек или недействителен. Требуется повторная авторизация.')
+        }
+        throw new Error('Failed to update image')
+      }
       if (res.ok) setFiles((prev) => prev.map((f) => (f.id === id ? { ...f, ...payload } : f)))
     } catch (err) {
       console.error('Failed to update image', err)
+      throw err
     }
   }
 

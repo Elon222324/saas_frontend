@@ -58,6 +58,22 @@ export const headerSchema = [
     visible: true
   },
   {
+    key: "mobile_login_button_bg_color",
+    label: "Фон кнопки 'Войти' на мобильных",
+    type: "color",
+    default: "#F3F4F6",
+    editable: true,
+    visible: true
+  },
+  {
+    key: "mobile_login_button_text_color",
+    label: "Текст кнопки 'Войти' на мобильных",
+    type: "color",
+    default: "#000000",
+    editable: true,
+    visible: true
+  },
+  {
     key: "rating_color",
     label: "Цвет звезды рейтинга",
     type: "color",
