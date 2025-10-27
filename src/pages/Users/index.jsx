@@ -214,7 +214,7 @@ export default function Users() {
   return (
     <PageLayout
       backgroundGradient="min-h-screen bg-white"
-      containerClass="p-6 space-y-6"
+      containerClass="p-6 space-y-6 max-w-7xl mx-auto"
       gridHeight="auto"
       header={
         <UsersHeader
