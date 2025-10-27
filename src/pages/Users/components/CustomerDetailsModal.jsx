@@ -83,14 +83,14 @@ export default function CustomerDetailsModal({
                     <div className="space-y-2">
                       <div className="text-lg font-semibold">{getCustomerName(profile)}</div>
                       <div className="flex flex-col sm:flex-row sm:items-center gap-3 text-gray-700">
-                        {profile?.phone && (
-                          <div className="flex items-center gap-2"><Phone className="h-4 w-4" /><span>{profile.phone}</span></div>
+                        {(profile?.phone || profile?.phone_number || profile?.mobile || profile?.customer_phone) && (
+                          <div className="flex items-center gap-2"><Phone className="h-4 w-4" /><span>{profile?.phone || profile?.phone_number || profile?.mobile || profile?.customer_phone}</span></div>
                         )}
-                        {profile?.email && (
-                          <div className="flex items-center gap-2"><Mail className="h-4 w-4" /><span>{profile.email}</span></div>
+                        {(profile?.email || profile?.mail || profile?.customer_email) && (
+                          <div className="flex items-center gap-2"><Mail className="h-4 w-4" /><span>{profile?.email || profile?.mail || profile?.customer_email}</span></div>
                         )}
-                        {profile?.created_at && (
-                          <div className="flex items-center gap-2"><Calendar className="h-4 w-4" /><span>{formatDate(profile.created_at)}</span></div>
+                        {(profile?.created_at || profile?.createdAt || profile?.created) && (
+                          <div className="flex items-center gap-2"><Calendar className="h-4 w-4" /><span>{formatDate(profile?.created_at || profile?.createdAt || profile?.created)}</span></div>
                         )}
                       </div>
                       <div className="text-xs text-gray-500">ID: {String(profile?.id ?? selectedCustomerId)}</div>

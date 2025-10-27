@@ -47,8 +47,16 @@ export async function fetchCustomerDetailsApi({ siteName, siteToken, customerId,
   if (!profileRes.ok) throw new Error(`HTTP ${profileRes.status}`)
   if (!ordersRes.ok) throw new Error(`HTTP ${ordersRes.status}`)
 
-  const profileData = await profileRes.json()
+  const profileRaw = await profileRes.json()
   const ordersRaw = await ordersRes.json()
+  
+  // Handle different response formats for profile
+  // Support: { customer: {...} }, { profile: {...} }, or direct customer data
+  const profileData = profileRaw?.customer || profileRaw?.profile || profileRaw
+  
+  console.log('🔍 [Customers API] ← Профиль клиента raw:', profileRaw)
+  console.log('🔍 [Customers API] ← Профиль клиента processed:', profileData)
+  
   const ordersData = Array.isArray(ordersRaw) ? ordersRaw : (ordersRaw?.orders || ordersRaw?.results || ordersRaw?.data || [])
   return { profileData, ordersData }
 }
