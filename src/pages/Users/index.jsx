@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import api from '@/lib/axios'
 import { useSiteTokenString } from '@/hooks/useSiteToken'
 import UsersHeader from './components/UsersHeader'
-import UsersControls from './components/UsersControls'
 import CustomersList from './components/CustomersList'
 import CustomerDetailsModal from './components/CustomerDetailsModal'
 import OrderDetailsModal from '../Orders/components/OrderDetailsModal'
@@ -213,20 +212,20 @@ export default function Users() {
 
   return (
     <div className="p-6 space-y-6">
-      <UsersHeader onRefresh={fetchCustomers} />
-
-      <UsersControls
+      <UsersHeader
         sites={sites}
         selectedSite={selectedSite}
-        setSelectedSite={setSelectedSite}
-        query={query}
-        setQuery={setQuery}
-        limit={limit}
-        setLimit={setLimit}
-        offset={offset}
-        setOffset={setOffset}
+        onChangeSite={setSelectedSite}
         loadingSites={loadingSites}
+        limit={limit}
+        onChangeLimit={setLimit}
+        offset={offset}
+        onChangeOffset={setOffset}
         onSearch={handleSearch}
+        baseDomain={baseDomain}
+        stripAppSuffix={stripAppSuffix}
+        searchQuery={query}
+        onChangeSearch={setQuery}
       />
 
       {/* Content */}
