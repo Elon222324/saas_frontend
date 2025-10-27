@@ -233,17 +233,16 @@ export default function Users() {
         <div className="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl">{error}</div>
       )}
 
-      {loading ? (
-        <div className="p-6">Загрузка...</div>
-      ) : (
-        <CustomersList
-          customers={customers}
-          offset={offset}
-          onPrev={handlePrevPage}
-          onNext={handleNextPage}
-          onOpenDetails={openDetails}
-        />
-      )}
+      <CustomersList
+        customers={customers}
+        loading={loading}
+        error={error}
+        onPrev={handlePrevPage}
+        onNext={handleNextPage}
+        onOpenDetails={openDetails}
+        canPrev={offset > 0}
+        canNext={customers.length >= limit}
+      />
 
       {/* Customer Details Modal */}
       <CustomerDetailsModal
