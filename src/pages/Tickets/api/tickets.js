@@ -36,6 +36,8 @@ export const fetchTicketDetails = async (siteToken, ticketId, baseDomain, siteNa
     url = `https://${siteName}.${baseDomain}${url}`
   }
   
+  console.log('🔑 [Tickets API] → GET ticket details:', url)
+  
   const response = await fetch(url, {
     method: 'GET',
     headers: {
@@ -47,10 +49,17 @@ export const fetchTicketDetails = async (siteToken, ticketId, baseDomain, siteNa
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}))
+    console.error('❌ [Tickets API] Failed to fetch ticket:', errorData)
     throw new Error(errorData.message || `HTTP ${response.status}`)
   }
 
-  return await response.json()
+  const data = await response.json()
+  console.log('✅ [Tickets API] ← Ticket details received:', {
+    id: data.id || data.ticket?.id,
+    status: data.status || data.ticket?.status,
+    keys: Object.keys(data)
+  })
+  return data
 }
 
 /**
@@ -61,6 +70,8 @@ export const updateTicketStatus = async (siteToken, ticketId, status, baseDomain
   if (baseDomain && siteName) {
     url = `https://${siteName}.${baseDomain}${url}`
   }
+  
+  console.log('🔑 [Tickets API] → PATCH ticket status:', url, { status })
   
   const response = await fetch(url, {
     method: 'PATCH',
@@ -74,10 +85,18 @@ export const updateTicketStatus = async (siteToken, ticketId, status, baseDomain
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}))
+    console.error('❌ [Tickets API] Failed to update status:', errorData)
     throw new Error(errorData.message || `HTTP ${response.status}`)
   }
 
-  return await response.json()
+  const data = await response.json()
+  console.log('✅ [Tickets API] ← Status updated:', {
+    id: data.id || data.ticket?.id,
+    status: data.status || data.ticket?.status,
+    keys: Object.keys(data),
+    fullResponse: data
+  })
+  return data
 }
 
 /**
@@ -92,6 +111,8 @@ export const addAdminResponse = async (siteToken, ticketId, message, status = nu
   const body = { message }
   if (status) body.status = status
 
+  console.log('🔑 [Tickets API] → POST admin response:', url, { messageLength: message.length, status })
+  
   const response = await fetch(url, {
     method: 'POST',
     headers: {
@@ -104,10 +125,17 @@ export const addAdminResponse = async (siteToken, ticketId, message, status = nu
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}))
+    console.error('❌ [Tickets API] Failed to add response:', errorData)
     throw new Error(errorData.message || `HTTP ${response.status}`)
   }
 
-  return await response.json()
+  const data = await response.json()
+  console.log('✅ [Tickets API] ← Admin response added:', {
+    id: data.id || data.ticket?.id,
+    keys: Object.keys(data),
+    fullResponse: data
+  })
+  return data
 }
 
 /**

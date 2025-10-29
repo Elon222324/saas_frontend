@@ -9,16 +9,27 @@ export default function MessagesSection({ ticket, isUpdating, onAddResponse }) {
     e.preventDefault()
     if (!message.trim()) return
 
+    console.log('📤 [MessagesSection] Submitting message:', {
+      message: message.substring(0, 50) + '...',
+      newStatus: newStatus || 'no change',
+    })
+
     try {
+      console.log('⏳ [MessagesSection] Waiting for onAddResponse...')
       await onAddResponse(message, newStatus || null)
+      console.log('✅ [MessagesSection] Message submitted successfully')
+      console.log('📊 [MessagesSection] Updated ticket state:', ticket)
       setMessage('')
       setNewStatus('')
     } catch (e) {
-      console.error('Error adding response:', e)
+      console.error('❌ [MessagesSection] Error adding response:', e)
     }
   }
 
-  if (!ticket) return null
+  if (!ticket) {
+    console.warn('⚠️ [MessagesSection] Ticket is null or undefined')
+    return null
+  }
 
   // Combine initial message with messages array
   const allMessages = []

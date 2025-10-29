@@ -160,8 +160,23 @@ export default function TicketDetailsModal({
       setLoading(true)
       setFetchError('')
       try {
+        console.log('🔄 [Ticket Details Modal] Loading ticket:', ticketId)
         const data = await fetchTicketDetails(siteToken, ticketId, baseDomain, siteName)
-        setTicket(data)
+        // Handle API response structure: may be { ticket: {...} } or just ticket object
+        const ticketData = data.ticket || data
+        console.log('📥 [Ticket Details Modal] Raw API response:', data)
+        console.log('📥 [Ticket Details Modal] Extracted ticket data:', ticketData)
+        console.log('📥 [Ticket Details Modal] Ticket fields:', {
+          id: ticketData.id,
+          status: ticketData.status,
+          priority: ticketData.priority,
+          created_at: ticketData.created_at,
+          updated_at: ticketData.updated_at,
+          user_name: ticketData.user_name,
+          category: ticketData.category,
+          messages: Array.isArray(ticketData.messages) ? ticketData.messages.length : 0,
+        })
+        setTicket(ticketData)
       } catch (e) {
         const msg = e.message || 'Ошибка при загрузке деталей тикета'
         setFetchError(msg)
@@ -172,16 +187,20 @@ export default function TicketDetailsModal({
     }
 
     loadTicketDetails()
-  }, [ticketId, siteToken, baseDomain, siteName, setTicket])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ticketId, siteToken, baseDomain, siteName])
 
   const handleActionAndRefresh = async (action) => {
+    console.log('🔄 [Ticket Details Modal] Executing action and refresh...')
     try {
-      await action()
+      const result = await action()
+      console.log('✅ [Ticket Details Modal] Action completed, ticket state:', ticket)
       setTimeout(() => {
+        console.log('🔄 [Ticket Details Modal] Refreshing tickets list...')
         refreshTickets?.()
       }, 500)
     } catch (e) {
-      console.error('Error in action:', e)
+      console.error('❌ [Ticket Details Modal] Error in action:', e)
     }
   }
 

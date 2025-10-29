@@ -37,8 +37,40 @@ const categoryLabels = {
   other: 'Другое',
 }
 
+// Helper function to safely format date
+const formatDate = (dateString) => {
+  if (!dateString) return 'Не указано'
+  try {
+    const date = new Date(dateString)
+    if (isNaN(date.getTime())) return 'Не указано'
+    return date.toLocaleDateString('ru-RU', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  } catch (e) {
+    console.warn('⚠️ [TicketInfo] Invalid date:', dateString)
+    return 'Не указано'
+  }
+}
+
 export default function TicketInfo({ ticket }) {
-  if (!ticket) return null
+  if (!ticket) {
+    console.warn('⚠️ [TicketInfo] Ticket is null or undefined')
+    return null
+  }
+
+  console.log('🎨 [TicketInfo] Rendering ticket:', {
+    id: ticket.id,
+    status: ticket.status,
+    priority: ticket.priority,
+    created_at: ticket.created_at,
+    updated_at: ticket.updated_at,
+    user_name: ticket.user_name,
+    category: ticket.category,
+  })
 
   return (
     <div className="space-y-4">
@@ -122,25 +154,13 @@ export default function TicketInfo({ ticket }) {
         <div>
           <p className="text-xs text-gray-500 uppercase font-semibold mb-1">Создано</p>
           <p className="text-sm text-gray-800">
-            {new Date(ticket.created_at).toLocaleDateString('ru-RU', {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
+            {formatDate(ticket.created_at)}
           </p>
         </div>
         <div>
           <p className="text-xs text-gray-500 uppercase font-semibold mb-1">Обновлено</p>
           <p className="text-sm text-gray-800">
-            {new Date(ticket.updated_at).toLocaleDateString('ru-RU', {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
+            {formatDate(ticket.updated_at)}
           </p>
         </div>
       </div>
