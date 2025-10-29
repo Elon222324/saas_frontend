@@ -20,16 +20,32 @@ export default function MessagesSection({ ticket, isUpdating, onAddResponse }) {
 
   if (!ticket) return null
 
+  // Combine initial message with messages array
+  const allMessages = []
+  if (ticket.message) {
+    allMessages.push({
+      id: 'initial',
+      message: ticket.message,
+      is_admin: false,
+      created_at: ticket.created_at,
+    })
+  }
+  if (ticket.messages && Array.isArray(ticket.messages)) {
+    allMessages.push(...ticket.messages)
+  }
+
+  console.log('💬 [MessagesSection] All messages to display:', allMessages)
+
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold text-gray-900">Сообщения</h3>
 
       {/* Messages List */}
       <div className="bg-gray-50 rounded-lg p-4 max-h-96 overflow-y-auto space-y-3">
-        {!ticket.messages || ticket.messages.length === 0 ? (
+        {allMessages.length === 0 ? (
           <p className="text-gray-500 text-sm text-center py-4">Нет сообщений</p>
         ) : (
-          ticket.messages.map((msg) => (
+          allMessages.map((msg) => (
             <div
               key={msg.id}
               className={`p-3 rounded-lg ${
