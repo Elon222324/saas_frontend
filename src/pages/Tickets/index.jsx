@@ -279,6 +279,8 @@ export default function TicketsPage() {
             <TicketDetailsModal
               ticketId={detailsTicket}
               siteToken={siteToken}
+              baseDomain={baseDomain}
+              siteName={selectedSite}
               onClose={() => setDetailsTicket(null)}
               refreshTickets={fetchTicketsList}
             />

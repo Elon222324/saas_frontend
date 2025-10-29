@@ -6,7 +6,7 @@ import {
   closeTicket,
 } from '../../../api/tickets'
 
-export const useTicketDetails = (ticketId, siteToken) => {
+export const useTicketDetails = (ticketId, siteToken, baseDomain, siteName) => {
   const [ticket, setTicket] = useState(null)
   const [isUpdating, setIsUpdating] = useState(false)
   const [error, setError] = useState('')
@@ -17,7 +17,7 @@ export const useTicketDetails = (ticketId, siteToken) => {
     setError('')
     
     try {
-      const updated = await updateTicketStatus(siteToken, ticket.id, newStatus)
+      const updated = await updateTicketStatus(siteToken, ticket.id, newStatus, baseDomain, siteName)
       setTicket(updated)
       return updated
     } catch (e) {
@@ -36,7 +36,7 @@ export const useTicketDetails = (ticketId, siteToken) => {
     setError('')
     
     try {
-      const updated = await addAdminResponse(siteToken, ticket.id, message, status)
+      const updated = await addAdminResponse(siteToken, ticket.id, message, status, baseDomain, siteName)
       setTicket(updated)
       return updated
     } catch (e) {
@@ -55,7 +55,7 @@ export const useTicketDetails = (ticketId, siteToken) => {
     setError('')
     
     try {
-      const updated = await resolveTicket(siteToken, ticket.id, resolutionNotes)
+      const updated = await resolveTicket(siteToken, ticket.id, resolutionNotes, baseDomain, siteName)
       setTicket(updated)
       return updated
     } catch (e) {
@@ -74,7 +74,7 @@ export const useTicketDetails = (ticketId, siteToken) => {
     setError('')
     
     try {
-      const updated = await closeTicket(siteToken, ticket.id)
+      const updated = await closeTicket(siteToken, ticket.id, baseDomain, siteName)
       setTicket(updated)
       return updated
     } catch (e) {

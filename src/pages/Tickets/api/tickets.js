@@ -29,8 +29,12 @@ export const fetchTickets = async (siteToken, params = {}) => {
 /**
  * Получить детали тикета
  */
-export const fetchTicketDetails = async (siteToken, ticketId) => {
-  const url = `${BASE_URL}/${ticketId}`
+export const fetchTicketDetails = async (siteToken, ticketId, baseDomain, siteName) => {
+  // If baseDomain and siteName are provided, construct full URL
+  let url = `${BASE_URL}/${ticketId}`
+  if (baseDomain && siteName) {
+    url = `https://${siteName}.${baseDomain}${url}`
+  }
   
   const response = await fetch(url, {
     method: 'GET',
@@ -52,8 +56,11 @@ export const fetchTicketDetails = async (siteToken, ticketId) => {
 /**
  * Изменить статус тикета
  */
-export const updateTicketStatus = async (siteToken, ticketId, status) => {
-  const url = `${BASE_URL}/${ticketId}/status`
+export const updateTicketStatus = async (siteToken, ticketId, status, baseDomain, siteName) => {
+  let url = `${BASE_URL}/${ticketId}/status`
+  if (baseDomain && siteName) {
+    url = `https://${siteName}.${baseDomain}${url}`
+  }
   
   const response = await fetch(url, {
     method: 'PATCH',
@@ -76,8 +83,11 @@ export const updateTicketStatus = async (siteToken, ticketId, status) => {
 /**
  * Добавить ответ администратора
  */
-export const addAdminResponse = async (siteToken, ticketId, message, status = null) => {
-  const url = `${BASE_URL}/${ticketId}/messages`
+export const addAdminResponse = async (siteToken, ticketId, message, status = null, baseDomain, siteName) => {
+  let url = `${BASE_URL}/${ticketId}/messages`
+  if (baseDomain && siteName) {
+    url = `https://${siteName}.${baseDomain}${url}`
+  }
   
   const body = { message }
   if (status) body.status = status
@@ -103,8 +113,11 @@ export const addAdminResponse = async (siteToken, ticketId, message, status = nu
 /**
  * Разрешить тикет (resolve)
  */
-export const resolveTicket = async (siteToken, ticketId, resolutionNotes) => {
-  const url = `${BASE_URL}/${ticketId}/resolve`
+export const resolveTicket = async (siteToken, ticketId, resolutionNotes, baseDomain, siteName) => {
+  let url = `${BASE_URL}/${ticketId}/resolve`
+  if (baseDomain && siteName) {
+    url = `https://${siteName}.${baseDomain}${url}`
+  }
   
   const response = await fetch(url, {
     method: 'POST',
@@ -127,8 +140,11 @@ export const resolveTicket = async (siteToken, ticketId, resolutionNotes) => {
 /**
  * Закрыть тикет
  */
-export const closeTicket = async (siteToken, ticketId) => {
-  const url = `${BASE_URL}/${ticketId}/close`
+export const closeTicket = async (siteToken, ticketId, baseDomain, siteName) => {
+  let url = `${BASE_URL}/${ticketId}/close`
+  if (baseDomain && siteName) {
+    url = `https://${siteName}.${baseDomain}${url}`
+  }
   
   const response = await fetch(url, {
     method: 'POST',
@@ -150,8 +166,11 @@ export const closeTicket = async (siteToken, ticketId) => {
 /**
  * Получить статистику по тикетам
  */
-export const fetchTicketsStats = async (siteToken) => {
-  const url = `${BASE_URL}/stats/dashboard`
+export const fetchTicketsStats = async (siteToken, baseDomain, siteName) => {
+  let url = `${BASE_URL}/stats/dashboard`
+  if (baseDomain && siteName) {
+    url = `https://${siteName}.${baseDomain}${url}`
+  }
   
   const response = await fetch(url, {
     method: 'GET',

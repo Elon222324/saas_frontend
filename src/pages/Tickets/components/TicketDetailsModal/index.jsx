@@ -10,6 +10,8 @@ import ModalFooter from './components/ModalFooter'
 export default function TicketDetailsModal({
   ticketId,
   siteToken,
+  baseDomain,
+  siteName,
   onClose = () => {},
   refreshTickets = () => {},
 }) {
@@ -25,7 +27,7 @@ export default function TicketDetailsModal({
     handleAddResponse,
     handleResolve,
     handleClose,
-  } = useTicketDetails(ticketId, siteToken)
+  } = useTicketDetails(ticketId, siteToken, baseDomain, siteName)
 
   useEffect(() => {
     if (!ticketId || !siteToken) return
@@ -34,7 +36,7 @@ export default function TicketDetailsModal({
       setLoading(true)
       setFetchError('')
       try {
-        const data = await fetchTicketDetails(siteToken, ticketId)
+        const data = await fetchTicketDetails(siteToken, ticketId, baseDomain, siteName)
         setTicket(data)
       } catch (e) {
         const msg = e.message || 'Ошибка при загрузке деталей тикета'
@@ -46,7 +48,7 @@ export default function TicketDetailsModal({
     }
 
     loadTicketDetails()
-  }, [ticketId, siteToken, setTicket])
+  }, [ticketId, siteToken, baseDomain, siteName, setTicket])
 
   const handleActionAndRefresh = async (action) => {
     try {
