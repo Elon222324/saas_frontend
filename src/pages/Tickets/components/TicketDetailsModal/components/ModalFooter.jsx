@@ -7,6 +7,7 @@ export default function ModalFooter({
   onStatusChange,
   onResolve,
   onClose,
+  onCloseModal,
 }) {
   const [showResolveForm, setShowResolveForm] = useState(false)
   const [resolutionNotes, setResolutionNotes] = useState('')
@@ -41,7 +42,7 @@ export default function ModalFooter({
     ticket.status !== 'closed' && ticket.status !== 'resolved'
 
   return (
-    <div className="border-t pt-4 space-y-3">
+    <div className="pt-4 space-y-3">
       {/* Resolve Form */}
       {showResolveForm && ticket.status !== 'resolved' && (
         <div className="bg-green-50 border border-green-200 rounded p-4 space-y-3">

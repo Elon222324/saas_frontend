@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, MessageCircle } from 'lucide-react'
+import ModalTemplate from '@/components/ModalTemplate'
 import { fetchTicketDetails } from '../../api/tickets'
 import { useTicketDetails } from './hooks/useTicketDetails'
-import ModalHeader from './components/ModalHeader'
 import TicketInfo from './components/TicketInfo'
 import MessagesSection from './components/MessagesSection'
-import ModalFooter from './components/ModalFooter'
 import CustomerProfileModal from '@/components/CustomerProfileModal'
 import OrderDetailsModal from '@/pages/Orders/components/OrderDetailsModal'
 
@@ -188,92 +187,93 @@ export default function TicketDetailsModal({
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-          <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          </div>
+      <ModalTemplate
+        title="Загрузка..."
+        subtitle="Получение деталей тикета"
+        icon={MessageCircle}
+        iconBgColor="bg-blue-50"
+        iconColor="text-blue-600"
+        onClose={onClose}
+        maxWidth="max-w-4xl"
+        showFooter={false}
+      >
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
-      </div>
+      </ModalTemplate>
     )
   }
 
   if (fetchError) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-8 max-w-2xl w-full mx-4">
+      <ModalTemplate
+        title="Ошибка загрузки"
+        subtitle="Не удалось загрузить детали тикета"
+        icon={AlertCircle}
+        iconBgColor="bg-red-50"
+        iconColor="text-red-600"
+        onClose={onClose}
+        maxWidth="max-w-2xl"
+      >
+        <div className="p-8">
           <div className="flex gap-3 items-start text-red-800">
             <AlertCircle size={24} className="flex-shrink-0 mt-1" />
             <div>
-              <h3 className="font-semibold mb-2">Ошибка загрузки</h3>
-              <p className="text-sm mb-4">{fetchError}</p>
-              <button
-                onClick={onClose}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-              >
-                Закрыть
-              </button>
+              <p className="text-sm">{fetchError}</p>
             </div>
           </div>
         </div>
-      </div>
+      </ModalTemplate>
     )
   }
 
   if (!ticket) return null
 
+  const ticketShortId = ticket.id?.slice(0, 8) || ticket.id
+  const ticketCreatedDate = ticket.created_at 
+    ? new Date(ticket.created_at).toLocaleString('ru-RU')
+    : ''
+
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-xl">
-          <div className="p-6 space-y-6">
-            {/* Header */}
-            <ModalHeader ticket={ticket} onClose={onClose} />
+      <ModalTemplate
+        title={`Тикет #${ticketShortId}`}
+        subtitle={ticketCreatedDate ? `Создано: ${ticketCreatedDate}` : 'Детали тикета'}
+        icon={MessageCircle}
+        iconBgColor="bg-blue-50"
+        iconColor="text-blue-600"
+        onClose={onClose}
+        maxWidth="max-w-4xl"
+      >
+        <div className="p-8 space-y-6">
+          {/* Error message */}
+          {updateError && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex gap-3">
+              <AlertCircle size={20} className="text-red-600 flex-shrink-0 mt-0.5" />
+              <p className="text-red-800 text-sm">{updateError}</p>
+            </div>
+          )}
 
-            {/* Error message */}
-            {updateError && (
-              <div className="bg-red-50 border border-red-200 rounded p-4 flex gap-3">
-                <AlertCircle size={20} className="text-red-600 flex-shrink-0 mt-0.5" />
-                <p className="text-red-800 text-sm">{updateError}</p>
-              </div>
-            )}
-
-            {/* Main content grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Left: Ticket Info */}
-              <div className="lg:col-span-1 bg-gray-50 rounded-lg p-4">
-                <TicketInfo ticket={ticket} />
-              </div>
-
-              {/* Right: Messages */}
-              <div className="lg:col-span-2">
-                <MessagesSection
-                  ticket={ticket}
-                  isUpdating={isUpdating}
-                  onAddResponse={(msg, status) =>
-                    handleActionAndRefresh(() => handleAddResponse(msg, status))
-                  }
-                />
-              </div>
+          {/* Main content grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left: Ticket Info */}
+            <div className="lg:col-span-1 bg-gray-50 rounded-lg p-4">
+              <TicketInfo ticket={ticket} />
             </div>
 
-            {/* Footer with action buttons */}
-            <ModalFooter
-              ticket={ticket}
-              isUpdating={isUpdating}
-              onStatusChange={(status) =>
-                handleActionAndRefresh(() => handleStatusChange(status))
-              }
-              onResolve={(notes) =>
-                handleActionAndRefresh(() => handleResolve(notes))
-              }
-              onClose={() =>
-                handleActionAndRefresh(() => handleClose())
-              }
-            />
+            {/* Right: Messages */}
+            <div className="lg:col-span-2">
+              <MessagesSection
+                ticket={ticket}
+                isUpdating={isUpdating}
+                onAddResponse={(msg, status) =>
+                  handleActionAndRefresh(() => handleAddResponse(msg, status))
+                }
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </ModalTemplate>
 
       {/* Customer Profile Modal - with higher z-index to appear above ticket modal */}
       <CustomerProfileModal

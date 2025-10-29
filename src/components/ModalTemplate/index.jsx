@@ -1,5 +1,6 @@
 import { ModalHeader } from './components/ModalHeader.jsx'
 import { ModalFooter } from './components/ModalFooter.jsx'
+import { Button } from '@/components/ui/button'
 
 /**
  * Универсальный шаблон модального окна
@@ -14,6 +15,8 @@ import { ModalFooter } from './components/ModalFooter.jsx'
  * @param {React.ReactNode} props.children - Контент модалки
  * @param {React.ReactNode} [props.footer] - Кастомный футер (если не передан, используется стандартный)
  * @param {boolean} [props.showFooter] - Показывать ли футер (по умолчанию true)
+ * @param {boolean} [props.showCloseButton] - Показывать ли кнопку закрытия в конце footer (по умолчанию true, работает только с кастомным footer)
+ * @param {string} [props.closeButtonText] - Текст кнопки закрытия (по умолчанию 'Закрыть')
  * @param {string} [props.maxWidth] - Максимальная ширина (по умолчанию 'max-w-4xl')
  * @param {string} [props.modalClassName] - Дополнительные классы для контейнера модалки
  * @param {string} [props.overlayClassName] - Дополнительные классы для оверлея
@@ -28,6 +31,8 @@ export default function ModalTemplate({
   children,
   footer,
   showFooter = true,
+  showCloseButton = true,
+  closeButtonText = 'Закрыть',
   maxWidth = 'max-w-4xl',
   modalClassName = '',
   overlayClassName = '',
@@ -49,7 +54,25 @@ export default function ModalTemplate({
         </div>
 
         {showFooter && (
-          footer || <ModalFooter onClose={onClose} />
+          footer ? (
+            <>
+              {footer}
+              {showCloseButton && (
+                <div className="px-8 py-4 border-t border-gray-100 bg-white">
+                  <div className="flex justify-end">
+                    <Button 
+                      onClick={onClose}
+                      className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2.5 rounded-lg transition-colors"
+                    >
+                      {closeButtonText}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <ModalFooter onClose={onClose} closeButtonText={closeButtonText} />
+          )
         )}
       </div>
     </div>
