@@ -1,5 +1,6 @@
 import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { isValidElement, createElement } from 'react'
 
 /**
  * Шапка модального окна
@@ -28,9 +29,13 @@ export function ModalHeader({
             <div className={`p-3 ${iconBgColor} rounded-xl`}>
               {typeof Icon === 'function' ? (
                 <Icon className={`h-6 w-6 ${iconColor}`} />
+              ) : isValidElement(Icon) ? (
+                Icon
+              ) : Icon && typeof Icon === 'object' && '$$typeof' in Icon && Icon.render ? (
+                createElement(Icon, { className: `h-6 w-6 ${iconColor}` })
               ) : (
                 <div className={iconColor}>
-                  {Icon}
+                  {typeof Icon === 'string' || typeof Icon === 'number' ? Icon : null}
                 </div>
               )}
             </div>
