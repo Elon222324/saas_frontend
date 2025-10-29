@@ -34,7 +34,7 @@ export default function ModalTemplate({
 }) {
   return (
     <div className={`fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 ${overlayClassName}`}>
-      <div className={`bg-white rounded-2xl shadow-2xl w-full ${maxWidth} max-h-[90vh] overflow-hidden animate-in fade-in-0 zoom-in-95 duration-300 ${modalClassName}`}>
+      <div className={`bg-white rounded-2xl shadow-2xl w-full ${maxWidth} max-h-[90vh] overflow-hidden flex flex-col animate-in fade-in-0 zoom-in-95 duration-300 ${modalClassName}`}>
         <ModalHeader 
           title={title}
           subtitle={subtitle}
@@ -44,7 +44,7 @@ export default function ModalTemplate({
           onClose={onClose}
         />
 
-        <div className="overflow-y-auto max-h-[calc(90vh-120px)]">
+        <div className="overflow-y-auto flex-1 min-h-0">
           {children}
         </div>
 
