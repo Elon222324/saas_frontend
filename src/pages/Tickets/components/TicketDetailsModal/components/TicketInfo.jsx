@@ -1,4 +1,5 @@
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, UserCircle, FileText } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 const statusColors = {
   new: 'bg-blue-100 text-blue-800',
@@ -66,7 +67,27 @@ export default function TicketInfo({ ticket }) {
       {/* User Info */}
       <div>
         <p className="text-xs text-gray-500 uppercase font-semibold mb-1">Пользователь</p>
-        <p className="text-sm text-gray-800">{ticket.user_name || 'Не указано'}</p>
+        <div className="flex items-center gap-2">
+          <p className="text-sm text-gray-800">{ticket.user_name || 'Не указано'}</p>
+          {ticket.order_id && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                // Получаем customer_id через глобальную функцию,
+                // потому что user_id из ticket это не customer_id
+                if (window.__getCustomerIdAndOpen) {
+                  window.__getCustomerIdAndOpen(ticket)
+                }
+              }}
+              className="flex items-center gap-1 border-blue-300 text-blue-700 hover:bg-blue-50 hover:border-blue-400 hover:text-blue-800 transition-colors"
+              title="Открыть профиль пользователя"
+            >
+              <UserCircle size={14} />
+              <span className="text-xs">Профиль</span>
+            </Button>
+          )}
+        </div>
         {ticket.user_id && (
           <p className="text-xs text-gray-500 mt-1">{ticket.user_id}</p>
         )}
@@ -76,7 +97,23 @@ export default function TicketInfo({ ticket }) {
       {ticket.order_id && (
         <div>
           <p className="text-xs text-gray-500 uppercase font-semibold mb-1">Заказ</p>
-          <p className="text-sm text-gray-800 font-mono">{ticket.order_id.slice(0, 8)}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-gray-800 font-mono">{ticket.order_id.slice(0, 8)}</p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                if (window.__openOrderDetails) {
+                  window.__openOrderDetails(ticket.order_id)
+                }
+              }}
+              className="flex items-center gap-1 border-blue-300 text-blue-700 hover:bg-blue-50 hover:border-blue-400 hover:text-blue-800 transition-colors"
+              title="Открыть детали заказа"
+            >
+              <FileText size={14} />
+              <span className="text-xs">Детали</span>
+            </Button>
+          </div>
         </div>
       )}
 
