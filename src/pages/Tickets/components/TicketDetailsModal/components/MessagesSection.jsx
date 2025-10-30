@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Send, AlertCircle } from 'lucide-react'
+import { Send } from 'lucide-react'
 
 export default function MessagesSection({ ticket, isUpdating, onAddResponse }) {
   const [message, setMessage] = useState('')
@@ -9,16 +9,8 @@ export default function MessagesSection({ ticket, isUpdating, onAddResponse }) {
     e.preventDefault()
     if (!message.trim()) return
 
-    console.log('📤 [MessagesSection] Submitting message:', {
-      message: message.substring(0, 50) + '...',
-      newStatus: newStatus || 'no change',
-    })
-
     try {
-      console.log('⏳ [MessagesSection] Waiting for onAddResponse...')
       await onAddResponse(message, newStatus || null)
-      console.log('✅ [MessagesSection] Message submitted successfully')
-      console.log('📊 [MessagesSection] Updated ticket state:', ticket)
       setMessage('')
       setNewStatus('')
     } catch (e) {
@@ -27,7 +19,6 @@ export default function MessagesSection({ ticket, isUpdating, onAddResponse }) {
   }
 
   if (!ticket) {
-    console.warn('⚠️ [MessagesSection] Ticket is null or undefined')
     return null
   }
 
@@ -45,14 +36,12 @@ export default function MessagesSection({ ticket, isUpdating, onAddResponse }) {
     allMessages.push(...ticket.messages)
   }
 
-  console.log('💬 [MessagesSection] All messages to display:', allMessages)
-
   return (
-    <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-gray-900">Сообщения</h3>
+    <div className="flex flex-col h-full">
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">Сообщения</h3>
 
       {/* Messages List */}
-      <div className="bg-gray-50 rounded-lg p-4 max-h-96 overflow-y-auto space-y-3">
+      <div className="flex-1 bg-gray-50 rounded-lg p-4 space-y-3 overflow-y-auto max-h-[50vh]">
         {allMessages.length === 0 ? (
           <p className="text-gray-500 text-sm text-center py-4">Нет сообщений</p>
         ) : (
@@ -86,7 +75,7 @@ export default function MessagesSection({ ticket, isUpdating, onAddResponse }) {
       </div>
 
       {/* Add Response Form */}
-      <form onSubmit={handleSubmit} className="space-y-3 pt-4 border-t">
+      <form onSubmit={handleSubmit} className="space-y-3 pt-4 border-t mt-4">
         <div>
           <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
             Ваш ответ
@@ -95,44 +84,41 @@ export default function MessagesSection({ ticket, isUpdating, onAddResponse }) {
             id="message"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Введите ответ (минимум 1, максимум 2000 символов)..."
-            maxLength={2000}
-            rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Введите ответ..."
+            rows={3}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             disabled={isUpdating}
           />
-          <p className="text-xs text-gray-500 mt-1">
-            {message.length} / 2000 символов
-          </p>
         </div>
 
-        {/* Status Change Option */}
-        <div>
-          <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
-            Изменить статус (опционально)
-          </label>
-          <select
-            id="status"
-            value={newStatus}
-            onChange={(e) => setNewStatus(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            disabled={isUpdating}
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
+              Изменить статус
+            </label>
+            <select
+              id="status"
+              value={newStatus}
+              onChange={(e) => setNewStatus(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={isUpdating}
+            >
+              <option value="">Оставить текущий</option>
+              <option value="new">Новый</option>
+              <option value="in_progress">В работе</option>
+              <option value="resolved">Решен</option>
+              <option value="closed">Закрыт</option>
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            disabled={!message.trim() || isUpdating}
+            className="self-end h-10 px-6 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 font-medium flex items-center gap-2"
           >
-            <option value="">Оставить текущий статус</option>
-            <option value="new">Новый</option>
-            <option value="in_progress">В работе</option>
-            <option value="resolved">Решен</option>
-            <option value="closed">Закрыт</option>
-          </select>
+            <Send size={16} /> Отправить
+          </button>
         </div>
-
-        <button
-          type="submit"
-          disabled={!message.trim() || isUpdating}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
-        >
-          <Send size={16} /> {isUpdating ? 'Отправка...' : 'Отправить ответ'}
-        </button>
       </form>
     </div>
   )
