@@ -1,9 +1,19 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Send } from 'lucide-react'
 
 export default function MessagesSection({ ticket, isUpdating, onAddResponse }) {
   const [message, setMessage] = useState('')
   const [newStatus, setNewStatus] = useState('')
+  const messagesEndRef = useRef(null)
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  // Автопрокрутка при изменении сообщений
+  useEffect(() => {
+    scrollToBottom()
+  }, [ticket?.messages, ticket?.message])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -13,6 +23,8 @@ export default function MessagesSection({ ticket, isUpdating, onAddResponse }) {
       await onAddResponse(message, newStatus || null)
       setMessage('')
       setNewStatus('')
+      // Прокрутка после отправки
+      setTimeout(scrollToBottom, 100)
     } catch (e) {
       console.error('❌ [MessagesSection] Error adding response:', e)
     }
@@ -72,6 +84,8 @@ export default function MessagesSection({ ticket, isUpdating, onAddResponse }) {
             </div>
           ))
         )}
+        {/* Невидимый элемент для прокрутки */}
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Add Response Form */}
