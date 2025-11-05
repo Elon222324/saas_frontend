@@ -16,8 +16,7 @@ export function useOptionGroupCrud(siteName) {
       console.log('🔑 [useOptionGroupCrud] → данные:', payload)
 
       // Используем ТОЛЬКО админский токен сайта из контекста
-      const adminToken = siteToken?.token
-      if (!adminToken) {
+      if (!siteToken) {
         console.error('❌ [useOptionGroupCrud] Админский токен сайта отсутствует (create)')
         throw new Error('Токен сайта не получен')
       }
@@ -25,7 +24,7 @@ export function useOptionGroupCrud(siteName) {
       const res = await fetch(baseApiUrl, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${adminToken}`,
+          'Authorization': `Bearer ${siteToken}`,
           'Content-Type': 'application/json',
         },
         credentials: 'include',
@@ -57,8 +56,7 @@ export function useOptionGroupCrud(siteName) {
       console.log('🔑 [useOptionGroupCrud] → данные:', rest)
 
       // Используем ТОЛЬКО админский токен сайта из контекста
-      const adminToken = siteToken?.token
-      if (!adminToken) {
+      if (!siteToken) {
         console.error('❌ [useOptionGroupCrud] Админский токен сайта отсутствует (update)')
         throw new Error('Токен сайта не получен')
       }
@@ -66,7 +64,7 @@ export function useOptionGroupCrud(siteName) {
       const res = await fetch(updateUrl, {
         method: 'PATCH',
         headers: {
-          'Authorization': `Bearer ${adminToken}`,
+          'Authorization': `Bearer ${siteToken}`,
           'Content-Type': 'application/json',
         },
         credentials: 'include',
@@ -101,8 +99,7 @@ export function useOptionGroupCrud(siteName) {
       console.log('🔑 [useOptionGroupCrud] → удаляю группу:', deleteUrl)
 
       // Используем ТОЛЬКО админский токен сайта из контекста
-      const adminToken = siteToken?.token
-      if (!adminToken) {
+      if (!siteToken) {
         console.error('❌ [useOptionGroupCrud] Админский токен сайта отсутствует (delete)')
         throw new Error('Токен сайта не получен')
       }
@@ -110,7 +107,7 @@ export function useOptionGroupCrud(siteName) {
       const res = await fetch(deleteUrl, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${adminToken}`,
+          'Authorization': `Bearer ${siteToken}`,
         },
         credentials: 'include',
       })

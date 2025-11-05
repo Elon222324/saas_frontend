@@ -7,8 +7,8 @@ export function useLabels(siteName, options = {}) {
   const { getLabels } = useLabelCrud(siteName)
   
   return useQuery({
-    queryKey: ['labels', siteName, siteToken?.token],
-    enabled: Boolean(siteToken?.token) && (options?.enabled ?? true),
+    queryKey: ['labels', siteName, siteToken],
+    enabled: Boolean(siteToken) && (options?.enabled ?? true),
     queryFn: getLabels,
     staleTime: 5 * 60 * 1000,
     ...options,

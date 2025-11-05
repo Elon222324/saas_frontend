@@ -8,8 +8,8 @@ export function useCategories(siteName, options = {}) {
   const { siteToken } = useSiteSettings();
   
   return useQuery({
-    queryKey: ['categories', siteName, siteToken?.token],
-    enabled: Boolean(siteToken?.token) && (options?.enabled ?? true),
+    queryKey: ['categories', siteName, siteToken],
+    enabled: Boolean(siteToken) && (options?.enabled ?? true),
     /** -------------  здесь основной fetch ------------- **/
     queryFn: async () => {
       // Убираем суффикс _app для нового API
@@ -20,15 +20,14 @@ export function useCategories(siteName, options = {}) {
       console.log('🔑 [useCategories] → используем админский JWT токен для аутентификации');
 
       // Используем ТОЛЬКО админский токен сайта из контекста
-      const adminToken = siteToken?.token;
-      if (!adminToken) {
+      if (!siteToken) {
         console.error('❌ [useCategories] Админский токен сайта отсутствует');
         throw new Error('Токен сайта не получен');
       }
 
       // Пытаемся прочитать клеймы токена (base64url) для проверки user_id и site_name
       try {
-        const payloadPart = adminToken.split('.')[1]
+        const payloadPart = siteToken.split('.')[1]
         const json = JSON.parse(atob(payloadPart.replace(/-/g, '+').replace(/_/g, '/')))
         console.log('🧾 [useCategories] Claims:', { user_id: json.user_id, site_name: json.site_name, exp: json.exp })
       } catch {}
@@ -36,7 +35,7 @@ export function useCategories(siteName, options = {}) {
       const res = await fetch(newApiUrl, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${adminToken}`,
+          'Authorization': `Bearer ${siteToken}`,
           'Content-Type': 'application/json',
         },
         credentials: 'include',

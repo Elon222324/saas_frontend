@@ -16,8 +16,7 @@ export function useOptionValueCrud(siteName) {
       console.log('🔑 [useOptionValueCrud] → данные:', payload)
 
       // Используем ТОЛЬКО админский токен сайта из контекста
-      const adminToken = siteToken?.token
-      if (!adminToken) {
+      if (!siteToken) {
         console.error('❌ [useOptionValueCrud] Админский токен сайта отсутствует (create)')
         throw new Error('Токен сайта не получен')
       }
@@ -25,7 +24,7 @@ export function useOptionValueCrud(siteName) {
       const res = await fetch(baseApiUrl, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${adminToken}`,
+          'Authorization': `Bearer ${siteToken}`,
           'Content-Type': 'application/json',
         },
         credentials: 'include',
@@ -58,8 +57,7 @@ export function useOptionValueCrud(siteName) {
       console.log('🔑 [useOptionValueCrud] → данные:', rest)
 
       // Используем ТОЛЬКО админский токен сайта из контекста
-      const adminToken = siteToken?.token
-      if (!adminToken) {
+      if (!siteToken) {
         console.error('❌ [useOptionValueCrud] Админский токен сайта отсутствует (update)')
         throw new Error('Токен сайта не получен')
       }
@@ -67,7 +65,7 @@ export function useOptionValueCrud(siteName) {
       const res = await fetch(updateUrl, {
         method: 'PATCH',
         headers: {
-          'Authorization': `Bearer ${adminToken}`,
+          'Authorization': `Bearer ${siteToken}`,
           'Content-Type': 'application/json',
         },
         credentials: 'include',
@@ -103,8 +101,7 @@ export function useOptionValueCrud(siteName) {
       console.log('🔑 [useOptionValueCrud] → удаляю значение:', deleteUrl)
 
       // Используем ТОЛЬКО админский токен сайта из контекста
-      const adminToken = siteToken?.token
-      if (!adminToken) {
+      if (!siteToken) {
         console.error('❌ [useOptionValueCrud] Админский токен сайта отсутствует (delete)')
         throw new Error('Токен сайта не получен')
       }
@@ -112,7 +109,7 @@ export function useOptionValueCrud(siteName) {
       const res = await fetch(deleteUrl, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${adminToken}`,
+          'Authorization': `Bearer ${siteToken}`,
         },
         credentials: 'include',
       })

@@ -32,8 +32,7 @@ export function useCategoryCrud(siteName) {
       console.log('🔑 [useCategoryCrud] → данные:', body);
       
       // Используем ТОЛЬКО админский токен сайта из контекста
-      const adminToken = siteToken?.token;
-      if (!adminToken) {
+      if (!siteToken) {
         console.error('❌ [useCategoryCrud] Админский токен сайта отсутствует (create)');
         throw new Error('Токен сайта не получен');
       }
@@ -41,7 +40,7 @@ export function useCategoryCrud(siteName) {
       const res = await fetch(baseApiUrl, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${adminToken}`,
+          'Authorization': `Bearer ${siteToken}`,
           'Content-Type': 'application/json',
         },
         credentials: 'include',
@@ -89,8 +88,7 @@ export function useCategoryCrud(siteName) {
       console.log('🔑 [useCategoryCrud] → данные:', body);
       
       // Используем ТОЛЬКО админский токен сайта из контекста
-      const adminToken = siteToken?.token;
-      if (!adminToken) {
+      if (!siteToken) {
         console.error('❌ [useCategoryCrud] Админский токен сайта отсутствует (update)');
         throw new Error('Токен сайта не получен');
       }
@@ -98,7 +96,7 @@ export function useCategoryCrud(siteName) {
       const res = await fetch(updateUrl, {
         method: 'PATCH',
         headers: {
-          'Authorization': `Bearer ${adminToken}`,
+          'Authorization': `Bearer ${siteToken}`,
           'Content-Type': 'application/json',
         },
         credentials: 'include',
@@ -137,8 +135,7 @@ export function useCategoryCrud(siteName) {
       console.log('🔑 [useCategoryCrud] → удаляю категорию:', deleteUrl);
       
       // Используем ТОЛЬКО админский токен сайта из контекста
-      const adminToken = siteToken?.token;
-      if (!adminToken) {
+      if (!siteToken) {
         console.error('❌ [useCategoryCrud] Админский токен сайта отсутствует (delete)');
         throw new Error('Токен сайта не получен');
       }
@@ -146,7 +143,7 @@ export function useCategoryCrud(siteName) {
       const res = await fetch(deleteUrl, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${adminToken}`,
+          'Authorization': `Bearer ${siteToken}`,
         },
         credentials: 'include',
       })

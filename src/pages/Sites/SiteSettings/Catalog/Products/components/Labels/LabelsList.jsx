@@ -21,15 +21,14 @@ export default function LabelsList({ siteName, selected, onSelect }) {
       const siteNameForApi = siteName.replace('_app', '');
       const url = `https://${siteNameForApi}.${import.meta.env.VITE_BASE_DOMAIN}/site-api/admin/labels/`;
       
-      const adminToken = siteToken?.token;
-      if (!adminToken) {
+      if (!siteToken) {
         console.error('❌ [LabelsList] Админский токен сайта отсутствует');
         throw new Error('Токен сайта не получен');
       }
       
       const res = await fetch(url, {
         headers: {
-          'Authorization': `Bearer ${adminToken}`,
+          'Authorization': `Bearer ${siteToken}`,
         },
         credentials: 'include',
       });

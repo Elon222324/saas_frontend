@@ -5,8 +5,8 @@ export function useOptionValues(siteName, groupId, options = {}) {
   const { siteToken } = useSiteSettings()
 
   return useQuery({
-    queryKey: ['optionValues', siteName, groupId, siteToken?.token],
-    enabled: Boolean(siteToken?.token) && (options?.enabled ?? true),
+    queryKey: ['optionValues', siteName, groupId, siteToken],
+    enabled: Boolean(siteToken) && (options?.enabled ?? true),
     queryFn: async () => {
       // Убираем суффикс _app для нового API
       const siteNameForApi = siteName.replace('_app', '')
@@ -16,8 +16,7 @@ export function useOptionValues(siteName, groupId, options = {}) {
       console.log('🔑 [useOptionValues] → запрашиваю новый API:', newApiUrl)
 
       // Используем ТОЛЬКО админский токен сайта из контекста
-      const adminToken = siteToken?.token
-      if (!adminToken) {
+      if (!siteToken) {
         console.error('❌ [useOptionValues] Админский токен сайта отсутствует')
         throw new Error('Токен сайта не получен')
       }
@@ -25,7 +24,7 @@ export function useOptionValues(siteName, groupId, options = {}) {
       const res = await fetch(newApiUrl, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${adminToken}`,
+          'Authorization': `Bearer ${siteToken}`,
           'Content-Type': 'application/json',
         },
         credentials: 'include',
