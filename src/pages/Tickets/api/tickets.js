@@ -216,3 +216,86 @@ export const fetchTicketsStats = async (siteToken, baseDomain, siteName) => {
 
   return await response.json()
 }
+
+/**
+ * Получить статистику непрочитанных сообщений/тикетов админом
+ * GET /admin/support/tickets/unread/stats
+ */
+export const fetchUnreadStats = async (siteToken, baseDomain, siteName) => {
+  let url = `${BASE_URL}/unread/stats`
+  if (baseDomain && siteName) {
+    url = `https://${siteName}.${baseDomain}${url}`
+  }
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${siteToken}`,
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  })
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}))
+    throw new Error(errorData.message || `HTTP ${response.status}`)
+  }
+
+  return await response.json()
+}
+
+/**
+ * Отметить все сообщения в тикете как прочитанные админом
+ * POST /admin/support/tickets/{ticket_id}/mark-read
+ */
+export const markTicketAsRead = async (siteToken, ticketId, baseDomain, siteName) => {
+  let url = `${BASE_URL}/${ticketId}/mark-read`
+  if (baseDomain && siteName) {
+    url = `https://${siteName}.${baseDomain}${url}`
+  }
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${siteToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({}),
+    credentials: 'include',
+  })
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}))
+    throw new Error(errorData.message || `HTTP ${response.status}`)
+  }
+
+  return await response.json()
+}
+
+/**
+ * Отметить конкретное сообщение как прочитанное админом
+ * POST /admin/support/tickets/messages/{message_id}/mark-read
+ */
+export const markMessageAsRead = async (siteToken, messageId, baseDomain, siteName) => {
+  let url = `${BASE_URL}/messages/${messageId}/mark-read`
+  if (baseDomain && siteName) {
+    url = `https://${siteName}.${baseDomain}${url}`
+  }
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${siteToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({}),
+    credentials: 'include',
+  })
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}))
+    throw new Error(errorData.message || `HTTP ${response.status}`)
+  }
+
+  return await response.json()
+}

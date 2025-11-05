@@ -7,6 +7,7 @@ import TicketsSidebar from './components/TicketsSidebar'
 import TicketsList from './components/TicketsList'
 import TicketDetailsModal from './components/TicketDetailsModal'
 import { fetchTickets } from './api/tickets'
+import { fetchUnreadStats } from './api/tickets'
 
 export default function TicketsPage() {
   const [sites, setSites] = useState([])
@@ -18,6 +19,8 @@ export default function TicketsPage() {
   const [offset, setOffset] = useState(0)
   const [error, setError] = useState('')
   const [detailsTicket, setDetailsTicket] = useState(null)
+  const [unreadStats, setUnreadStats] = useState(null)
+  const [unreadByTicket, setUnreadByTicket] = useState({})
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedStatuses, setSelectedStatuses] = useState([])
   const [selectedPriorities, setSelectedPriorities] = useState([])
@@ -174,6 +177,23 @@ export default function TicketsPage() {
     }
   }
 
+  const fetchUnread = async () => {
+    if (!selectedSite || !siteToken) return
+    try {
+      const siteForUrl = stripAppSuffix(selectedSite)
+      const stats = await fetchUnreadStats(siteToken, baseDomain, siteForUrl)
+      setUnreadStats(stats)
+      const map = {}
+      ;(stats?.unread_by_ticket || []).forEach((item) => {
+        map[item.ticket_id] = item.unread_count || 0
+      })
+      setUnreadByTicket(map)
+    } catch (e) {
+      // тихо логируем, не ломаем UI списка
+      console.warn('⚠️ [Tickets] Не удалось получить статистику непрочитанных:', e)
+    }
+  }
+
   const onToggleStatus = (value) => {
     setSelectedStatuses((prev) =>
       prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
@@ -219,9 +239,20 @@ export default function TicketsPage() {
   useEffect(() => {
     if (siteToken) {
       fetchTicketsList()
+      fetchUnread()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSite, limit, offset, siteToken])
+
+  // Пулинг статистики непрочитанных
+  useEffect(() => {
+    if (!siteToken || !selectedSite) return
+    const id = setInterval(() => {
+      fetchUnread()
+    }, 5000)
+    return () => clearInterval(id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [siteToken, selectedSite])
 
   useEffect(() => {
     if (tokenError) {
@@ -269,6 +300,7 @@ export default function TicketsPage() {
             loading={loadingTickets}
             error={error}
             onDetails={setDetailsTicket}
+            unreadByTicket={unreadByTicket}
             onPrevPage={onPrevPage}
             onNextPage={onNextPage}
             canPrev={canPrev}
@@ -282,7 +314,10 @@ export default function TicketsPage() {
               baseDomain={baseDomain}
               siteName={selectedSite}
               onClose={() => setDetailsTicket(null)}
-              refreshTickets={fetchTicketsList}
+              refreshTickets={() => {
+                fetchTicketsList()
+                fetchUnread()
+              }}
             />
           )}
         </>

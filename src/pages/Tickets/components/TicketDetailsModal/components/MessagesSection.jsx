@@ -70,15 +70,31 @@ export default function MessagesSection({ ticket, isUpdating, onAddResponse }) {
                 <p className="text-sm font-semibold text-gray-900">
                   {msg.is_admin ? '👨‍💼 Администратор' : '👤 Пользователь'}
                 </p>
-                <p className="text-xs text-gray-500">
-                  {new Date(msg.created_at).toLocaleString('ru-RU', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </p>
+                <div className="flex items-center gap-3">
+                  {/* Read indicators */}
+                  {!msg.is_admin ? (
+                    msg.is_read_by_admin ? (
+                      <span className="text-xs text-green-600 font-medium">✓ прочитано админом</span>
+                    ) : (
+                      <span className="text-xs text-red-600 font-semibold">● новое</span>
+                    )
+                  ) : (
+                    msg.is_read_by_user ? (
+                      <span className="text-xs text-cyan-700 font-medium">✓ прочитано пользователем</span>
+                    ) : (
+                      <span className="text-xs text-amber-600 font-semibold">● не прочитано пользователем</span>
+                    )
+                  )}
+                  <p className="text-xs text-gray-500">
+                    {new Date(msg.created_at).toLocaleString('ru-RU', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </p>
+                </div>
               </div>
               <p className="text-sm text-gray-800 break-words">{msg.message}</p>
             </div>

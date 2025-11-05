@@ -10,13 +10,12 @@ export function useBlocksApi() {
   const baseApiUrl = `https://${siteNameForApi}.${import.meta.env.VITE_BASE_DOMAIN}/site-api/admin/blocks`
 
   const getHeaders = () => {
-    const adminToken = siteToken?.token
-    if (!adminToken) {
+    if (!siteToken) {
       console.error('❌ [useBlocksApi] Admin token is missing')
       throw new Error('Admin token is not available')
     }
     return {
-      Authorization: `Bearer ${adminToken}`,
+      Authorization: `Bearer ${siteToken}`,
       'Content-Type': 'application/json',
     }
   }

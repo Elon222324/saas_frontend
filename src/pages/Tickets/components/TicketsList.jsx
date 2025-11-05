@@ -2,7 +2,7 @@ import { AlertCircle } from 'lucide-react'
 import TicketItem from './TicketItem'
 import DataList from '@/components/PageTemplate/DataList'
 
-export default function TicketsList({ tickets, onDetails, ...props }) {
+export default function TicketsList({ tickets, onDetails, unreadByTicket = {}, ...props }) {
   return (
     <DataList
       items={tickets}
@@ -15,6 +15,7 @@ export default function TicketsList({ tickets, onDetails, ...props }) {
       clickHint="Кликните на тикет для просмотра деталей"
       itemComponent={TicketItem}
       itemPropName="ticket"
+      extraItemProps={{ unreadByTicket }}
       itemKeySelector={(ticket) => ticket.id || JSON.stringify(ticket)}
       {...props}
     />

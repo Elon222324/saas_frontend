@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { AlertCircle, MessageCircle } from 'lucide-react'
 import ModalTemplate from '@/components/ModalTemplate'
 import { fetchTicketDetails } from '../../api/tickets'
+import { markTicketAsRead } from '../../api/tickets'
 import { useTicketDetails } from './hooks/useTicketDetails'
 import TicketInfo from './components/TicketInfo'
 import MessagesSection from './components/MessagesSection'
@@ -189,6 +190,22 @@ export default function TicketDetailsModal({
     loadTicketDetails()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ticketId, siteToken, baseDomain, siteName])
+
+  // После загрузки тикета — отметить как прочитанный и обновить список/статистику
+  useEffect(() => {
+    const markAsRead = async () => {
+      if (!ticket?.id || !siteToken) return
+      try {
+        await markTicketAsRead(siteToken, ticket.id, baseDomain, siteName)
+        // Обновляем список и статистику непрочитанных в родителе
+        refreshTickets?.()
+      } catch (e) {
+        console.warn('⚠️ [Ticket Details Modal] Не удалось отметить тикет прочитанным:', e)
+      }
+    }
+    markAsRead()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ticket?.id, siteToken])
 
   const handleActionAndRefresh = async (action) => {
     console.log('🔄 [Ticket Details Modal] Executing action and refresh...')

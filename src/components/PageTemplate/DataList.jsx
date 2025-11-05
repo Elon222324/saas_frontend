@@ -19,7 +19,8 @@ export default function DataList({
   itemKeySelector = (item) => item.id || JSON.stringify(item),
   itemPropName = 'item',
   showCount = true,
-  showClickHint = true
+  showClickHint = true,
+  extraItemProps = {}
 }) {
   const hasItems = Array.isArray(items) && items.length > 0
   
@@ -81,6 +82,7 @@ export default function DataList({
                   const itemProps = {
                     [itemPropName]: item,
                     onDetails: onItemClick,
+                    ...extraItemProps,
                   }
                   return (
                     <ItemComponent 

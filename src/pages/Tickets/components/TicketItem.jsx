@@ -23,7 +23,7 @@ const categoryLabels = {
   other: 'Другое',
 }
 
-export default function TicketItem({ ticket, onDetails }) {
+export default function TicketItem({ ticket, onDetails, unreadByTicket = {} }) {
   if (!ticket) return null
 
   const formatDate = (dateString) => {
@@ -76,6 +76,12 @@ export default function TicketItem({ ticket, onDetails }) {
             <div className="font-bold text-lg text-gray-900 group-hover:text-blue-600 transition-colors">
               Тикет #{ticket.id.slice(0, 8).toUpperCase()}
             </div>
+            {/* Unread badge */}
+            {!!unreadByTicket[ticket.id] && unreadByTicket[ticket.id] > 0 && (
+              <span className="inline-flex items-center justify-center min-w-6 h-6 px-2 rounded-full text-xs font-bold bg-red-600 text-white">
+                {unreadByTicket[ticket.id]}
+              </span>
+            )}
             {ticket.status && (
               <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusStyle.bg} ${statusStyle.text}`}>
                 {statusLabel}
