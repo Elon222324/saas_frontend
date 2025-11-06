@@ -1,0 +1,105 @@
+import { useState, useEffect } from 'react'
+import { useSiteSettings } from '@/context/SiteSettingsContext'
+import { promoStoriesSchema } from './promoStoriesSchema'
+import { promoStoriesDataSchema } from './promoStoriesDataSchema'
+import { fieldTypes } from '@/components/fields/fieldTypes'
+import PromoStoriesItemsEditor from './ItemsEditor'
+import PromoStoriesAppearance from './Appearance'
+import { Tabs, Tab } from '@/components/ui/tabs'
+import { useBlockAppearance } from '@blocks/forms/hooks/useBlockAppearance'
+import { useBlockData } from '@blocks/forms/hooks/useBlockData'
+
+export default function PromoStoriesEditor({ block, slug, onChange }) {
+  const { data: siteData, site_name, setData } = useSiteSettings()
+  const block_id = block?.real_id
+  const [activeTab, setActiveTab] = useState('data')
+
+  const [dataState, setDataState] = useState(block?.data || {})
+  const [settingsState, setSettingsState] = useState(block?.settings || {})
+
+  useEffect(() => {
+    setDataState(block?.data || {})
+    setSettingsState(block?.settings || {})
+  }, [block])
+
+  const {
+    handleFieldChange,
+    handleSaveAppearance,
+    showSavedToast,
+    showSaveButton,
+    uiDefaults,
+  } = useBlockAppearance({
+    schema: promoStoriesSchema,
+    data: settingsState,
+    block_id,
+    slug,
+    siteData,
+    site_name,
+    setData,
+    onChange: (update) => {
+      setSettingsState(update)
+      onChange(prev => ({ ...prev, settings: typeof update === 'function' ? update(prev.settings || {}) : update }))
+    },
+  })
+
+  const {
+    handleFieldChange: handleDataChange,
+    handleSaveData,
+    showSavedToast: savedData,
+    showSaveButton: showDataButton,
+  } = useBlockData({
+    schema: promoStoriesDataSchema,
+    data: dataState,
+    block_id,
+    slug,
+    site_name,
+    setData,
+    onChange: (update) => {
+      setDataState(update)
+      onChange(prev => ({ ...prev, data: typeof update === 'function' ? update(prev.data || {}) : update }))
+    },
+  })
+
+  return (
+    <div className="space-y-6 relative">
+      {(showSavedToast || savedData) && (
+        <div className="text-green-600 text-sm font-medium">
+          ✅ {showSavedToast ? 'Дизайн' : 'Содержимое'} сохранено
+        </div>
+      )}
+
+      <Tabs value={activeTab} onChange={setActiveTab} className="mb-4">
+        <Tab value="data">Данные</Tab>
+        <Tab value="appearance">Дизайн</Tab>
+      </Tabs>
+
+      {activeTab === 'data' && (
+        <PromoStoriesItemsEditor
+          schema={promoStoriesDataSchema}
+          data={dataState}
+          settings={settingsState}
+          onTextChange={handleDataChange}
+          onSaveData={() => handleSaveData(dataState)}
+          uiDefaults={uiDefaults}
+        />
+      )}
+
+      {activeTab === 'appearance' && (
+        <>
+          <div className="text-sm text-gray-500 italic pl-1">
+            ⚙️ Настройка цветов, отступов и размеров
+          </div>
+          <PromoStoriesAppearance
+            schema={promoStoriesSchema}
+            settings={settingsState}
+            onChange={handleFieldChange}
+            fieldTypes={fieldTypes}
+            onSaveAppearance={() => handleSaveAppearance(settingsState)}
+            uiDefaults={uiDefaults}
+          />
+        </>
+      )}
+    </div>
+  )
+}
+

@@ -9,6 +9,7 @@ import HeaderEditor from '@blocks/forms/Header'
 import BannerEditor from '@blocks/forms/Banner'
 import QuickInfoEditor from '@blocks/forms/QuickInfo'
 import PromoEditor from '@blocks/forms/PromoCards'
+import PromoStoriesEditor from '@blocks/forms/PromoStories'
 import ProductsEditor from '@blocks/forms/PopularItems'
 import TabsEditor from '@blocks/forms/MenuTabs'
 import ProductGridEditor from '@blocks/forms/ProductGrid'
@@ -147,6 +148,8 @@ export default function BlockDetails({ block, data, onSave, onBlockChange }) {
         return <QuickInfoEditor {...sharedProps} />
       case 'promo':
         return <PromoEditor {...sharedProps} />
+      case 'promo_stories':
+        return <PromoStoriesEditor {...sharedProps} />
       case 'products':
         return <ProductsEditor {...sharedProps} />
       case 'tabs':

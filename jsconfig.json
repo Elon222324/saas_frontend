@@ -2,7 +2,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@blocks/*": ["src/pages/Sites/SiteSettings/PagesTab/BlocksEditor/*"]
     }
   }
 }
