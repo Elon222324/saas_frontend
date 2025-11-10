@@ -127,7 +127,7 @@ export default function ProductsList({ category, labels, noLabel }) {
       return updated
     })
     for (const p of updated) {
-      // eslint-disable-next-line no-await-in-loop
+       
       await update.mutateAsync({ id: p.id, order: p.order })
     }
   }
@@ -148,7 +148,7 @@ export default function ProductsList({ category, labels, noLabel }) {
       prev.map(p => (ids.includes(p.id) ? { ...p, ...changes } : p)),
     )
     for (const id of ids) {
-      // eslint-disable-next-line no-await-in-loop
+       
       await update.mutateAsync({ id, ...changes })
     }
     list.clearSelected()

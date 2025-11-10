@@ -1,7 +1,8 @@
 import pizzaImg from '/images/8.webp'
 import { getImageVariants } from '@/utils/imageVariants'
+import { useMemo } from 'react'
 
-export const PopularItems = ({ settings = {}, data = {}, commonSettings = {} }) => {
+export const PopularItems = ({ settings = {}, data = {}, commonSettings = {}, products = [] }) => {
   const backgroundColor = settings.bg_color ?? commonSettings.background?.card ?? '#FFFFFF'
   const borderColor = settings.border_color ?? commonSettings.text?.primary ?? '#212121'
   const titleColor = settings.title_color ?? commonSettings.text?.primary ?? '#212121'
@@ -29,27 +30,28 @@ export const PopularItems = ({ settings = {}, data = {}, commonSettings = {} }) 
   }
   const imageSize = imageSizeMap[settings.image_size ?? 'medium'] || 'w-24 h-24'
 
-  const defaultItems = [
-    { id: 1, name: 'Пепперони фреш', price: 'от 409 ₽', img_url: pizzaImg },
-    { id: 2, name: '3 пиццы 30 см', price: '1 449 ₽', img_url: pizzaImg },
-    { id: 3, name: '2 соуса', price: '75 ₽', img_url: pizzaImg },
-    { id: 4, name: 'Товар 4', price: '', img_url: pizzaImg },
-    { id: 5, name: 'Товар 5', price: '', img_url: pizzaImg },
-    { id: 6, name: 'Товар 6', price: '', img_url: pizzaImg },
-  ]
+  const productsMap = useMemo(() => {
+    if (!Array.isArray(products)) return new Map()
+    return new Map(products.map(p => [p.id, p]))
+  }, [products])
 
-  const rawItems = Array.isArray(data.items)
-    ? data.items
-    : defaultItems.map((item, idx) => ({
-        ...item,
-        name: data[`item${idx + 1}_name`] || item.name,
-        price: data[`item${idx + 1}_price`] || item.price,
-        img_url: data[`item${idx + 1}_img`] || item.img_url,
-      }))
+  const items = useMemo(() => {
+    if (!Array.isArray(data?.items)) return []
 
-  const parsedCount = parseInt(settings?.cards_count, 10)
-  const cardsCount = Number.isFinite(parsedCount) && parsedCount > 0 ? parsedCount : defaultItems.length
-  const items = rawItems.slice(0, cardsCount)
+    return data.items
+      .map(item => {
+        const product = productsMap.get(item?.product_id)
+        if (!product) return null
+        
+        return {
+          id: product.id,
+          name: product.title || product.name || 'Товар без названия',
+          price: product.variants?.[0]?.price ? `${product.variants[0].price} ₽` : (product.price ? `${product.price} ₽` : ''),
+          img_url: product.image_url || product.img_url || pizzaImg,
+        }
+      })
+      .filter(Boolean)
+  }, [data?.items, productsMap])
 
   const baseUrl = import.meta.env.VITE_LIBRARY_ASSETS_URL || ''
 
@@ -90,12 +92,12 @@ export const PopularItems = ({ settings = {}, data = {}, commonSettings = {} }) 
             <img
               src={(() => {
                 const fullPath = item.img_url
-                  ? item.img_url.startsWith('/')
-                    ? baseUrl + item.img_url
-                    : item.img_url
-                  : ''
-                const { small } = getImageVariants(fullPath)
-                return fullPath ? small : pizzaImg
+                  ? item.img_url.startsWith('http')
+                    ? item.img_url
+                    : (item.img_url.startsWith('/') ? baseUrl + item.img_url : item.img_url)
+                  : pizzaImg;
+                const { small } = getImageVariants(fullPath);
+                return small || fullPath;
               })()}
               alt={item.name}
               className={`${imageSize} object-cover`}

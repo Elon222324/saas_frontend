@@ -111,7 +111,7 @@ export default function useProductsList({
 
   const deleteSelected = async () => {
     for (const id of selected) {
-      // eslint-disable-next-line no-await-in-loop
+       
       await removeFn(id)
     }
     setSelected(new Set())

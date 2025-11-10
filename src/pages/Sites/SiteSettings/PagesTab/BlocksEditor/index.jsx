@@ -5,6 +5,7 @@ import { useSiteSettings } from '@/context/SiteSettingsContext'
 import PageSelectHeader from './parts/PageSelectHeader'
 import BlockListSidebar from './parts/BlockListSidebar'
 import BlockEditorPanel from './parts/BlockEditorPanel'
+import AddBlockModal from './parts/AddBlockModal'
 import { useBlocksApi } from './hooks/useBlocksApi'
 
 export default function PageEditor() {
@@ -14,12 +15,14 @@ export default function PageEditor() {
     reorderBlocks,
     updateAllBlocks,
     updateBlockStatus,
+    createBlock,
   } = useBlocksApi()
 
   const [blocks, setBlocks] = useState([])
   const [blockDataMap, setBlockDataMap] = useState({})
   const [selectedId, setSelectedId] = useState(null)
   const [unsavedBlocks, setUnsavedBlocks] = useState({})
+  const [showAddBlockModal, setShowAddBlockModal] = useState(false)
   const API_URL = import.meta.env.VITE_API_URL
 
   useEffect(() => {
@@ -106,8 +109,17 @@ export default function PageEditor() {
     }
   }
 
-  const handleAddBlock = () => {
-    alert('Добавление нового блока')
+  const handleAddBlock = async ({ type, label }) => {
+    try {
+      await createBlock.mutateAsync({
+        type,
+        label,
+      })
+      alert('✅ Блок успешно добавлен!')
+    } catch (error) {
+      console.error('Ошибка при добавлении блока:', error)
+      throw error
+    }
   }
 
   if (loadingContext || !blocks.length || !data?.pages) return <div className="p-6">Загрузка...</div>
@@ -141,7 +153,7 @@ export default function PageEditor() {
           setSelectedId={setSelectedId}
           setBlocks={setBlocks}
           handleReorder={handleReorder}
-          handleAddBlock={handleAddBlock}
+          handleAddBlock={() => setShowAddBlockModal(true)}
           handleActivityChange={handleActivityChange} // <-- Передаем новую функцию
         />
         <BlockEditorPanel
@@ -151,6 +163,14 @@ export default function PageEditor() {
           onChange={handleBlockChange}
         />
       </div>
+
+      {/* Модальное окно для добавления нового блока */}
+      <AddBlockModal
+        open={showAddBlockModal}
+        onClose={() => setShowAddBlockModal(false)}
+        onAddBlock={handleAddBlock}
+        isLoading={createBlock.isPending}
+      />
     </div>
   )
 }

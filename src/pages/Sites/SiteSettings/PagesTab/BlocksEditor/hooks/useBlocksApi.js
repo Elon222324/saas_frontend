@@ -104,11 +104,35 @@ export function useBlocksApi() {
     },
   })
 
+  const createBlock = useMutation({
+    mutationFn: async ({ type, label }) => {
+      const payload = {
+        block_type: type,
+        id_alias: `${type}_${Date.now()}`,
+        label,
+        settings: {},
+        data: {},
+      }
+
+      const res = await fetch(`${baseApiUrl}/create/${slug}`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify(payload),
+      })
+      if (!res.ok) throw new Error(`Error creating block: ${res.statusText}`)
+      return res.json()
+    },
+    onSuccess: () => {
+      refetchSiteSettings()
+    },
+  })
+
   return {
     reorderBlocks: reorder,
     updateAllBlocks: updateAll,
     updateBlockStatus: updateStatus,
     updateBlockSettings: updateSettings,
     updateBlockData: updateData,
+    createBlock: createBlock,
   }
 }
