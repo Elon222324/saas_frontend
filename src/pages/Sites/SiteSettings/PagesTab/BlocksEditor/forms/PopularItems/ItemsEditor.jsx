@@ -20,7 +20,7 @@ export default function ProductsItemsEditor({
   useEffect(() => {
     setSelectedIds(data?.items?.map(item => item.product_id) || [])
   }, [data?.items])
-  
+
   const maxItems = settings?.cards_count || 6
 
   const handleSelectProducts = (ids) => {
@@ -29,17 +29,13 @@ export default function ProductsItemsEditor({
     onTextChange('items', items)
   }
 
-  const handleSave = () => {
-    onSaveData()
-  }
-
   const renderField = (field) => {
     if (!field.editable || field.key === 'items') return null
 
     const fieldKey = field.key
     const textVal = data?.[fieldKey] ?? uiDefaults?.[fieldKey] ?? field.default ?? ''
     const FieldComponent = fieldTypes[field.type] || fieldTypes.text
-    
+
     return (
       <FieldComponent
         {...field}
@@ -75,15 +71,6 @@ export default function ProductsItemsEditor({
           onSelect={handleSelectProducts}
         />
       )}
-
-      <div className="flex gap-2">
-        <button
-          onClick={handleSave}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
-        >
-          Сохранить
-        </button>
-      </div>
     </div>
   )
 }
