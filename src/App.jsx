@@ -30,6 +30,7 @@ import LibraryPage from './pages/OwnerPanel/Tools/Library'
 import StoragePage from './pages/OwnerPanel/Tools/Storage'
 import LogsPage from './pages/OwnerPanel/Tools/Logs'
 import TestingPage from './pages/OwnerPanel/Tools/Testing'
+import ServicesPage from './pages/OwnerPanel/Tools/Services'
 
 export default function App() {
   return (
@@ -52,6 +53,7 @@ export default function App() {
               <Route path="storage" element={<StoragePage />} />
               <Route path="testing" element={<TestingPage />} />
               <Route path="logs" element={<LogsPage />} />
+              <Route path="services" element={<ServicesPage />} />
             </Route>
           </Route>
 

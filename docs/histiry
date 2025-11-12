@@ -31,3 +31,8 @@ npm run build
 
 ЗАЛИВКА НА СЕРВЕР (ПАПКА С ФРОНТОМ ДЛЯ СЕРВИСА)
 scp -r ./dist/* root@217.107.219.130:/frontend/saas_front/
+
+ЗАЛИВКА НА СЕРВЕР (ПАПКА С ФРОНТОМ ДЛЯ СЕРВИСА) ФУДЛЕ!
+scp -r ./dist/* root@157.245.152.46:/frontend/saas_front/
+
+scp -r ./dist/* root@157.245.152.46:/root/StartBox/box/frontend/saas_front/

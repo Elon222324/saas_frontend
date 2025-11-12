@@ -4,6 +4,7 @@ import {
   Image as ImageIcon,
   FlaskConical,
   FileText,
+  Settings,
 } from 'lucide-react'
 
 export default function OwnerTools() {
@@ -55,6 +56,17 @@ export default function OwnerTools() {
             }
           >
             <FileText size={18} /> Логи
+          </NavLink>
+
+          <NavLink
+            to="/owner/tools/services"
+            className={({ isActive }) =>
+              `flex items-center gap-2 px-3 py-2 rounded-md hover:bg-purple-50 ${
+                isActive ? 'bg-purple-100 text-purple-600 font-semibold' : ''
+              }`
+            }
+          >
+            <Settings size={18} /> Сервисы
           </NavLink>
         </nav>
       </aside>
