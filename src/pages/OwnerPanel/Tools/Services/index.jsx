@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { RefreshCw, Globe, Layout, Zap, AlertTriangle } from 'lucide-react'
+import { RefreshCw, Globe, Layout, Zap, AlertTriangle, BookOpen } from 'lucide-react'
 import ServiceCard from './components/ServiceCard'
 import { serviceApi } from './api/services'
 
@@ -44,6 +44,13 @@ export default function ServicesPage() {
       description: 'Загружает новый образ docker-update и устанавливает флаг на обновление',
       icon: Zap,
       updateFn: () => serviceApi.selfUpdate(),
+    },
+    {
+      id: 'library-import',
+      title: 'Library Import',
+      description: 'Инициализирует библиотеку и импортирует шаблоны',
+      icon: BookOpen,
+      updateFn: () => serviceApi.initLibrary(),
     },
   ]
 

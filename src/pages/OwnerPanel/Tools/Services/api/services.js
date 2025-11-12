@@ -40,5 +40,15 @@ export const serviceApi = {
       throw new Error(error.response?.data?.message || 'Ошибка при self-update')
     }
   },
+
+  // Инициализирует библиотеку
+  initLibrary: async () => {
+    try {
+      const response = await axios.post('/api/cloud/library/import')
+      return response.data
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Ошибка при инициализации библиотеки')
+    }
+  },
 }
 
