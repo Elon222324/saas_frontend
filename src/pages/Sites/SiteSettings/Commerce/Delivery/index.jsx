@@ -77,10 +77,11 @@ export default function Delivery() {
 
   // Инициализация delivery_type из данных сайта
   useEffect(() => {
-    if (data?.commerce?.delivery_type && !hasInitialized) {
-      setDeliveryType(data.commerce.delivery_type)
-      setHasInitialized(true)
-    } else if (!hasInitialized && data) {
+    if (!hasInitialized && data) {
+      console.log('🚚 [Delivery] Инициализация delivery_type, data:', data)
+      const deliveryTypeValue = data?.commerce?.delivery_type || 'delivery'
+      console.log('🚚 [Delivery] Установленное значение:', deliveryTypeValue)
+      setDeliveryType(deliveryTypeValue)
       setHasInitialized(true)
     }
   }, [data, hasInitialized])
@@ -191,25 +192,37 @@ export default function Delivery() {
         'commerce.delivery_type': deliveryType,
       }
 
-      const res = await fetch(
-        `${API_URL}/schema/site-settings/${site_name}`,
-        {
-          method: 'PATCH',
-          credentials: 'include',
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        }
-      )
+      const url = `${API_URL}/schema/site-settings/${site_name}`
+      console.log('🚚 [Delivery] → Сохраняю delivery_type')
+      console.log('🚚 [Delivery] → URL:', url)
+      console.log('🚚 [Delivery] → Payload:', payload)
 
-      if (!res.ok) throw new Error('Ошибка сохранения')
+      const res = await fetch(url, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
+
+      console.log('🚚 [Delivery] ← Статус ответа:', res.status, res.statusText)
+
+      if (!res.ok) {
+        const errorText = await res.text()
+        console.error('🚚 [Delivery] ❌ Ошибка:', errorText)
+        throw new Error('Ошибка сохранения: ' + errorText)
+      }
+
+      const responseData = await res.json()
+      console.log('🚚 [Delivery] ✅ Ответ:', responseData)
+
       alert('Тип доставки сохранен')
       await refetch()
     } catch (err) {
-      console.error(err)
-      alert('Не удалось сохранить тип доставки')
+      console.error('🚚 [Delivery] ❌ Ошибка сохранения:', err)
+      alert('Не удалось сохранить тип доставки: ' + err.message)
     }
   }
 

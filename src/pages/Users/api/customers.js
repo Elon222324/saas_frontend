@@ -15,6 +15,7 @@ export async function fetchCustomersApi({ siteName, siteToken, limit, offset, qu
       'Content-Type': 'application/json',
     },
     credentials: 'include',
+    cache: 'no-cache',
   })
   if (!res.ok) {
     throw new Error(`HTTP ${res.status}: ${res.statusText}`)
@@ -34,6 +35,7 @@ export async function fetchCustomerDetailsApi({ siteName, siteToken, customerId,
         'Content-Type': 'application/json',
       },
       credentials: 'include',
+      cache: 'no-cache',
     }),
     fetch(`${baseUrl}/orders?${new URLSearchParams({ limit: String(ordersLimit), offset: String(ordersOffset) }).toString()}`, {
       headers: {
@@ -41,6 +43,7 @@ export async function fetchCustomerDetailsApi({ siteName, siteToken, customerId,
         'Content-Type': 'application/json',
       },
       credentials: 'include',
+      cache: 'no-cache',
     }),
   ])
 

@@ -39,6 +39,7 @@ export async function fetchAllSites() {
       'Content-Type': 'application/json',
     },
     credentials: 'include',
+    cache: 'no-cache',
   })
 
   console.log('🌐 [fetchAllSites] ← Статус ответа:', response.status, response.statusText)
@@ -318,6 +319,7 @@ export async function getUserSites(userId) {
       'Content-Type': 'application/json',
     },
     credentials: 'include',
+    cache: 'no-cache',
   })
 
   console.log('🌐 [getUserSites] ← Статус ответа:', response.status, response.statusText)
@@ -369,6 +371,7 @@ export async function getSiteById(siteId) {
       'Content-Type': 'application/json',
     },
     credentials: 'include',
+    cache: 'no-cache',
   })
 
   console.log('🌐 [getSiteById] ← Статус ответа:', response.status, response.statusText)

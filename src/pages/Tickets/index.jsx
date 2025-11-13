@@ -118,6 +118,7 @@ export default function TicketsPage() {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
+        cache: 'no-cache',
       })
 
       console.log('🔑 [Tickets] ← Статус ответа:', res.status, res.statusText)

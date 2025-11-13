@@ -5,6 +5,26 @@ const api = axios.create({
   withCredentials: true,
 })
 
+// Добавляем заголовок Authorization перед каждым запросом
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    // Отключаем кэширование для GET-запросов
+    if (config.method === 'get') {
+      config.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate';
+      config.headers['Pragma'] = 'no-cache';
+      config.headers['Expires'] = '0';
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 // 🔄 Перехватчик ошибок
 api.interceptors.response.use(
   (res) => res,
