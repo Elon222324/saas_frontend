@@ -36,7 +36,7 @@ export default function Delivery() {
   const hasRules = rules && rules.length > 0
 
   const fetchRules = async () => {
-    if (!siteToken?.token) {
+    if (!siteToken) {
       console.log('⏳ [Delivery] Ожидание токена...')
       return
     }
@@ -48,10 +48,11 @@ export default function Delivery() {
       const res = await fetch(baseApiUrl, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${siteToken.token}`,
+          'Authorization': `Bearer ${siteToken}`,
           'Content-Type': 'application/json',
         },
         credentials: 'include',
+        cache: 'no-cache',
       })
 
       console.log('🔑 [Delivery] ← статус ответа:', res.status, res.statusText)
@@ -89,7 +90,7 @@ export default function Delivery() {
   useEffect(() => {
     fetchRules()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [siteToken?.token])
+  }, [siteToken])
 
   const [newBaseFee, setNewBaseFee] = useState('')
   const [newFreeThreshold, setNewFreeThreshold] = useState('')
@@ -101,7 +102,7 @@ export default function Delivery() {
   }, [newBaseFee, newFreeThreshold])
 
   const handleCreate = async () => {
-    if (!canCreate || !siteToken?.token) return
+    if (!canCreate || !siteToken) return
     setIsSaving(true)
     try {
       const payload = {
@@ -115,11 +116,12 @@ export default function Delivery() {
       const res = await fetch(baseApiUrl, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${siteToken.token}`,
+          'Authorization': `Bearer ${siteToken}`,
           'Content-Type': 'application/json',
         },
         credentials: 'include',
         body: JSON.stringify(payload),
+        cache: 'no-cache',
       })
 
       console.log('🔑 [Delivery] ← статус ответа:', res.status, res.statusText)
@@ -147,7 +149,7 @@ export default function Delivery() {
   }
 
   const handleActivate = async (ruleId) => {
-    if (!siteToken?.token) return
+    if (!siteToken) return
     setIsSaving(true)
     try {
       const activateUrl = `${baseApiUrl}activate/${ruleId}`
@@ -156,10 +158,11 @@ export default function Delivery() {
       const res = await fetch(activateUrl, {
         method: 'PATCH',
         headers: {
-          'Authorization': `Bearer ${siteToken.token}`,
+          'Authorization': `Bearer ${siteToken}`,
           'Content-Type': 'application/json',
         },
         credentials: 'include',
+        cache: 'no-cache',
       })
 
       console.log('🔑 [Delivery] ← статус ответа:', res.status, res.statusText)
@@ -188,23 +191,35 @@ export default function Delivery() {
 
   const handleSaveDeliveryType = async () => {
     try {
-      const payload = {
-        'commerce.delivery_type': deliveryType,
+      if (!siteToken) {
+        alert('Токен сайта ещё не получен. Попробуйте позже.')
+        return
       }
 
-      const url = `${API_URL}/schema/site-settings/${site_name}`
+      // Убираем суффикс _app для нового API
+      const siteNameForApi = site_name?.replace('_app', '') || domain
+      const url = `https://${siteNameForApi}.${baseDomain}/site-api/site-info`
+
+      const payload = {
+        commerce: {
+          delivery_type: deliveryType,
+        }
+      }
+
       console.log('🚚 [Delivery] → Сохраняю delivery_type')
       console.log('🚚 [Delivery] → URL:', url)
       console.log('🚚 [Delivery] → Payload:', payload)
+      console.log('🔑 [Delivery] Authorization: Bearer', siteToken ? siteToken.substring(0, 20) + '...' : 'no token')
 
       const res = await fetch(url, {
         method: 'PATCH',
         credentials: 'include',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          Authorization: `Bearer ${siteToken}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
+        cache: 'no-cache',
       })
 
       console.log('🚚 [Delivery] ← Статус ответа:', res.status, res.statusText)

@@ -22,7 +22,7 @@ const TextField = ({ label, value, onChange, placeholder, helpText }) => (
 
 export default function Integrations() {
   const { domain } = useParams();
-  const { data, loading, site_name, refetch } = useSiteSettings();
+  const { data, loading, site_name, siteToken, refetch } = useSiteSettings();
 
   // Состояние для данных формы
   const [integrations, setIntegrations] = useState({});
@@ -54,32 +54,54 @@ export default function Integrations() {
   // Обработчик для сохранения данных на бэкенд
   const handleSave = async () => {
     try {
-      // Бэкенд ожидает "плоский" объект с ключами через точку
+      if (!siteToken) {
+        alert('Токен сайта ещё не получен. Попробуйте позже.');
+        return;
+      }
+
+      // Убираем суффикс _app для нового API
+      const siteNameForApi = site_name?.replace('_app', '') || domain;
+      const url = `https://${siteNameForApi}.${baseDomain}/site-api/site-info`;
+
       const payload = {
-        'integrations.yandex_metrica_id': integrations.yandex_metrica_id,
-        // Здесь можно будет добавить другие ключи в будущем
+        integrations: {
+          yandex_metrica_id: integrations.yandex_metrica_id,
+          // Здесь можно будет добавить другие ключи в будущем
+        }
       };
 
-      const res = await fetch(
-        `${API_URL}/schema/site-settings/${site_name}`,
-        {
-          method: 'PATCH',
-          credentials: 'include',
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        }
-      );
+      console.log('🔗 [Integrations] → Сохраняю настройки интеграций');
+      console.log('🔗 [Integrations] → URL:', url);
+      console.log('🔗 [Integrations] → Payload:', payload);
+      console.log('🔑 [Integrations] Authorization: Bearer', siteToken ? siteToken.substring(0, 20) + '...' : 'no token');
 
-      if (!res.ok) throw new Error('Ошибка сохранения');
+      const res = await fetch(url, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          Authorization: `Bearer ${siteToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      console.log('🔗 [Integrations] ← Статус ответа:', res.status, res.statusText);
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('🔗 [Integrations] ❌ Ошибка:', errorText);
+        throw new Error('Ошибка сохранения: ' + errorText);
+      }
+
+      const responseData = await res.json();
+      console.log('🔗 [Integrations] ✅ Ответ:', responseData);
+
       alert('Настройки интеграций сохранены');
       await refetch(); // Обновляем данные в контексте
       setInitial(integrations); // Обновляем "начальное" состояние
     } catch (err) {
-      console.error(err);
-      alert('Не удалось сохранить настройки');
+      console.error('🔗 [Integrations] ❌ Ошибка сохранения:', err);
+      alert('Не удалось сохранить настройки: ' + err.message);
     }
   };
 

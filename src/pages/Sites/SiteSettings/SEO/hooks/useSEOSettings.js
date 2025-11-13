@@ -3,7 +3,7 @@ import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { saveSEOSettings } from '../utils/seoApi';
 
 export const useSEOSettings = () => {
-  const { data, loading, site_name, refetch } = useSiteSettings();
+  const { data, loading, site_name, siteToken, refetch } = useSiteSettings();
 
   // Состояние для данных формы
   const [seo, setSeo] = useState({});
@@ -51,13 +51,18 @@ export const useSEOSettings = () => {
   // Обработчик для сохранения данных
   const handleSave = async () => {
     try {
-      await saveSEOSettings(site_name, seo);
+      if (!siteToken) {
+        alert('Токен сайта ещё не получен. Попробуйте позже.');
+        return;
+      }
+
+      await saveSEOSettings(site_name, siteToken, seo);
       alert('SEO настройки сохранены');
       await refetch();
       setInitial(seo);
     } catch (err) {
       console.error(err);
-      alert('Не удалось сохранить SEO настройки');
+      alert('Не удалось сохранить SEO настройки: ' + err.message);
     }
   };
 
