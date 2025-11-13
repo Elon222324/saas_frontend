@@ -36,7 +36,7 @@ export default function Login() {
       console.log('🎟️ accessToken:', accessToken)
   
       localStorage.setItem('access_token', accessToken)
-      navigate('/')
+      navigate('/choose-role')
     } catch (err) {
       console.error('❌ ОШИБКА axios:', err)
       console.log('📦 err.response:', err.response)

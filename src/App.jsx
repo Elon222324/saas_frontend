@@ -16,6 +16,7 @@ import Integrations from './pages/Sites/SiteSettings/Integrations'
 import SEOSettings from './pages/Sites/SiteSettings/SEO'
 import PromoCodes from './pages/Sites/SiteSettings/Commerce/PromoCodes'
 import Delivery from './pages/Sites/SiteSettings/Commerce/Delivery'
+import Reviews from './pages/Sites/SiteSettings/Reviews'
 import GeneralSettings from './pages/Sites/SiteSettings/GeneralSettings'
 import { SiteSettingsProvider } from './context/SiteSettingsContext'
 import { UserProvider } from './context/UserContext'
@@ -32,6 +33,12 @@ import LogsPage from './pages/OwnerPanel/Tools/Logs'
 import TestingPage from './pages/OwnerPanel/Tools/Testing'
 import ServicesPage from './pages/OwnerPanel/Tools/Services'
 
+// Seller (Board) layout and pages
+import SellerLayout from './layouts/SellerLayout'
+import RoleSelector from './pages/RoleSelector'
+import SellerSites from './pages/SellerSites'
+import SellerBoard from './pages/SellerBoard'
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -39,6 +46,7 @@ export default function App() {
         <Routes>
 
           <Route path="/login" element={<Login />} />
+          <Route path="/choose-role" element={<RoleSelector />} />
 
           {/* Панель владельца */}
           <Route path="/owner" element={<OwnerLayout />}>
@@ -81,10 +89,20 @@ export default function App() {
             <Route path="extras" element={<Extras />} />
             <Route path="promocodes" element={<PromoCodes />} />
             <Route path="delivery" element={<Delivery />} />
+            <Route path="reviews" element={<Reviews />} />
             <Route path="integrations" element={<Integrations />} />
             <Route path="seo" element={<SEOSettings />} />
             <Route path="general" element={<GeneralSettings />} />
           </Route>
+        </Route>
+
+        {/* Борд продавца */}
+        <Route path="/seller" element={<SellerLayout />}>
+          <Route path="sites" element={<SellerSites />} />
+        </Route>
+
+        <Route path="/board/:siteName" element={<SellerLayout />}>
+          <Route index element={<SellerBoard />} />
         </Route>
         </Routes>
       </UserProvider>

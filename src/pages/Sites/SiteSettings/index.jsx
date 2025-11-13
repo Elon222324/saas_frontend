@@ -17,6 +17,7 @@ import {
   Truck,
   Percent,
   Search,
+  MessageCircle,
 } from 'lucide-react'
 
 export default function SiteSettings() {
@@ -215,6 +216,19 @@ export default function SiteSettings() {
                 </div>
               )}
             </div>
+
+            <NavLink
+              to="reviews"
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2 rounded hover:bg-blue-50 transition-colors ${
+                  isActive ? 'bg-blue-100 text-blue-600 font-semibold' : 'text-gray-700'
+                } ${!isExpanded ? 'justify-center' : ''}`
+              }
+              title={!isExpanded ? 'Отзывы' : ''}
+            >
+              <MessageCircle size={20} />
+              {isExpanded && <span>Отзывы</span>}
+            </NavLink>
 
             <NavLink
               to="integrations"

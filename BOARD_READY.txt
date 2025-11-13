@@ -1,0 +1,82 @@
+✅ БОРД ПРОДАВЦА - ГОТОВО К ТЕСТИРОВАНИЮ
+
+=== ЧТО БЫЛО СОЗДАНО ===
+
+1. RoleSelector (/choose-role)
+   └─ Выбор между Админкой и Бордом после логина
+
+2. SellerSites (/seller/sites)
+   └─ Список магазинов для выбора
+
+3. SellerLayout
+   └─ Темный layout для борда (планшет)
+
+4. SellerBoard (/board/:siteName)
+   └─ Главная страница борда (заглушка, готова к интеграции)
+
+=== МАРШРУТЫ ===
+
+✅ /login                    → Login
+✅ /choose-role              → RoleSelector (выбор роли)
+✅ /                         → MainLayout → Dashboard (админка)
+✅ /seller/sites             → SellerSites (список магазинов)
+✅ /board/:siteName          → SellerBoard (борд заказов)
+
+=== ЛОГИКА ВХОДА ===
+
+1. Логин → access_token в localStorage
+2. Редирект на / (MainLayout)
+3. UserContext → редирект на /choose-role
+4. RoleSelector:
+   - Клик "Админка" → / (полная админка)
+   - Клик "Борд" → /seller/sites
+
+=== АВТОРИЗАЦИЯ ===
+
+✅ access_token живет 7 дней (обновлено на бекенде)
+✅ Все компоненты используют UserContext
+✅ API токены через useSiteTokenString(siteName)
+
+=== ТЕСТИРОВАНИЕ ===
+
+http://localhost:5173/login
+→ http://localhost:5173/choose-role
+→ Выбрать "Админка" или "Борд"
+
+=== ФАЙЛЫ ===
+
+Созданы:
+- src/pages/RoleSelector/index.jsx
+- src/pages/SellerSites/index.jsx
+- src/pages/SellerBoard/index.jsx
+- src/layouts/SellerLayout.jsx
+
+Изменены:
+- src/App.jsx (добавлены маршруты)
+- src/pages/Dashboard/index.jsx (убран редирект)
+- src/context/UserContext.jsx (добавлена логика редиректа на /choose-role)
+
+=== СЛЕДУЮЩИЕ ШАГИ ===
+
+1. Интеграция с API заказов
+   - Создать useOrdersPolling хук
+   - Создать OrderCard компонент
+   - Создать OrdersList компонент
+
+2. Реал-тайм обновления
+   - GET /site-api/admin/orders/
+   - Polling каждые 5-10 сек
+
+3. Функциональность борда
+   - Изменение статусов
+   - Фильтрация
+   - Логирование действий
+
+=== СТАТУС ===
+
+✅ Сборка без ошибок
+✅ Маршруты работают
+✅ Авторизация готова
+✅ Layout готов
+✅ 🚀 Готово к разработке функциональности
+
