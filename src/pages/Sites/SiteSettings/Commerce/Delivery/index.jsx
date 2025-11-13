@@ -4,6 +4,11 @@ import { Button } from '@/components/ui/button'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
 import { Info } from 'lucide-react'
 
+const DELIVERY_TYPES = [
+  { value: 'delivery', label: 'Доставка' },
+  { value: 'pickup', label: 'Самовывоз' },
+]
+
 function numberOrEmpty(value) {
   if (value === null || value === undefined) return ''
   if (Number.isNaN(Number(value))) return ''
@@ -12,9 +17,10 @@ function numberOrEmpty(value) {
 
 export default function Delivery() {
   const { domain } = useParams()
-  const { site_name, siteToken } = useSiteSettings()
+  const { data, site_name, siteToken, refetch } = useSiteSettings()
 
   const baseDomain = import.meta.env.VITE_BASE_DOMAIN
+  const API_URL = import.meta.env.VITE_API_URL
   const full_domain = `${domain}.${baseDomain}`
   
   // Убираем суффикс _app для нового API
@@ -24,6 +30,8 @@ export default function Delivery() {
   const [rules, setRules] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [deliveryType, setDeliveryType] = useState('delivery')
+  const [hasInitialized, setHasInitialized] = useState(false)
 
   const hasRules = rules && rules.length > 0
 
@@ -66,6 +74,16 @@ export default function Delivery() {
       setIsLoading(false)
     }
   }
+
+  // Инициализация delivery_type из данных сайта
+  useEffect(() => {
+    if (data?.commerce?.delivery_type && !hasInitialized) {
+      setDeliveryType(data.commerce.delivery_type)
+      setHasInitialized(true)
+    } else if (!hasInitialized && data) {
+      setHasInitialized(true)
+    }
+  }, [data, hasInitialized])
 
   useEffect(() => {
     fetchRules()
@@ -167,6 +185,34 @@ export default function Delivery() {
     }
   }
 
+  const handleSaveDeliveryType = async () => {
+    try {
+      const payload = {
+        'commerce.delivery_type': deliveryType,
+      }
+
+      const res = await fetch(
+        `${API_URL}/schema/site-settings/${site_name}`,
+        {
+          method: 'PATCH',
+          credentials: 'include',
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        }
+      )
+
+      if (!res.ok) throw new Error('Ошибка сохранения')
+      alert('Тип доставки сохранен')
+      await refetch()
+    } catch (err) {
+      console.error(err)
+      alert('Не удалось сохранить тип доставки')
+    }
+  }
+
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-6">
       <div className="flex justify-between items-center">
@@ -181,6 +227,36 @@ export default function Delivery() {
         <p>
           Управляйте правилами доставки. Активное правило применяется на сайте. Новое правило автоматически
           становится активным, а остальные — неактивными.
+        </p>
+      </div>
+
+      {/* Выбор типа доставки */}
+      <div className="border rounded-lg p-4 space-y-3 bg-blue-50">
+        <h2 className="font-semibold">Тип доставки</h2>
+        <div className="flex items-end gap-4">
+          <div className="flex-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Выберите способ доставки/самовывоза
+            </label>
+            <select
+              value={deliveryType}
+              onChange={(e) => setDeliveryType(e.target.value)}
+              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {DELIVERY_TYPES.map((type) => (
+                <option key={type.value} value={type.value}>
+                  {type.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <Button onClick={handleSaveDeliveryType} disabled={isSaving}>
+            {isSaving ? 'Сохранение...' : 'Сохранить'}
+          </Button>
+        </div>
+        <p className="text-xs text-gray-600">
+          <strong>Доставка</strong> - заказ доставляется клиенту<br />
+          <strong>Самовывоз</strong> - клиент забирает заказ сам
         </p>
       </div>
 
