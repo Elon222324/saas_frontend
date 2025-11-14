@@ -1,4 +1,5 @@
 import { useTimerLogic } from '../shared/useTimerLogic'
+import { formatCustomerName } from '../utils/formatCustomerName'
 
 export function MobileHeader({ order, statusConfig }) {
   const { timeData, formattedTime } = useTimerLogic(order.pickup_time)
@@ -18,9 +19,11 @@ export function MobileHeader({ order, statusConfig }) {
             )}
           </div>
         )}
-        <div className="text-white text-xs truncate">
-          {order.customer_name}
-        </div>
+        {formatCustomerName(order.customer_name) && (
+          <div className="text-white text-xs truncate">
+            {formatCustomerName(order.customer_name)}
+          </div>
+        )}
       </div>
       <div className="flex items-center gap-0.5 flex-shrink-0">
         <div className="text-white font-bold text-sm bg-black/20 px-1 py-0.5 rounded">
