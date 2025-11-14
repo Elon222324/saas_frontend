@@ -17,7 +17,14 @@ export function TabletHeader({ order, statusConfig, siteName, siteToken, onOrder
             </div>
             {timeData && (
               <div className={`text-xs font-semibold ${timeData.color}`}>
-                {timeData.text}
+                {/* На портретном экране показываем shortText, если есть */}
+                <span className="md:hidden">
+                  {timeData.shortText || timeData.text}
+                </span>
+                {/* На горизонтальном показываем полный текст */}
+                <span className="hidden md:inline">
+                  {timeData.text}
+                </span>
               </div>
             )}
           </div>

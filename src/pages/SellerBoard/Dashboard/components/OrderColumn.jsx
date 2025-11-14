@@ -19,7 +19,7 @@ export function OrderColumn({ status, orders, siteName, siteToken }) {
       </div>
 
       {/* Список заказов */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-2 min-h-96">
+      <div className="flex-1 overflow-y-auto p-3 space-y-2 min-h-80">
         {statusOrders.length === 0 ? (
           <div className="text-gray-500 text-xs text-center py-8">
             Нет заказов

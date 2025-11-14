@@ -13,7 +13,7 @@ export function MobileHeader({ order, statusConfig }) {
             </div>
             {timeData && (
               <div className={`text-xs font-semibold ${timeData.color}`}>
-                {timeData.text}
+                {timeData.shortText || timeData.text}
               </div>
             )}
           </div>

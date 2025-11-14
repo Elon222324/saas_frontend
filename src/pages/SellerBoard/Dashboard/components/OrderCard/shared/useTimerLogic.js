@@ -13,6 +13,7 @@ export function useTimerLogic(pickupTime) {
       const overdueMins = Math.abs(minutes)
       return {
         text: `ПРОСРОЧЕНО на ${overdueMins}м`,
+        shortText: `+${overdueMins}м`,
         color: 'text-red-400',
         bgColor: 'bg-red-600',
         isPulsing: true
