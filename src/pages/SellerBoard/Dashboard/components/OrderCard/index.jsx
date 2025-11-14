@@ -3,8 +3,9 @@ import { OrderCardDesktop } from './Desktop'
 import { OrderCardTablet } from './Tablet'
 import { OrderCardMobile } from './Mobile'
 
-export function OrderCard({ order }) {
+export function OrderCard({ order, siteName, siteToken, onOrderStatusChanged }) {
   const [device, setDevice] = useState('desktop')
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -23,13 +24,8 @@ export function OrderCard({ order }) {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  switch (device) {
-    case 'mobile':
-      return <OrderCardMobile order={order} />
-    case 'tablet':
-      return <OrderCardTablet order={order} />
-    default:
-      return <OrderCardDesktop order={order} />
-  }
+  // TODO: Сейчас везде используется Tablet версия для настройки
+  // После завершения подключить Mobile и Desktop
+  return <OrderCardTablet order={order} siteName={siteName} siteToken={siteToken} onOrderStatusChanged={onOrderStatusChanged} />
 }
 

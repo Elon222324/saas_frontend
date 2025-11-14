@@ -45,8 +45,8 @@ export const STATUS_CONFIG = {
     canTransition: true,
   },
   [ORDER_STATUSES.DELIVERING]: {
-    title: 'В пути',
-    icon: '🚗',
+    title: 'Готовы к выдаче',
+    icon: '📦',
     color: 'cyan',
     borderColor: 'border-cyan-400',
     bgColor: 'bg-cyan-900/30',
@@ -75,30 +75,33 @@ export const STATUS_CONFIG = {
 
 /**
  * Получить конфиг для статуса
+ * Нормализует регистр (new, New, NEW -> new)
  */
 export function getStatusConfig(status) {
-  return STATUS_CONFIG[status] || STATUS_CONFIG[ORDER_STATUSES.NEW]
+  const normalized = String(status || '').toLowerCase()
+  return STATUS_CONFIG[normalized] || STATUS_CONFIG[ORDER_STATUSES.NEW]
 }
 
 /**
  * Проверить, может ли статус быть изменён
+ * Нормализует регистр перед проверкой
  */
 export function canTransitionStatus(status) {
-  const config = getStatusConfig(status)
+  const normalized = String(status || '').toLowerCase()
+  const config = getStatusConfig(normalized)
   return config.canTransition
 }
 
 /**
- * Возвращает все статусы в порядке отображения на доске
+ * Возвращает видимые статусы в порядке отображения на доске
+ * Только 3 колонки: Новые, Готовятся, Готовы к Выдаче
  */
 export function getOrderStatusesInOrder() {
   return [
     ORDER_STATUSES.NEW,
-    ORDER_STATUSES.CONFIRMED,
     ORDER_STATUSES.PREPARING,
     ORDER_STATUSES.DELIVERING,
-    ORDER_STATUSES.COMPLETED,
-    ORDER_STATUSES.CANCELED,
+    // Скрытые: CONFIRMED, COMPLETED, CANCELED (не отображаются на борде)
   ]
 }
 

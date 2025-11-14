@@ -1,7 +1,7 @@
 import { OrderCard } from './OrderCard'
 import { getStatusConfig } from '../constants/orderStatuses'
 
-export function OrderColumn({ status, orders }) {
+export function OrderColumn({ status, orders, siteName, siteToken }) {
   const statusOrders = orders.filter(order => order.status === status)
   const config = getStatusConfig(status)
 
@@ -26,7 +26,17 @@ export function OrderColumn({ status, orders }) {
           </div>
         ) : (
           statusOrders.map(order => (
-            <OrderCard key={order.id} order={order} />
+            <OrderCard 
+              key={order.id} 
+              order={order}
+              siteName={siteName}
+              siteToken={siteToken}
+              onOrderStatusChanged={(orderId) => {
+                // После изменения статуса закажем обновление заказов
+                // Это позволит заказу переместиться в новый столбец
+                window.dispatchEvent(new CustomEvent('orderStatusChanged', { detail: { orderId } }))
+              }}
+            />
           ))
         )}
       </div>

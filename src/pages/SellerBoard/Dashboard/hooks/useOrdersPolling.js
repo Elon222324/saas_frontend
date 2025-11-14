@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import { fetchOrdersQuick } from '../api/ordersApi'
+import { fetchOrdersWithItems } from '../api/ordersApi'
 
 /**
  * Хук для автоматической загрузки и обновления заказов с помощью polling
@@ -23,7 +23,7 @@ export function useOrdersPolling(siteName, siteToken, interval = 3000) {
 
     try {
       console.log('🔄 [useOrdersPolling] Загружаю заказы для:', siteName)
-      const fetchedOrders = await fetchOrdersQuick(siteName, siteToken)
+      const fetchedOrders = await fetchOrdersWithItems(siteName, siteToken)
       setOrders(fetchedOrders)
       console.log('✅ [useOrdersPolling] Получено заказов:', fetchedOrders.length)
     } catch (err) {
