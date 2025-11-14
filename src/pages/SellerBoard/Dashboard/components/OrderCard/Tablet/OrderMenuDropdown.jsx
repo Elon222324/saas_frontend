@@ -19,7 +19,7 @@ export function OrderMenuDropdown({ order, onCancelClick }) {
   }, [isOpen])
 
   return (
-    <div ref={menuRef} className="relative">
+    <div ref={menuRef} className="relative flex-shrink-0 ml-auto">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="text-gray-300 hover:text-white text-lg cursor-pointer transition"

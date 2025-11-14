@@ -23,7 +23,7 @@ export const STATUS_CONFIG = {
     color: 'orange',
     borderColor: 'border-orange-400',
     bgColor: 'bg-orange-900/30',
-    headerBg: 'bg-orange-900/50 border-orange-400',
+    headerBg: 'bg-gray-700/50 border-b-4 border-orange-400',
     canTransition: true,
   },
   [ORDER_STATUSES.CONFIRMED]: {
@@ -32,7 +32,7 @@ export const STATUS_CONFIG = {
     color: 'blue',
     borderColor: 'border-blue-400',
     bgColor: 'bg-blue-900/30',
-    headerBg: 'bg-blue-900/50 border-blue-400',
+    headerBg: 'bg-gray-700/50 border-b-4 border-blue-400',
     canTransition: true,
   },
   [ORDER_STATUSES.PREPARING]: {
@@ -41,7 +41,7 @@ export const STATUS_CONFIG = {
     color: 'purple',
     borderColor: 'border-purple-400',
     bgColor: 'bg-purple-900/30',
-    headerBg: 'bg-purple-900/50 border-purple-400',
+    headerBg: 'bg-gray-700/50 border-b-4 border-purple-400',
     canTransition: true,
   },
   [ORDER_STATUSES.DELIVERING]: {
@@ -50,7 +50,7 @@ export const STATUS_CONFIG = {
     color: 'cyan',
     borderColor: 'border-cyan-400',
     bgColor: 'bg-cyan-900/30',
-    headerBg: 'bg-cyan-900/50 border-cyan-400',
+    headerBg: 'bg-gray-700/50 border-b-4 border-cyan-400',
     canTransition: true,
   },
   [ORDER_STATUSES.COMPLETED]: {
@@ -59,7 +59,7 @@ export const STATUS_CONFIG = {
     color: 'green',
     borderColor: 'border-green-400',
     bgColor: 'bg-green-900/30',
-    headerBg: 'bg-green-900/50 border-green-400',
+    headerBg: 'bg-gray-700/50 border-b-4 border-green-400',
     canTransition: false, // финальный статус
   },
   [ORDER_STATUSES.CANCELED]: {
@@ -68,7 +68,7 @@ export const STATUS_CONFIG = {
     color: 'red',
     borderColor: 'border-red-400',
     bgColor: 'bg-red-900/30',
-    headerBg: 'bg-red-900/50 border-red-400',
+    headerBg: 'bg-gray-700/50 border-b-4 border-red-400',
     canTransition: false, // финальный статус
   },
 }

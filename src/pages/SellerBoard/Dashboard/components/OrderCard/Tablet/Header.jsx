@@ -25,7 +25,7 @@ export function TabletHeader({ order, statusConfig, siteName, siteToken, onOrder
       </div>
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-1">
-          <div className="text-white font-bold text-xs bg-black/20 px-1.5 py-0.5 rounded">
+          <div className="text-white font-bold text-sm bg-black/20 px-1.5 py-0.5 rounded">
             #{order.order_number}
           </div>
           <div className="w-5 h-5 rounded-full border border-gray-400 flex items-center justify-center cursor-help flex-shrink-0" title="Информация о заказе">

@@ -23,7 +23,7 @@ export function DesktopHeader({ order, statusConfig }) {
         </div>
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
-        <div className="text-white font-bold text-sm bg-black/20 px-2 py-1 rounded">
+        <div className="text-white font-bold text-lg bg-black/20 px-2 py-1 rounded">
           #{order.order_number}
         </div>
         <div className="w-5 h-5 rounded-full border border-gray-400 flex items-center justify-center cursor-help" title="Информация о заказе">

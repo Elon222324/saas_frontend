@@ -23,7 +23,7 @@ export function MobileHeader({ order, statusConfig }) {
         </div>
       </div>
       <div className="flex items-center gap-0.5 flex-shrink-0">
-        <div className="text-white font-bold text-xs bg-black/20 px-1 py-0.5 rounded">
+        <div className="text-white font-bold text-sm bg-black/20 px-1 py-0.5 rounded">
           #{order.order_number}
         </div>
         <div className="w-4 h-4 rounded-full border border-gray-400 flex items-center justify-center cursor-help flex-shrink-0" title="Информация о заказе">
