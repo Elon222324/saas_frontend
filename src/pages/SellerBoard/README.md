@@ -9,6 +9,9 @@
 /board/:siteName
 ```
 
+## Лейаут
+Обёрнут в `SellerLayout` (`src/layouts/SellerLayout.jsx`) - глобальная шапка с "БОРД ЗАКАЗОВ", статусом ONLINE и кнопками навигации (Выбрать сайт, Админка, Выход).
+
 ## Структура
 ```
 SellerBoard/

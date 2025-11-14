@@ -10,15 +10,27 @@ export function TabletFooter({ order }) {
   }
 
   const paymentMethod = getPaymentMethodDisplay()
+  
+  const isCash = String(order.payment_method || '').toLowerCase() === 'cash'
+  const hasChange = order.cash_payment_detail === 'needs_change' && order.cash_denominal
+  const changeAmount = hasChange ? (order.cash_denominal - order.total_amount) : 0
 
   return (
-    <div className="px-2 py-1 border-t border-black/20 flex items-center justify-between gap-1">
-      <button className={`${paymentMethod.color} hover:brightness-110 text-white font-bold text-xs px-1.5 py-0.5 rounded transition flex-shrink-0`}>
-        {paymentMethod.text}
-      </button>
-      <div className="text-gray-300 font-bold text-xs">
-        <span className="text-white">{order.total_amount}</span> {order.currency}
+    <div className="px-2 py-1 border-t border-black/20">
+      <div className="flex items-center justify-between gap-1">
+        <button className={`${paymentMethod.color} hover:brightness-110 text-white font-bold text-xs px-1.5 py-0.5 rounded transition flex-shrink-0`}>
+          {paymentMethod.text}
+        </button>
+        <div className="text-gray-300 font-bold text-xs">
+          <span className="text-white">{order.total_amount}</span> {order.currency}
+        </div>
       </div>
+      
+      {isCash && hasChange && (
+        <div className="mt-0.5 text-xs font-bold text-green-400">
+          Сдача: {changeAmount}₽
+        </div>
+      )}
     </div>
   )
 }
