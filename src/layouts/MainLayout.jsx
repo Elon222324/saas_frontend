@@ -1,9 +1,10 @@
-import { NavLink, Outlet } from 'react-router-dom'
-import { LayoutDashboard, Server, Users, ShoppingCart, MessageSquare, LogOut, Crown } from 'lucide-react'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { LayoutDashboard, Server, Users, ShoppingCart, MessageSquare, LogOut, Crown, Store } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 
 export default function MainLayout() {
   const { user, loading, logout, isSuperAdmin } = useUser()
+  const navigate = useNavigate()
 
   if (loading) {
     return (
@@ -91,12 +92,20 @@ export default function MainLayout() {
           </nav>
         </div>
 
-        <button 
-          onClick={logout}
-          className="flex items-center gap-2 bg-red-100 text-red-600 px-4 py-2 rounded hover:bg-red-200"
-        >
-          <LogOut size={18} /> Logout
-        </button>
+        <div className="flex items-center gap-2">
+          <button 
+            onClick={() => navigate('/seller/sites')}
+            className="flex items-center gap-2 bg-amber-100 text-amber-600 px-4 py-2 rounded hover:bg-amber-200"
+          >
+            <Store size={18} /> Борд продавца
+          </button>
+          <button 
+            onClick={logout}
+            className="flex items-center gap-2 bg-red-100 text-red-600 px-4 py-2 rounded hover:bg-red-200"
+          >
+            <LogOut size={18} /> Logout
+          </button>
+        </div>
       </header>
 
       {/* Content */}
