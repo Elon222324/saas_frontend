@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { useMemo, useState, useEffect, useRef } from 'react'
-import { RefreshCw } from 'lucide-react'
+import { RefreshCw, Maximize2, Minimize2 } from 'lucide-react'
 import { useSiteTokenString } from '@/hooks/useSiteToken'
 import { OrderBoard } from './components'
 import { useOrdersPolling } from './hooks/useOrdersPolling'
@@ -62,7 +62,9 @@ const containerSuffix = import.meta.env.VITE_CONTAINER_SUFFIX || '_app'
 export default function SellerBoardDashboard() {
   const { siteName } = useParams()
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [isFullscreen, setIsFullscreen] = useState(false)
   const previousOrdersCountRef = useRef(0)
+  const containerRef = useRef(null)
 
   // Очищаем siteName от суффикса контейнера
   const siteNameForToken = useMemo(() => {
@@ -96,6 +98,30 @@ export default function SellerBoardDashboard() {
     
     previousOrdersCountRef.current = currentOrdersCount
   }, [orders])
+
+  // Отслеживаем изменение полноэкранного режима
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement)
+    }
+    
+    document.addEventListener('fullscreenchange', handleFullscreenChange)
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange)
+  }, [])
+
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        // Входим в полноэкран
+        await containerRef.current?.requestFullscreen()
+      } else {
+        // Выходим из полноэкрана
+        await document.exitFullscreen()
+      }
+    } catch (err) {
+      console.error('Ошибка полноэкрана:', err)
+    }
+  }
 
   const handleRefresh = async () => {
     setIsRefreshing(true)
@@ -146,21 +172,30 @@ export default function SellerBoardDashboard() {
   }
 
   return (
-    <div className="h-full flex flex-col">
+    <div ref={containerRef} className="h-full flex flex-col bg-gray-800">
       <div className="flex items-center justify-between p-4 border-b border-gray-700">
         <h2 className="text-xl font-bold text-white">📋 Заказы</h2>
-        <button
-          onClick={handleRefresh}
-          disabled={isRefreshing || !siteToken}
-          className={`transition-colors hover:text-white ${
-            isRefreshing || !siteToken
-              ? 'text-gray-500 cursor-not-allowed'
-              : 'text-gray-300 hover:text-white cursor-pointer'
-          }`}
-          title="Обновить данные заказов"
-        >
-          <RefreshCw size={28} strokeWidth={2} />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={toggleFullscreen}
+            className="transition-colors text-gray-300 hover:text-white cursor-pointer"
+            title={isFullscreen ? 'Выход из полноэкрана' : 'Полноэкран'}
+          >
+            {isFullscreen ? <Minimize2 size={28} strokeWidth={2} /> : <Maximize2 size={28} strokeWidth={2} />}
+          </button>
+          <button
+            onClick={handleRefresh}
+            disabled={isRefreshing || !siteToken}
+            className={`transition-colors hover:text-white ${
+              isRefreshing || !siteToken
+                ? 'text-gray-500 cursor-not-allowed'
+                : 'text-gray-300 hover:text-white cursor-pointer'
+            }`}
+            title="Обновить данные заказов"
+          >
+            <RefreshCw size={28} strokeWidth={2} />
+          </button>
+        </div>
       </div>
       {content}
     </div>
