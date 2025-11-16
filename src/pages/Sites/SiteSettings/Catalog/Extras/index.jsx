@@ -7,7 +7,8 @@ import ItemList from './components/ItemList/ItemList'
 export default function Extras() {
   const [selectedGroup, setSelectedGroup] = useState(null)
   const { domain } = useParams()
-  const siteName = `${domain}_app`
+  const containerSuffix = import.meta.env.VITE_CONTAINER_SUFFIX || '_app'
+  const siteName = `${domain}${containerSuffix}`
 
   return (
     <div className="h-full flex">

@@ -26,7 +26,8 @@ export default function ProductTable({
 }) {
   const hasCategories = Object.keys(categoryMap).length > 0
   const { domain } = useParams()
-  const siteName = `${domain}_app`
+  const containerSuffix = import.meta.env.VITE_CONTAINER_SUFFIX || '_app'
+  const siteName = `${domain}${containerSuffix}`
 
   const { add: addCat } = useCategoryCrud(siteName)
   const [showAddCat, setShowAddCat] = useState(false)

@@ -8,7 +8,8 @@ import ValueList from './components/ValueList/ValueList'
 export default function Options() {
   const [selectedGroupId, setSelectedGroupId] = useState(null)
   const { domain } = useParams()
-  const siteName = `${domain}_app`
+  const containerSuffix = import.meta.env.VITE_CONTAINER_SUFFIX || '_app'
+  const siteName = `${domain}${containerSuffix}`
 
   const { data: groups = [] } = useOptionGroups(siteName)
 

@@ -8,7 +8,8 @@ import { useReviewCrud } from './hooks/useReviewCrud'
 
 export default function Reviews() {
   const { domain } = useParams()
-  const siteName = `${domain}_app`
+  const containerSuffix = import.meta.env.VITE_CONTAINER_SUFFIX || '_app'
+  const siteName = `${domain}${containerSuffix}`
 
   const [filters, setFilters] = useState({ status: null, limit: 50, offset: 0 })
   const [selectedReview, setSelectedReview] = useState(null)

@@ -16,7 +16,8 @@ import { filterTree, highlight } from './TreeUtils'
 
 export default function CategoryList({ selected, onSelect, tab, setTab }) {
   const { domain } = useParams()
-  const siteName = `${domain}_app`
+  const containerSuffix = import.meta.env.VITE_CONTAINER_SUFFIX || '_app'
+  const siteName = `${domain}${containerSuffix}`
 
   const { data: tree = [], isFetching, refetch } = useCategories(siteName)
   const { add: addCat, update: updateCat, remove: deleteCat } = useCategoryCrud(siteName, refetch)

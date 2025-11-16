@@ -10,7 +10,8 @@ import EditGroupModal from '../EditGroupModal'
 
 export default function GroupList({ selected, onSelect }) {
   const { domain } = useParams()
-  const siteName = `${domain}_app`
+  const containerSuffix = import.meta.env.VITE_CONTAINER_SUFFIX || '_app'
+  const siteName = `${domain}${containerSuffix}`
 
   const { data: groups = [], isFetching } = useExtraGroups(siteName)
   const { add, update, remove } = useExtraGroupCrud(siteName)

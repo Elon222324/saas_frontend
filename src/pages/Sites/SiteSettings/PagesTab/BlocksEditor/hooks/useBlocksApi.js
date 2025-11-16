@@ -45,15 +45,32 @@ export function useBlocksApi() {
       }))
       if (payload.length === 0) return
 
+      console.log('📤 [updateAll] Sending payload:', {
+        endpoint: `${baseApiUrl}/update-all/${slug}`,
+        payload: payload,
+        payloadLength: payload.length,
+        payloadJSON: JSON.stringify(payload),
+        headers: getHeaders(),
+      })
+
       const res = await fetch(`${baseApiUrl}/update-all/${slug}`, {
         method: 'POST',
         headers: getHeaders(),
         body: JSON.stringify(payload),
       })
-      if (!res.ok) throw new Error(`Error updating blocks: ${res.statusText}`)
+
+      console.log('📥 [updateAll] Response status:', res.status, res.statusText)
+      
+      if (!res.ok) {
+        const errorText = await res.text()
+        console.error('❌ [updateAll] Error response body:', errorText)
+        throw new Error(`Error updating blocks: ${res.statusText}. Body: ${errorText}`)
+      }
+      
       return res.json()
     },
     onSuccess: () => {
+      console.log('✅ [updateAll] Success')
       refetchSiteSettings()
     },
   })

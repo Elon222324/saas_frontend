@@ -59,8 +59,9 @@ export default function Integrations() {
         return;
       }
 
-      // Убираем суффикс _app для нового API
-      const siteNameForApi = site_name?.replace('_app', '') || domain;
+      // Убираем суффикс для нового API
+      const containerSuffix = import.meta.env.VITE_CONTAINER_SUFFIX || '_app'
+      const siteNameForApi = site_name?.replace(containerSuffix, '') || domain;
       const url = `https://${siteNameForApi}.${baseDomain}/site-api/site-info`;
 
       const payload = {

@@ -5,7 +5,8 @@ export function useReviewCrud(siteName) {
   const { siteToken } = useSiteSettings()
   const queryClient = useQueryClient()
 
-  const siteNameForApi = siteName.replace('_app', '')
+  const containerSuffix = import.meta.env.VITE_CONTAINER_SUFFIX || '_app'
+  const siteNameForApi = siteName.replace(containerSuffix, '')
   const baseApiUrl = `https://${siteNameForApi}.${import.meta.env.VITE_BASE_DOMAIN}/site-api/api/admin/reviews`
 
   // Получить детали отзыва

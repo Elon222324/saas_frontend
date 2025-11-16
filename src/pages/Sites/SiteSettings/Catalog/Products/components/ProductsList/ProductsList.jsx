@@ -19,7 +19,8 @@ import useProductsList from './useProductsList'
 
 export default function ProductsList({ category, labels, noLabel }) {
   const { domain } = useParams()
-  const siteName = `${domain}_app`
+  const containerSuffix = import.meta.env.VITE_CONTAINER_SUFFIX || '_app'
+  const siteName = `${domain}${containerSuffix}`
 
   const { data: all = [], isFetching, isError, refetch } = useProducts(siteName)
   const { add, update, remove } = useProductCrud(siteName)

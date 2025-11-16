@@ -17,7 +17,8 @@ export default function Products() {
   }
 
   const { domain } = useParams()
-  const siteName = `${domain}_app`
+  const containerSuffix = import.meta.env.VITE_CONTAINER_SUFFIX || '_app'
+  const siteName = `${domain}${containerSuffix}`
 
   return (
     <div className="h-full px-0 pt-0 pb-4">

@@ -22,7 +22,8 @@ const hasDuplicateVariants = (variants) => {
 
 export default function useProductForm({ open, product, onSave, onClose }) {
   const { domain } = useParams()
-  const siteName = `${domain}_app`
+  const containerSuffix = import.meta.env.VITE_CONTAINER_SUFFIX || '_app'
+  const siteName = `${domain}${containerSuffix}`
 
   const { data: tree = [] } = useCategories(siteName)
   const { data: allExtraGroups = [] } = useExtraGroups(siteName)

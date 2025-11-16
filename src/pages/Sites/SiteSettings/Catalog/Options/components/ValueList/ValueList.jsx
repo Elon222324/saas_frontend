@@ -12,7 +12,8 @@ import EditValueModal from '../EditValueModal'
 // Принимаем новый проп `isPricing`
 export default function ValueList({ groupId, isPricing }) {
   const { domain } = useParams()
-  const siteName = `${domain}_app`
+  const containerSuffix = import.meta.env.VITE_CONTAINER_SUFFIX || '_app'
+  const siteName = `${domain}${containerSuffix}`
 
   const { data: values = [], isFetching } = useOptionValues(siteName, groupId)
   const { add, update, remove } = useOptionValueCrud(siteName)

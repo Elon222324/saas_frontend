@@ -30,7 +30,9 @@ export const SiteSettingsProvider = ({ children }) => {
 
     setLoading(true)
     
-    const url = `${API_URL}/schema/site-settings?site_name=${site_name}`
+    // Убираем суффикс _app для API
+    const siteNameForApi = site_name.replace(containerSuffix, '')
+    const url = `${API_URL}/schema/site-settings?site_name=${siteNameForApi}`
     console.log('📤 [SITE SETTINGS] Отправляем запрос на:', url)
     console.log('🔑 [SITE SETTINGS] Authorization: Bearer', siteToken.substring(0, 20) + '...')
     
@@ -61,11 +63,12 @@ export const SiteSettingsProvider = ({ children }) => {
   // Загружаем данные при монтировании и при изменении токена
   useEffect(() => {
     if (site_name && siteToken) {
+      const siteNameForApi = site_name.replace(containerSuffix, '')
       console.log('🚀 [SITE SETTINGS] Инициализация настроек сайта для:', site_name)
-      console.log('🔗 [SITE SETTINGS] URL:', `${API_URL}/schema/site-settings?site_name=${site_name}`)
+      console.log('🔗 [SITE SETTINGS] URL:', `${API_URL}/schema/site-settings?site_name=${siteNameForApi}`)
       fetchData()
     }
-  }, [fetchData, site_name, siteToken, API_URL])
+  }, [fetchData, site_name, siteToken, API_URL, containerSuffix])
 
   return (
     <SiteSettingsContext.Provider value={{ 

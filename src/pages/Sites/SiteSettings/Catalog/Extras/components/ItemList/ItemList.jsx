@@ -21,7 +21,8 @@ const toPublicUrl = (raw = '', siteName) => {
 
 export default function ItemList({ groupId }) {
   const { domain } = useParams()
-  const siteName = `${domain}_app`
+  const containerSuffix = import.meta.env.VITE_CONTAINER_SUFFIX || '_app'
+  const siteName = `${domain}${containerSuffix}`
 
   // API уже отдает отсортированные данные, так как мы исправили бэкенд
   const { data: items = [], isFetching } = useExtraItems(siteName, groupId)

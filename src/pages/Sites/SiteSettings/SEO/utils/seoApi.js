@@ -1,8 +1,9 @@
 const baseDomain = import.meta.env.VITE_BASE_DOMAIN;
 
 export const saveSEOSettings = async (siteName, siteToken, seoData) => {
-  // Убираем суффикс _app для нового API
-  const siteNameForApi = siteName.replace('_app', '');
+  // Убираем суффикс для нового API
+  const containerSuffix = import.meta.env.VITE_CONTAINER_SUFFIX || '_app'
+  const siteNameForApi = siteName.replace(containerSuffix, '');
   const url = `https://${siteNameForApi}.${baseDomain}/site-api/site-info`;
 
   const payload = {

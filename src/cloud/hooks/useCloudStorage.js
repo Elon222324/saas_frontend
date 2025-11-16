@@ -13,6 +13,8 @@ const getAccessToken = () => {
 export default function useCloudStorage() {
   const { site_name } = useSiteSettings()
   const API_URL = import.meta.env.VITE_API_URL
+  const containerSuffix = import.meta.env.VITE_CONTAINER_SUFFIX || '_app'
+  const siteNameForApi = site_name ? site_name.replace(containerSuffix, '') : null
 
   const [groups, setGroups] = useState([])
   const [files, setFiles] = useState([])
@@ -24,7 +26,7 @@ export default function useCloudStorage() {
   const uploadInputRef = useRef(null)
 
   const fetchData = useCallback(async () => {
-    if (!site_name) return
+    if (!siteNameForApi) return
     try {
       const accessToken = getAccessToken()
       
@@ -33,9 +35,9 @@ export default function useCloudStorage() {
         throw new Error('Отсутствует access_token пользователя')
       }
 
-      console.log('☁️ [fetchData] → Запрос к:', `${API_URL}/images/categories/?site_name=${site_name}`)
+      console.log('☁️ [fetchData] → Запрос к:', `${API_URL}/images/categories/?site_name=${siteNameForApi}`)
 
-      const res = await fetch(`${API_URL}/images/categories/?site_name=${site_name}`, {
+      const res = await fetch(`${API_URL}/images/categories/?site_name=${siteNameForApi}`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
@@ -102,9 +104,9 @@ export default function useCloudStorage() {
         throw new Error('Отсутствует access_token пользователя')
       }
 
-      console.log('☁️ [createCategory] → Создание категории:', `${API_URL}/images/categories/?site_name=${site_name}`)
+      console.log('☁️ [createCategory] → Создание категории:', `${API_URL}/images/categories/?site_name=${siteNameForApi}`)
 
-      const res = await fetch(`${API_URL}/images/categories/?site_name=${site_name}`, {
+      const res = await fetch(`${API_URL}/images/categories/?site_name=${siteNameForApi}`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -166,10 +168,10 @@ export default function useCloudStorage() {
           throw new Error('Отсутствует access_token пользователя')
         }
 
-        console.log('☁️ [uploadFiles] → Загрузка файла:', `${API_URL}/images/?site_name=${site_name}&category_id=${categoryId}&category=${categoryCode}`)
+        console.log('☁️ [uploadFiles] → Загрузка файла:', `${API_URL}/images/?site_name=${siteNameForApi}&category_id=${categoryId}&category=${categoryCode}`)
 
         const res = await fetch(
-          `${API_URL}/images/?site_name=${site_name}&category_id=${categoryId}&category=${categoryCode}`,
+          `${API_URL}/images/?site_name=${siteNameForApi}&category_id=${categoryId}&category=${categoryCode}`,
           {
             method: 'POST',
             credentials: 'include',
@@ -218,9 +220,9 @@ export default function useCloudStorage() {
         throw new Error('Отсутствует access_token пользователя')
       }
 
-      console.log('☁️ [deleteImage] → Удаление изображения:', `${API_URL}/images/${id}?site_name=${site_name}`)
+      console.log('☁️ [deleteImage] → Удаление изображения:', `${API_URL}/images/${id}?site_name=${siteNameForApi}`)
 
-      const res = await fetch(`${API_URL}/images/${id}?site_name=${site_name}`, {
+      const res = await fetch(`${API_URL}/images/${id}?site_name=${siteNameForApi}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -253,9 +255,9 @@ export default function useCloudStorage() {
         throw new Error('Отсутствует access_token пользователя')
       }
 
-      console.log('☁️ [updateImage] → Обновление изображения:', `${API_URL}/images/${id}?site_name=${site_name}`)
+      console.log('☁️ [updateImage] → Обновление изображения:', `${API_URL}/images/${id}?site_name=${siteNameForApi}`)
 
-      const res = await fetch(`${API_URL}/images/${id}?site_name=${site_name}`, {
+      const res = await fetch(`${API_URL}/images/${id}?site_name=${siteNameForApi}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: {

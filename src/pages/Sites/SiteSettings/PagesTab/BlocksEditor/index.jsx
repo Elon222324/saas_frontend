@@ -88,14 +88,21 @@ export default function PageEditor() {
   };
 
   const handleSaveAll = async () => {
-    if (Object.keys(unsavedBlocks).length === 0) return
+    if (Object.keys(unsavedBlocks).length === 0) {
+      console.log('⚠️ [handleSaveAll] No unsaved blocks')
+      return
+    }
+
+    console.log('💾 [handleSaveAll] Starting save with unsavedBlocks:', unsavedBlocks)
 
     try {
       await updateAllBlocks.mutateAsync(unsavedBlocks)
       setUnsavedBlocks({})
+      console.log('✅ [handleSaveAll] Successfully saved all blocks')
       alert('Сохранено!')
     } catch (error) {
-      console.error('Не удалось сохранить изменения:', error)
+      console.error('❌ [handleSaveAll] Error saving changes:', error)
+      console.error('📋 [handleSaveAll] Failed unsavedBlocks:', unsavedBlocks)
       alert('Не удалось сохранить данные')
     }
   }

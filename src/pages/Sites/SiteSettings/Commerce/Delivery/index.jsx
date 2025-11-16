@@ -23,8 +23,9 @@ export default function Delivery() {
   const API_URL = import.meta.env.VITE_API_URL
   const full_domain = `${domain}.${baseDomain}`
   
-  // Убираем суффикс _app для нового API
-  const siteNameForApi = site_name?.replace('_app', '') || domain
+  // Убираем суффикс для нового API
+  const containerSuffix = import.meta.env.VITE_CONTAINER_SUFFIX || '_app'
+  const siteNameForApi = site_name?.replace(containerSuffix, '') || domain
   const baseApiUrl = `https://${siteNameForApi}.${baseDomain}/site-api/admin/delivery-rules/`
 
   const [rules, setRules] = useState([])
@@ -196,8 +197,9 @@ export default function Delivery() {
         return
       }
 
-      // Убираем суффикс _app для нового API
-      const siteNameForApi = site_name?.replace('_app', '') || domain
+      // Убираем суффикс для нового API
+      const containerSuffixLocal = import.meta.env.VITE_CONTAINER_SUFFIX || '_app'
+      const siteNameForApi = site_name?.replace(containerSuffixLocal, '') || domain
       const url = `https://${siteNameForApi}.${baseDomain}/site-api/site-info`
 
       const payload = {
