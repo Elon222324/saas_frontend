@@ -11,7 +11,20 @@ export default function ProductsSelector({
   const [search, setSearch] = useState('')
   const [showModal, setShowModal] = useState(false)
 
+  // Debug logs to inspect empty list cases
+  if (Array.isArray(products)) {
+    console.log('🧩 [ProductsSelector] products length:', products.length)
+  }
+  console.log('🧩 [ProductsSelector] selectedIds:', selectedIds)
+  console.log('🧩 [ProductsSelector] products IDs:', products.map(p => p?.id))
+
   const modalRoot = typeof document !== 'undefined' ? document.body : null
+
+  const productIdsSet = useMemo(() => new Set((products || []).map(p => Number(p?.id))), [products])
+  const invalidSelectedIds = useMemo(() => selectedIds.map(Number).filter(id => !productIdsSet.has(id)), [selectedIds, productIdsSet])
+  if (invalidSelectedIds.length) {
+    console.warn('🧩 [ProductsSelector] invalid selectedIds (not in products):', invalidSelectedIds)
+  }
 
   const filteredProducts = useMemo(() => {
     if (!search) return products
@@ -23,26 +36,41 @@ export default function ProductsSelector({
   }, [products, search])
 
   const selectedProducts = useMemo(() => {
-    return selectedIds
-      .map(id => products.find(p => p.id === id))
+    const idsNum = selectedIds.map(Number)
+    const found = idsNum
+      .map(id => products.find(p => Number(p.id) === id))
       .filter(Boolean)
+    console.log('🧩 [ProductsSelector] selectedIds (num):', idsNum)
+    console.log('🧩 [ProductsSelector] matched selectedProducts IDs:', found.map(p => p?.id))
+    return found
   }, [selectedIds, products])
 
   const handleToggle = (productId) => {
-    const newIds = selectedIds.includes(productId)
-      ? selectedIds.filter(id => id !== productId)
-      : selectedIds.length < maxItems
-        ? [...selectedIds, productId]
-        : selectedIds
+    const pid = Number(productId)
+    const idsNum = selectedIds.map(Number)
+    const newIds = idsNum.includes(pid)
+      ? idsNum.filter(id => id !== pid)
+      : idsNum.length < maxItems
+        ? [...idsNum, pid]
+        : idsNum
 
+    console.log('🧩 [ProductsSelector] handleToggle pid:', pid, 'prev:', idsNum, 'next:', newIds)
     onSelect(newIds)
   }
 
   const handleRemove = (productId) => {
-    onSelect(selectedIds.filter(id => id !== productId))
+    const pid = Number(productId)
+    const idsNum = selectedIds.map(Number)
+    const next = idsNum.filter(id => id !== pid)
+    console.log('🧩 [ProductsSelector] handleRemove pid:', pid, 'prev:', idsNum, 'next:', next)
+    onSelect(next)
   }
 
-  const isSelected = (productId) => selectedIds.includes(productId)
+  const isSelected = (productId) => {
+    const res = selectedIds.map(Number).includes(Number(productId))
+    // Uncomment if needed per-item: console.log('🧩 [ProductsSelector] isSelected?', productId, '=>', res)
+    return res
+  }
   const isFull = selectedIds.length >= maxItems
 
   const modalContent = (
@@ -149,6 +177,19 @@ export default function ProductsSelector({
 
   return (
     <div className="space-y-4">
+      {invalidSelectedIds.length > 0 && (
+        <div className="p-3 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800 flex items-center justify-between gap-3">
+          <div>
+            ⚠️ Некоторые выбранные товары недоступны: {invalidSelectedIds.join(', ')}
+          </div>
+          <button
+            onClick={() => onSelect(selectedIds.map(Number).filter(id => productIdsSet.has(id)))}
+            className="px-2 py-1 bg-yellow-100 hover:bg-yellow-200 rounded border border-yellow-300"
+          >
+            Очистить недоступные
+          </button>
+        </div>
+      )}
       <div className="space-y-2">
         <label className="block text-sm font-medium text-gray-700">
           Выбранные товары ({selectedIds.length}/{maxItems})
@@ -203,14 +244,12 @@ export default function ProductsSelector({
         )}
       </div>
 
-      {selectedIds.length < maxItems && (
-        <button
-          onClick={() => setShowModal(true)}
-          className="w-full px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 transition-colors"
-        >
-          + Добавить товар
-        </button>
-      )}
+      <button
+        onClick={() => setShowModal(true)}
+        className="w-full px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50 transition-colors"
+      >
+        {isFull ? 'Изменить выбор' : '+ Добавить товар'}
+      </button>
 
       {showModal && modalRoot ? createPortal(modalContent, modalRoot) : null}
     </div>

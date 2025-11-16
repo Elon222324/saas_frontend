@@ -50,6 +50,11 @@ export function useCategoryCrud(siteName) {
       console.log('🔑 [useCategoryCrud] ← статус ответа:', res.status, res.statusText);
       
       if (!res.ok) {
+        let errorBody = ''
+        try {
+          errorBody = await res.text()
+        } catch {}
+        console.error('❌ [useCategoryCrud] Тело ошибки (create):', errorBody)
         if (res.status === 401) {
           console.error('❌ [useCategoryCrud] Ошибка аутентификации (401)');
           throw new Error('Ошибка аутентификации. Проверьте токен.');
@@ -58,7 +63,7 @@ export function useCategoryCrud(siteName) {
           console.error('❌ [useCategoryCrud] Конфликт (409) - категория уже существует');
           throw new Error('Категория с таким slug уже существует');
         }
-        throw new Error(`Ошибка создания категории: ${res.status} ${res.statusText}`)
+        throw new Error(`Ошибка создания категории: ${res.status} ${res.statusText}. Body: ${errorBody}`)
       }
       
       const result = await res.json();
@@ -106,6 +111,11 @@ export function useCategoryCrud(siteName) {
       console.log('🔑 [useCategoryCrud] ← статус ответа:', res.status, res.statusText);
       
       if (!res.ok) {
+        let errorBody = ''
+        try {
+          errorBody = await res.text()
+        } catch {}
+        console.error('❌ [useCategoryCrud] Тело ошибки (update):', errorBody)
         if (res.status === 401) {
           console.error('❌ [useCategoryCrud] Ошибка аутентификации (401)');
           throw new Error('Ошибка аутентификации. Проверьте токен.');
@@ -118,7 +128,7 @@ export function useCategoryCrud(siteName) {
           console.error('❌ [useCategoryCrud] Конфликт (409) - категория уже существует');
           throw new Error('Категория с таким slug уже существует');
         }
-        throw new Error(`Ошибка обновления категории: ${res.status} ${res.statusText}`)
+        throw new Error(`Ошибка обновления категории: ${res.status} ${res.statusText}. Body: ${errorBody}`)
       }
       
       const result = await res.json();
@@ -151,6 +161,11 @@ export function useCategoryCrud(siteName) {
       console.log('🔑 [useCategoryCrud] ← статус ответа:', res.status, res.statusText);
       
       if (!res.ok) {
+        let errorBody = ''
+        try {
+          errorBody = await res.text()
+        } catch {}
+        console.error('❌ [useCategoryCrud] Тело ошибки (delete):', errorBody)
         if (res.status === 401) {
           console.error('❌ [useCategoryCrud] Ошибка аутентификации (401)');
           throw new Error('Ошибка аутентификации. Проверьте токен.');
@@ -159,7 +174,7 @@ export function useCategoryCrud(siteName) {
           console.error('❌ [useCategoryCrud] Категория не найдена (404)');
           throw new Error('Категория не найдена');
         }
-        throw new Error(`Ошибка удаления категории: ${res.status} ${res.statusText}`)
+        throw new Error(`Ошибка удаления категории: ${res.status} ${res.statusText}. Body: ${errorBody}`)
       }
       
       console.log('✅ [useCategoryCrud] ← категория удалена');

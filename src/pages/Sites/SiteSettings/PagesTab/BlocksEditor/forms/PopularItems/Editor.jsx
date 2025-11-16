@@ -17,6 +17,17 @@ export default function ProductsEditor({ block, slug, onChange }) {
   const [dataState, setDataState] = useState(block?.data || {})
   const [settingsState, setSettingsState] = useState(block?.settings || {})
 
+  // Debug: what exists in this block right now
+  useEffect(() => {
+    const items = Array.isArray(dataState?.items) ? dataState.items : []
+    console.log('🧩 [PopularItems/Editor] block_id:', block_id, 'slug:', slug)
+    console.log('🧩 [PopularItems/Editor] site_name:', site_name)
+    console.log('🧩 [PopularItems/Editor] settingsState:', settingsState)
+    console.log('🧩 [PopularItems/Editor] dataState:', dataState)
+    console.log('🧩 [PopularItems/Editor] items length:', items.length)
+    console.log('🧩 [PopularItems/Editor] items product_ids:', items.map(i => i?.product_id))
+  }, [block_id, slug, site_name, dataState, settingsState])
+
   useEffect(() => {
     setDataState(block?.data || {})
     setSettingsState(block?.settings || {})

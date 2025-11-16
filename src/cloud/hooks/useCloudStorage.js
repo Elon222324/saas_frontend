@@ -48,6 +48,9 @@ export default function useCloudStorage() {
       console.log('☁️ [fetchData] ← Статус ответа:', res.status)
 
       if (!res.ok) {
+        let errorBody = ''
+        try { errorBody = await res.text() } catch {}
+        console.error('❌ [fetchData] Тело ошибки:', errorBody)
         if (res.status === 401) {
           throw new Error('Токен истек или недействителен. Требуется повторная авторизация.')
         }
@@ -104,21 +107,30 @@ export default function useCloudStorage() {
         throw new Error('Отсутствует access_token пользователя')
       }
 
-      console.log('☁️ [createCategory] → Создание категории:', `${API_URL}/images/categories/?site_name=${siteNameForApi}`)
+      const endpoint = `${API_URL}/images/categories/?site_name=${siteNameForApi}`
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+      }
+      console.log('☁️ [createCategory] → Создание категории:', endpoint)
+      console.log('☁️ [createCategory] → Заголовки:', headers)
+      console.log('☁️ [createCategory] → Тело запроса:', categoryData)
 
-      const res = await fetch(`${API_URL}/images/categories/?site_name=${siteNameForApi}`, {
+      const res = await fetch(endpoint, {
         method: 'POST',
         credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-        },
+        headers,
         body: JSON.stringify(categoryData),
       })
 
       console.log('☁️ [createCategory] ← Статус ответа:', res.status)
 
       if (!res.ok) {
+        let errorBody = ''
+        try {
+          errorBody = await res.text()
+        } catch {}
+        console.error('❌ [createCategory] Тело ошибки:', errorBody)
         if (res.status === 401) {
           throw new Error('Токен истек или недействителен. Требуется повторная авторизация.')
         }
@@ -185,6 +197,9 @@ export default function useCloudStorage() {
         console.log('☁️ [uploadFiles] ← Статус ответа:', res.status)
 
         if (!res.ok) {
+          let errorBody = ''
+          try { errorBody = await res.text() } catch {}
+          console.error('❌ [uploadFiles] Тело ошибки:', errorBody)
           if (res.status === 401) {
             throw new Error('Токен истек или недействителен. Требуется повторная авторизация.')
           }
@@ -234,6 +249,9 @@ export default function useCloudStorage() {
       console.log('☁️ [deleteImage] ← Статус ответа:', res.status)
 
       if (!res.ok) {
+        let errorBody = ''
+        try { errorBody = await res.text() } catch {}
+        console.error('❌ [deleteImage] Тело ошибки:', errorBody)
         if (res.status === 401) {
           throw new Error('Токен истек или недействителен. Требуется повторная авторизация.')
         }
@@ -270,6 +288,9 @@ export default function useCloudStorage() {
       console.log('☁️ [updateImage] ← Статус ответа:', res.status)
 
       if (!res.ok) {
+        let errorBody = ''
+        try { errorBody = await res.text() } catch {}
+        console.error('❌ [updateImage] Тело ошибки:', errorBody)
         if (res.status === 401) {
           throw new Error('Токен истек или недействителен. Требуется повторная авторизация.')
         }

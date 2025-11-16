@@ -15,17 +15,31 @@ export default function ProductsItemsEditor({
 }) {
   const { site_name } = useSiteSettings()
   const { data: products = [], isLoading, error } = useProducts(site_name)
-  const [selectedIds, setSelectedIds] = useState(data?.items?.map(item => item.product_id) || [])
+  const [selectedIds, setSelectedIds] = useState(
+    (data?.items?.map(item => Number(item.product_id)) || [])
+  )
 
   useEffect(() => {
-    setSelectedIds(data?.items?.map(item => item.product_id) || [])
+    setSelectedIds(data?.items?.map(item => Number(item.product_id)) || [])
   }, [data?.items])
+
+  useEffect(() => {
+    if (!isLoading && !error) {
+      console.log('🧩 [PopularItems/ItemsEditor] products count:', products?.length || 0)
+      console.log('🧩 [PopularItems/ItemsEditor] selectedIds:', selectedIds)
+      if (products?.length) {
+        const sample = products.slice(0, 3).map(p => ({ id: p.id, title: p.title || p.name }))
+        console.log('🧩 [PopularItems/ItemsEditor] sample products:', sample)
+      }
+    }
+  }, [products, isLoading, error, selectedIds])
 
   const maxItems = settings?.cards_count || 6
 
   const handleSelectProducts = (ids) => {
-    setSelectedIds(ids)
-    const items = ids.map(product_id => ({ product_id }))
+    const normalized = ids.map(Number)
+    setSelectedIds(normalized)
+    const items = normalized.map(product_id => ({ product_id }))
     onTextChange('items', items)
   }
 
