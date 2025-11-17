@@ -44,7 +44,7 @@ export const serviceApi = {
   // Инициализирует библиотеку
   initLibrary: async () => {
     try {
-      const response = await axios.post('/api/cloud/library/import')
+      const response = await axios.post('/cloud/library/import')
       return response.data
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Ошибка при инициализации библиотеки')
