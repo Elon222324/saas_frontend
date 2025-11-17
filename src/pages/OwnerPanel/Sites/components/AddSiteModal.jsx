@@ -84,8 +84,10 @@ export default function AddSiteModal({ onClose, onCreate, preselectedUserId = nu
       // Закрываем модальное окно
       onClose()
     } catch (err) {
-      console.error('🌐 [AddSiteModal] Ошибка создания сайта:', err)
-      setError(err.message)
+      console.error('🌐 [AddSiteModal] ❌ Ошибка создания сайта:', err)
+      console.error('🌐 [AddSiteModal] ❌ Сообщение ошибки:', err.message)
+      console.error('🌐 [AddSiteModal] ❌ Весь объект ошибки:', err)
+      setError(err.message || 'Ошибка при создании сайта')
     } finally {
       setLoading(false)
     }

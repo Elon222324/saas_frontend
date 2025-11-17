@@ -75,22 +75,84 @@ export default function Sites() {
     if (!newDomain.trim()) return
 
     console.log(`➕ Добавление нового сайта: ${newDomain.trim()}`)
+    
+    // Логирование данных отправки
+    const token = localStorage.getItem('access_token')
+    const requestData = { domain: newDomain.trim() }
+    console.log(`📤 URL запроса: /sites/add_new`)
+    console.log(`📤 Метод: POST`)
+    console.log(`📤 Отправляемые данные:`, requestData)
+    console.log(`📤 Токен присутствует:`, token ? 'Да' : 'Нет')
+    console.log(`📤 Токен (первые 20 символов): ${token?.substring(0, 20)}...`)
+    
     try {
       setAdding(true)
-      await api.post(
+      const response = await api.post(
         '/sites/add_new',
-        { domain: newDomain.trim() },
+        requestData,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       )
       console.log(`✅ Сайт ${newDomain.trim()} успешно добавлен`)
+      console.log(`✅ Ответ сервера:`, response.data)
       setNewDomain('')
       await fetchSites()
     } catch (err) {
       console.error(`❌ Ошибка при добавлении сайта ${newDomain.trim()}:`, err)
+      
+      let errorMessage = 'Ошибка при добавлении сайта'
+      
+      // Детальное логирование ошибки
+      if (err.response) {
+        console.error(`❌ Статус ошибки: ${err.response.status}`)
+        console.error(`❌ Данные ошибки:`, err.response.data)
+        console.error(`❌ Заголовки ответа:`, err.response.headers)
+        
+        // Проверяем структуру ошибки: { detail: { error, message } }
+        if (err.response.data?.detail) {
+          if (typeof err.response.data.detail === 'object') {
+            // Вложенная структура
+            if (err.response.data.detail.message) {
+              errorMessage = err.response.data.detail.message
+              console.error(`❌ Сообщение от сервера: ${err.response.data.detail.message}`)
+            }
+            if (err.response.data.detail.error) {
+              console.error(`❌ Код ошибки: ${err.response.data.detail.error}`)
+            }
+          } else if (typeof err.response.data.detail === 'string') {
+            // Простая строка
+            errorMessage = err.response.data.detail
+            console.error(`❌ Детали от сервера: ${err.response.data.detail}`)
+          }
+        }
+        
+        // Альтернативные поля
+        if (!errorMessage || errorMessage === 'Ошибка при добавлении сайта') {
+          if (err.response.data?.message) {
+            errorMessage = err.response.data.message
+            console.error(`❌ Сообщение от сервера: ${err.response.data.message}`)
+          }
+          if (err.response.data?.error) {
+            errorMessage = err.response.data.error
+            console.error(`❌ Ошибка от сервера: ${err.response.data.error}`)
+          }
+        }
+      } else if (err.request) {
+        console.error(`❌ Запрос был отправлен, но ответа не было:`, err.request)
+        errorMessage = 'Нет ответа от сервера'
+      } else {
+        console.error(`❌ Ошибка при создании запроса:`, err.message)
+        errorMessage = err.message
+      }
+      
+      console.error(`❌ Весь объект ошибки:`, err)
+      console.error(`❌ Итоговое сообщение для пользователя: ${errorMessage}`)
+      
+      // Показываем alert с сообщением об ошибке
+      alert(`⚠️ ${errorMessage}`)
     } finally {
       setAdding(false)
     }

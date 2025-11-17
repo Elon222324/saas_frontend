@@ -267,11 +267,26 @@ export async function addSiteToUser(userId, siteData) {
   console.log('🌐 [addSiteToUser] ← Статус ответа:', response.status, response.statusText)
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}))
+    let errorData = {}
+    let errorText = ''
+    
+    try {
+      errorText = await response.text()
+      console.log('🌐 [addSiteToUser] ← Текст ответа:', errorText)
+      
+      if (errorText) {
+        errorData = JSON.parse(errorText)
+        console.log('🌐 [addSiteToUser] ← Распарсенный JSON:', errorData)
+      }
+    } catch (parseError) {
+      console.error('🌐 [addSiteToUser] ← Не удалось распарсить ответ:', parseError)
+      console.log('🌐 [addSiteToUser] ← Сырой текст ошибки:', errorText)
+    }
+    
     console.error('🌐 [addSiteToUser] ❌ Ошибка HTTP:', response.status, errorData)
     
     if (response.status === 400) {
-      throw new Error(errorData.detail || 'Неверные данные запроса')
+      throw new Error(errorData.detail || errorData.message || 'Неверные данные запроса')
     }
     if (response.status === 401) {
       throw new Error('Токен истек или недействителен. Требуется повторная авторизация.')
@@ -280,9 +295,12 @@ export async function addSiteToUser(userId, siteData) {
       throw new Error('Доступ запрещен. Требуется роль super_admin.')
     }
     if (response.status === 404) {
-      throw new Error(errorData.detail || 'Пользователь не найден')
+      throw new Error(errorData.detail || errorData.message || 'Пользователь не найден')
     }
-    throw new Error(errorData.detail || `HTTP error! status: ${response.status}`)
+    if (response.status === 500) {
+      throw new Error(errorData.detail || errorData.message || 'Ошибка сервера при создании сайта')
+    }
+    throw new Error(errorData.detail || errorData.message || `HTTP error! status: ${response.status}`)
   }
 
   const data = await response.json()
